@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ELEGANT-M — Kontakt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      font-family: 'Josefin Sans', sans-serif;
+      color: #ccc; overflow-x: hidden;
+      position: relative;
+    }
+    .bg-base {
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 25% 25%, #071f0e 0%, #040f07 45%, #020804 100%);
+    }
+    .bg-glitter { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    .bg-glitter canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hero, .form-wrap, .btn-wrap, .silver-line, footer { position: relative; z-index: 2; }
+
+    .hero { width: 100%; text-align: center; padding: 2.5rem 1rem 1.5rem; }
+    .hero::after {
+      content: ''; display: block; width: 140px; height: 0.5px;
+      background: linear-gradient(90deg, transparent, #707070, transparent);
+      margin: 1.4rem auto 0;
+    }
+    .logo-wrap { position: relative; display: inline-block; margin-bottom: 0.6rem; }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 4.5rem);
+      font-weight: 300; letter-spacing: 0.18em;
+      background: linear-gradient(135deg, #888 0%, #ddd 35%, #aaa 60%, #ccc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none; display: inline-block;
+    }
+    .logo span { font-style: italic; }
+    .sparkle {
+      position: absolute; border-radius: 50%;
+      background: rgba(120,255,170,0.9);
+      animation: sparkleAnim 2.5s ease-in-out infinite; pointer-events: none;
+    }
+    .sparkle:nth-child(1)  { width:2px;height:2px;top:0;left:6%;animation-delay:0s; }
+    .sparkle:nth-child(2)  { width:3px;height:3px;top:8%;left:18%;animation-delay:0.4s; }
+    .sparkle:nth-child(3)  { width:2px;height:2px;top:3%;left:35%;animation-delay:0.8s; }
+    .sparkle:nth-child(4)  { width:3px;height:3px;top:0;left:55%;animation-delay:0.2s; }
+    .sparkle:nth-child(5)  { width:2px;height:2px;top:12%;left:72%;animation-delay:1s; }
+    .sparkle:nth-child(6)  { width:2px;height:2px;top:4%;left:88%;animation-delay:0.6s; }
+    .sparkle:nth-child(7)  { width:3px;height:3px;bottom:4%;left:12%;animation-delay:1.2s; }
+    .sparkle:nth-child(8)  { width:2px;height:2px;bottom:8%;left:32%;animation-delay:0.3s; }
+    .sparkle:nth-child(9)  { width:3px;height:3px;bottom:2%;left:58%;animation-delay:0.9s; }
+    .sparkle:nth-child(10) { width:2px;height:2px;bottom:6%;left:80%;animation-delay:1.5s; }
+    @keyframes sparkleAnim {
+      0%,100% { opacity:0; transform:scale(0.4); }
+      50%      { opacity:1; transform:scale(1.5); }
+    }
+    .page-title {
+      font-size: clamp(0.6rem, 1.2vw, 0.85rem);
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: #4caf82; font-weight: 200;
+    }
+
+    .form-wrap { width: min(92vw, 680px); margin: 2rem auto 0; }
+    .field-card {
+      position: relative; background: #ffffff;
+      border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.6);
+    }
+    .field-card::before {
+      content: 'M'; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(7rem, 18vw, 11rem);
+      font-weight: 300; font-style: italic;
+      color: rgba(4,30,12,0.07); pointer-events: none; z-index: 0; line-height: 1;
+    }
+    .field-inner { position: relative; z-index: 1; padding: 1.2rem 1.5rem 1rem; }
+    .field-label {
+      font-size: clamp(0.55rem, 1vw, 0.72rem);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: #1a3a22; font-weight: 400;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+    }
+    .required-badge {
+      font-size: 0.5rem; letter-spacing: 0.15em; padding: 1px 6px; border-radius: 10px;
+      background: rgba(4,30,12,0.08); color: rgba(4,30,12,0.45); font-weight: 300; text-transform: uppercase;
+    }
+    .optional-badge {
+      font-size: 0.5rem; letter-spacing: 0.15em; padding: 1px 6px; border-radius: 10px;
+      background: rgba(4,30,12,0.04); color: rgba(4,30,12,0.3); font-weight: 300;
+      text-transform: uppercase; font-style: italic;
+    }
+    .field-input {
+      width: 100%; border: none; outline: none; background: transparent;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      font-weight: 300; color: #1a1a1a; letter-spacing: 0.06em;
+      padding: 4px 0 8px; border-bottom: 0.5px solid rgba(4,30,12,0.2);
+      transition: border-color 0.2s;
+    }
+    .field-input:focus { border-bottom-color: rgba(10,80,35,0.5); }
+    .field-input::placeholder { color: rgba(0,0,0,0.2); font-weight: 200; }
+    .field-textarea {
+      width: 100%; border: none; outline: none; background: transparent;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      font-weight: 300; color: #1a1a1a; letter-spacing: 0.06em;
+      padding: 4px 0 8px; border-bottom: 0.5px solid rgba(4,30,12,0.2);
+      resize: none; min-height: 90px; transition: border-color 0.2s;
+    }
+    .field-textarea:focus { border-bottom-color: rgba(10,80,35,0.5); }
+    .field-textarea::placeholder { color: rgba(0,0,0,0.2); font-weight: 200; }
+    .mail-note {
+      margin-top: 10px; padding: 8px 12px;
+      background: rgba(4,30,12,0.04); border-radius: 6px;
+      border-left: 2px solid rgba(76,175,130,0.4);
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      color: rgba(4,30,12,0.45); font-weight: 200; line-height: 1.7;
+    }
+    .upload-area {
+      margin-top: 14px; border: 0.5px dashed rgba(4,30,12,0.25);
+      border-radius: 8px; padding: 14px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; background: rgba(4,30,12,0.02);
+    }
+    .upload-area:hover { border-color: rgba(10,80,35,0.45); background: rgba(4,30,12,0.04); }
+    .upload-label {
+      font-size: clamp(0.55rem, 1vw, 0.68rem); letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(4,30,12,0.4); font-weight: 300; cursor: pointer; display: block;
+    }
+    .upload-sublabel { font-size: 0.6rem; letter-spacing: 0.12em; color: rgba(4,30,12,0.25); font-weight: 200; margin-top: 3px; }
+    #fileInput { display: none; }
+    .file-list { margin-top: 8px; font-size: 0.65rem; color: rgba(4,30,12,0.45); letter-spacing: 0.08em; font-weight: 300; }
+    .file-error { color: #c05050; font-size: 0.65rem; letter-spacing: 0.08em; margin-top: 4px; }
+
+    .btn-wrap {
+      width: min(92vw, 680px); margin: 0.5rem auto 3rem;
+      display: flex; justify-content: flex-end; align-items: center; gap: 16px;
+    }
+    .sending-txt {
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #4caf82; font-weight: 200; display: none;
+    }
+    .skicka-btn {
+      position: relative; padding: 14px 52px;
+      border: none; border-radius: 6px; cursor: pointer;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+      font-weight: 400; letter-spacing: 0.35em; text-transform: uppercase;
+      overflow: hidden;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0.03) 1px, rgba(255,255,255,0) 2px),
+        linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 15%, #c8c8c8 30%, #d8d8d8 45%, #c0c0c0 55%, #cccccc 70%, #d4d4d4 85%, #e0e0e0 100%);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 -1px 0 rgba(0,0,0,0.2) inset,
+                  1px 0 0 rgba(255,255,255,0.5) inset, -1px 0 0 rgba(0,0,0,0.1) inset,
+                  0 4px 16px rgba(0,0,0,0.5);
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    }
+    .skicka-btn:hover { transform: translateY(-1px); }
+    .skicka-btn:active { transform: translateY(1px); }
+    .skicka-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .skicka-btn span {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 40%, #111 60%, #222 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,0.4)) drop-shadow(0 -0.5px 0 rgba(0,0,0,0.6));
+    }
+    .skicka-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: skewX(-15deg); transition: left 0.4s;
+    }
+    .skicka-btn:hover::before { left: 150%; }
+
+    .silver-line { width: 90px; height: 0.5px; background: linear-gradient(90deg,transparent,#383838,transparent); margin: 1rem auto 1.5rem; }
+    footer { padding: 1.5rem 0 2.5rem; border-top: 0.5px solid #141414; width: 100%; }
+    .footer-grid { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: flex-start; width: 100%; }
+    .s-title { font-size: clamp(0.55rem,1.1vw,0.75rem); letter-spacing:0.22em; text-transform:uppercase; background: linear-gradient(135deg,#aaa,#f0f0f0,#ccc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:400; margin-bottom:0.8rem; display:block; }
+    .footer-left { display:flex; flex-direction:column; padding-left:2rem; min-width:200px; max-width:280px; }
+    .footer-left p { font-size:clamp(0.75rem,1.3vw,0.95rem); letter-spacing:0.08em; background:linear-gradient(135deg,#999,#e0e0e0,#bbb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:300; line-height:2; }
+    .footer-center { display:flex; flex-direction:column; align-items:center; text-align:center; flex:1; }
+    .mail-btn { display:inline-flex; align-items:center; gap:10px; padding:11px 22px; border:0.5px solid rgba(76,175,130,0.35); border-radius:30px; background:linear-gradient(135deg,rgba(10,40,20,0.8),rgba(5,20,10,0.9)); text-decoration:none; transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s; }
+    .mail-btn:hover { border-color:rgba(76,175,130,0.8); box-shadow:0 0 18px rgba(76,175,130,0.2); transform:scale(1.03); }
+    .mail-btn span { font-family:'Josefin Sans',sans-serif; font-size:clamp(0.75rem,1.3vw,0.95rem); font-weight:400; letter-spacing:0.12em; text-transform:uppercase; background:linear-gradient(135deg,#aaa,#f0f0f0,#ccc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .mail-icon { width:16px; height:16px; flex-shrink:0; }
+    .footer-right { display:flex; flex-direction:column; align-items:center; padding-right:2rem; min-width:180px; }
+    .pay-row { display:flex; gap:7px; justify-content:center; flex-wrap:wrap; }
+    .pay-badge { font-size:clamp(0.75rem,1.3vw,0.95rem); padding:5px 14px; border:0.5px solid rgba(180,200,185,0.2); border-radius:20px; letter-spacing:0.12em; font-weight:400; background:linear-gradient(135deg,#999,#e0e0e0,#bbb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    /* Success overlay */
+    .success-msg { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; }
+    .success-msg.show { display:flex; }
+    .success-box { background:linear-gradient(135deg,#0a2010,#071508); border:0.5px solid rgba(76,175,130,0.4); border-radius:16px; padding:2.5rem 3rem; text-align:center; max-width:420px; }
+    .success-box h3 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; background:linear-gradient(135deg,#888,#ddd,#aaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:1rem; }
+    .success-box p { font-size:0.8rem; letter-spacing:0.1em; color:#4caf82; font-weight:200; line-height:1.9; }
+    .success-close { margin-top:1.5rem; padding:8px 24px; border:0.5px solid rgba(76,175,130,0.4); border-radius:20px; background:transparent; color:#4caf82; font-family:'Josefin Sans',sans-serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; }
+    .success-close:hover { background:rgba(76,175,130,0.1); }
+
+    /* Error overlay */
+    .error-msg { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; }
+    .error-msg.show { display:flex; }
+    .error-box { background:linear-gradient(135deg,#200a0a,#150707); border:0.5px solid rgba(175,76,76,0.4); border-radius:16px; padding:2.5rem 3rem; text-align:center; max-width:420px; }
+    .error-box h3 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; background:linear-gradient(135deg,#888,#ddd,#aaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:1rem; }
+    .error-box p { font-size:0.8rem; letter-spacing:0.1em; color:#cf6f6f; font-weight:200; line-height:1.9; }
+    .error-close { margin-top:1.5rem; padding:8px 24px; border:0.5px solid rgba(175,76,76,0.4); border-radius:20px; background:transparent; color:#cf6f6f; font-family:'Josefin Sans',sans-serif; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; }
+    .error-close:hover { background:rgba(175,76,76,0.1); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-base"></div>
+  <div class="bg-glitter"><canvas id="glitterCanvas"></canvas></div>
+
+  <!-- Success -->
+  <div class="success-msg" id="successMsg">
+    <div class="success-box">
+      <h3>ELEGANT<em>-M</em></h3>
+      <p>Tack f&#246;r ditt meddelande!<br><br>En bekr&#228;ftelse har skickats till<br>din e-postadress.<br><br>Vi &#229;terkommer till dig inom kort.</p>
+      <button class="success-close" onclick="document.getElementById('successMsg').classList.remove('show')">St&#228;ng</button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg">
+    <div class="error-box">
+      <h3>ELEGANT<em>-M</em></h3>
+      <p>N&#229;gonting gick fel.<br><br>V&#228;nligen f&#246;rs&#246;k igen eller kontakta oss direkt p&#229;<br>elegant.m.se@gmail.com</p>
+      <button class="error-close" onclick="document.getElementById('errorMsg').classList.remove('show')">St&#228;ng</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo-wrap">
+      <span class="sparkle"></span><span class="sparkle"></span>
+      <span class="sparkle"></span><span class="sparkle"></span>
+      <span class="sparkle"></span><span class="sparkle"></span>
+      <span class="sparkle"></span><span class="sparkle"></span>
+      <span class="sparkle"></span><span class="sparkle"></span>
+      <a href="index.html" class="logo">ELEGANT<span>-M</span></a>
+    </div>
+    <div class="page-title">Kontakta oss</div>
+  </div>
+
+  <!-- FORM -->
+  <form class="form-wrap" id="contactForm">
+
+    <div class="field-card">
+      <div class="field-inner">
+        <label class="field-label" for="namn">Namn <span class="required-badge">Obligatorisk</span></label>
+        <input class="field-input" type="text" id="namn" name="from_name" placeholder="Ditt fullst&#228;ndiga namn" required/>
+      </div>
+    </div>
+
+    <div class="field-card">
+      <div class="field-inner">
+        <label class="field-label" for="epost">E-post <span class="required-badge">Obligatorisk</span></label>
+        <input class="field-input" type="email" id="epost" name="from_email" placeholder="din@email.com" required/>
+        <div class="mail-note">En bekr&#228;ftelse skickas automatiskt till denna adress n&#228;r du skickar formul&#228;ret.</div>
+      </div>
+    </div>
+
+    <div class="field-card">
+      <div class="field-inner">
+        <label class="field-label" for="telefon">Telefonnummer <span class="optional-badge">Frivillig</span></label>
+        <input class="field-input" type="tel" id="telefon" name="phone" placeholder="+46 70 000 00 00"/>
+      </div>
+    </div>
+
+    <div class="field-card">
+      <div class="field-inner">
+        <label class="field-label" for="beskrivning">Beskriv din best&#228;llning <span class="required-badge">Obligatorisk</span></label>
+        <textarea class="field-textarea" id="beskrivning" name="message" placeholder="Ber&#228;tta vad du &#246;nskar gravera, p&#229; vilket material, eventuell text eller design..." required></textarea>
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <label class="upload-label">Bifoga bilder (max 2 st) <span style="font-size:0.5rem;letter-spacing:0.15em;color:rgba(4,30,12,0.3);font-style:italic;">Frivillig</span></label>
+          <div class="upload-sublabel">Max 10 MB totalt &middot; JPG, PNG, WEBP</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(this)"/>
+        <div class="file-list" id="fileList"></div>
+        <div class="file-error" id="fileError"></div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- SKICKA -->
+  <div class="btn-wrap">
+    <span class="sending-txt" id="sendingTxt">Skickar...</span>
+    <button class="skicka-btn" id="skickaBtn" onclick="handleSubmit()">
+      <span>Skicka</span>
+    </button>
+  </div>
+
+  <div class="silver-line"></div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-left">
+        <span class="s-title">Om oss</span>
+        <p>Personliga gravyrer skapade<br>med precision och k&#228;rlek.<br>ELEGANT-M &mdash; Where Love Leaves Marks.</p>
+      </div>
+      <div class="footer-center">
+        <span class="s-title">Kontakt</span>
+        <a class="mail-btn" href="kontakt.html">
+          <svg class="mail-icon" viewBox="0 0 24 24" fill="none" stroke="#4caf82" stroke-width="1.5">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <polyline points="2,4 12,14 22,4"/>
+          </svg>
+          <span>elegant.m.se@gmail.com</span>
+        </a>
+      </div>
+      <div class="footer-right">
+        <span class="s-title">Betalning</span>
+        <div class="pay-row">
+          <span class="pay-badge">Kort</span>
+          <span class="pay-badge">Swish</span>
+          <span class="pay-badge">Klarna</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* EmailJS init */
+    emailjs.init('syV4hDTJIVxj9xUyp');
+
+    var SERVICE_ID   = 'service_rqr0oai';
+    var TEMPLATE_TO_YOU     = 'template_kvc84w1';
+    var TEMPLATE_TO_CUSTOMER = 'template_1qdf2dj';
+
+    function handleSubmit() {
+      var form = document.getElementById('contactForm');
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      var btn = document.getElementById('skickaBtn');
+      var txt = document.getElementById('sendingTxt');
+      btn.disabled = true;
+      txt.style.display = 'block';
+
+      var params = {
+        from_name:  document.getElementById('namn').value,
+        from_email: document.getElementById('epost').value,
+        phone:      document.getElementById('telefon').value || 'Ej angivet',
+        message:    document.getElementById('beskrivning').value
+      };
+
+      /* Send to Mustafa */
+      emailjs.send(SERVICE_ID, TEMPLATE_TO_YOU, params)
+        .then(function() {
+          /* Send auto-reply to customer */
+          return emailjs.send(SERVICE_ID, TEMPLATE_TO_CUSTOMER, params);
+        })
+        .then(function() {
+          btn.disabled = false;
+          txt.style.display = 'none';
+          document.getElementById('successMsg').classList.add('show');
+          form.reset();
+          document.getElementById('fileList').textContent = '';
+        })
+        .catch(function(err) {
+          console.error('EmailJS error:', err);
+          btn.disabled = false;
+          txt.style.display = 'none';
+          document.getElementById('errorMsg').classList.add('show');
+        });
+    }
+
+    /* File upload */
+    function handleFiles(input) {
+      var files = Array.from(input.files);
+      var errorEl = document.getElementById('fileError');
+      var listEl  = document.getElementById('fileList');
+      errorEl.textContent = ''; listEl.textContent = '';
+      if (files.length > 2) { errorEl.textContent = 'Max 2 bilder till\u00e5tna.'; input.value = ''; return; }
+      var total = files.reduce(function(a,f){return a+f.size;},0);
+      if (total > 10*1024*1024) { errorEl.textContent = 'Total storlek f\u00e5r inte \u00f6verstiga 10 MB.'; input.value=''; return; }
+      listEl.textContent = files.map(function(f){return f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB)';}).join(' \u00b7 ');
+    }
+
+    /* Silver glitter canvas */
+    (function(){
+      var canvas=document.getElementById('glitterCanvas');
+      var ctx=canvas.getContext('2d');
+      var particles=[]; var W,H;
+      function resize(){W=canvas.width=window.innerWidth;H=canvas.height=Math.max(document.body.scrollHeight,window.innerHeight);}
+      function create(){particles=[];var c=Math.floor(W*H/3800);for(var i=0;i<c;i++){particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.3,speed:Math.random()*0.008+0.003,phase:Math.random()*Math.PI*2});}}
+      var t=0;
+      function draw(){ctx.clearRect(0,0,W,H);t+=0.018;for(var i=0;i<particles.length;i++){var p=particles[i];var a=0.25+0.65*Math.abs(Math.sin(t*p.speed*60+p.phase));ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);var b=Math.floor(180+60*Math.abs(Math.sin(t+p.phase)));ctx.fillStyle='rgba('+b+','+b+','+b+','+a.toFixed(2)+')';ctx.fill();}requestAnimationFrame(draw);}
+      resize();create();draw();
+      window.addEventListener('resize',function(){resize();create();});
+    })();
+  </script>
+
+</body>
+</html>
