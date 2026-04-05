@@ -69,7 +69,7 @@
     }
     .logo {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 7vw, 6rem);
+      font-size: clamp(4.5rem, 11vw, 10rem);
       font-weight: 300; letter-spacing: 0.18em;
       background: linear-gradient(135deg, #111 0%, #2a2a2a 50%, #111 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -82,7 +82,7 @@
     }
     .tagline {
       font-family: 'Josefin Sans', sans-serif;
-      font-size: clamp(1rem, 2.2vw, 1.6rem);
+      font-size: clamp(1.2rem, 3vw, 2.2rem);
       font-weight: 400; letter-spacing: 0.38em;
       text-transform: uppercase;
       background: linear-gradient(135deg, #071a0d 0%, #0f3320 35%, #071a0d 60%, #0a2212 80%, #071a0d 100%);
@@ -119,7 +119,7 @@
     }
 
     .heart-container {
-      position:relative; width:min(96vw,980px); margin:0 auto;
+      position:relative; width:min(98vw,1200px); margin:0 auto;
     }
     .heart-svg { width:100%; height:auto; display:block; }
     .heart-buttons { position:absolute; top:0; left:0; right:0; bottom:0; }
@@ -178,11 +178,11 @@
       text-align:center;
     }
     .lbl-wrap span {
-      font-size:clamp(0.55rem,1.1vw,0.75rem);
-      letter-spacing:0.14em; text-transform:uppercase;
-      background:linear-gradient(135deg,#1a1a1a,#444,#1a1a1a);
+      font-size:clamp(0.6rem,1.2vw,0.85rem);
+      letter-spacing:0.16em; text-transform:uppercase;
+      background:linear-gradient(135deg,#999,#eee,#bbb,#f5f5f5,#aaa);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text; font-weight:400; display:block; line-height:1.4;
+      background-clip:text; font-weight:500; display:block; line-height:1.4;
     }
     .kampanj-dot {
       position:absolute; top:8px; right:8px;
@@ -197,14 +197,67 @@
       margin:2.5rem auto 1.8rem;
     }
     footer {
-      padding:2.5rem 0 3rem;
+      padding:2.5rem 0 2rem;
       border-top:0.5px solid rgba(0,0,0,0.25);
       width:100%;
     }
     .footer-grid {
       display:flex; flex-wrap:nowrap;
       justify-content:space-between; align-items:flex-start;
-      width:100%; max-width:1100px; margin:0 auto; padding:0 2rem;
+      width:100%; max-width:1200px; margin:0 auto; padding:0 2rem;
+    }
+    .footer-left {
+      display:flex; flex-direction:column;
+      align-items:flex-start; flex:1; min-width:0;
+    }
+    .footer-center {
+      display:flex; flex-direction:column;
+      align-items:center; text-align:center; flex:1;
+    }
+    .footer-right {
+      display:flex; flex-direction:column;
+      align-items:center; flex:1; min-width:0;
+    }
+
+    /* ── MINI FOOTER ── */
+    .mini-footer {
+      width:100%;
+      border-top:0.5px solid rgba(255,255,255,0.12);
+      margin-top:1.5rem;
+      padding:0.9rem 0;
+    }
+    .mini-footer-inner {
+      display:flex; flex-wrap:nowrap;
+      justify-content:space-between; align-items:center;
+      width:100%; max-width:1200px; margin:0 auto; padding:0 2rem;
+      gap:1rem;
+    }
+    .mini-footer-links {
+      display:flex; gap:0; align-items:center; flex-wrap:wrap;
+    }
+    .mini-footer-links a {
+      font-family:'Josefin Sans',sans-serif;
+      font-size:0.65rem; letter-spacing:0.1em;
+      text-transform:uppercase; text-decoration:none;
+      color:#aaa;
+      padding:0 0.7rem;
+      border-right:1px solid rgba(255,255,255,0.2);
+      line-height:1;
+      transition:color 0.2s;
+    }
+    .mini-footer-links a:first-child { padding-left:0; }
+    .mini-footer-links a:last-child { border-right:none; }
+    .mini-footer-links a:hover { color:#ddd; }
+    .mini-footer-mid {
+      font-family:'Josefin Sans',sans-serif;
+      font-size:0.65rem; letter-spacing:0.12em;
+      text-transform:uppercase; color:#aaa;
+      white-space:nowrap;
+    }
+    .mini-footer-copy {
+      font-family:'Josefin Sans',sans-serif;
+      font-size:0.65rem; letter-spacing:0.08em;
+      color:#aaa; white-space:nowrap; text-align:right;
     }
     .s-title {
       font-size: clamp(0.55rem, 1.1vw, 0.75rem);
@@ -214,20 +267,12 @@
       margin-bottom:0.8rem; display:block;
       font-family:'Josefin Sans',sans-serif;
     }
-    .footer-left {
-      display:flex; flex-direction:column;
-      padding-left:2rem; min-width:200px; max-width:280px;
-    }
     .footer-left p {
       font-size: clamp(0.85rem, 1.5vw, 1.05rem);
       letter-spacing:0.06em;
       color: #ddd;
       font-weight:300; line-height:1.9;
       font-family:'Josefin Sans',sans-serif;
-    }
-    .footer-center {
-      display:flex; flex-direction:column;
-      align-items:center; text-align:center; flex:1;
     }
     .mail-btn {
       display:inline-flex; align-items:center; gap:10px;
@@ -252,10 +297,6 @@
       background-clip:text;
     }
     .mail-icon { width:16px; height:16px; flex-shrink:0; }
-    .footer-right {
-      display:flex; flex-direction:column;
-      align-items:center; padding-right:2rem; min-width:180px;
-    }
     .pay-row { display:flex; gap:7px; justify-content:center; flex-wrap:wrap; }
     .pay-badge {
       font-size: clamp(0.7rem, 1.2vw, 0.85rem);
@@ -392,6 +433,20 @@
       </div>
     </div>
   </footer>
+
+  <div class="mini-footer">
+    <div class="mini-footer-inner">
+      <div class="mini-footer-links">
+        <a href="#">Köpvillkor</a>
+        <a href="#">Integritetspolicy</a>
+        <a href="#">Recensionspolicy</a>
+        <a href="#">Cookies</a>
+        <a href="#">Sitemap</a>
+      </div>
+      <div class="mini-footer-mid">Sverige &ndash; SEK</div>
+      <div class="mini-footer-copy">&copy; ALKAISY AB 559285-0588</div>
+    </div>
+  </div>
 
 </body>
 </html>
