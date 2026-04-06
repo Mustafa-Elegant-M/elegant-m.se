@@ -456,7 +456,7 @@
       </div>
       <div class="footer-center">
         <span class="s-title">Kontakt</span>
-        <a class="mail-btn" id="contact-mail-btn" href="#">
+        <a class="mail-btn" id="contact-mail-btn" href="#" target="_blank" rel="noopener">
           <svg class="mail-icon" viewBox="0 0 24 24" fill="none" stroke="#4caf82" stroke-width="1.5">
             <rect x="2" y="4" width="20" height="16" rx="2"/>
             <polyline points="2,4 12,14 22,4"/>
@@ -469,7 +469,7 @@
             var el=document.getElementById("contact-mail-btn");
             var lbl=document.getElementById("contact-mail-label");
             var addr=u+"@"+d;
-            el.href="mailto:"+addr;
+            el.href="https://mail.google.com/mail/?to="+addr;
             lbl.textContent=addr;
           })();
         </script>
