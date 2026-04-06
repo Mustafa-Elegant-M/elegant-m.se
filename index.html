@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ELEGANT-M</title>
+  <title>ELEGANT-M — Where Love Leaves Marks</title>
+  <meta name="description" content="Personliga gravyrer skapade med precision och kärlek. Välj mellan akryl, metall, glas, läder, trä och mer. ELEGANT-M — Where Love Leaves Marks."/>
+  <meta name="keywords" content="gravyr, personlig gravyr, lasergravyr, laser engraving, present, lyxiga presenter, lux present, gåva, minne, speciell gåva, speciell present, unik, elegant, akryl, metall, glas, läder, trä, Sverige"/>
+  <meta name="author" content="ELEGANT-M"/>
+  <meta property="og:title" content="ELEGANT-M — Where Love Leaves Marks"/>
+  <meta property="og:description" content="Personliga gravyrer skapade med precision och kärlek. Beställ ditt unika minnesmärke idag."/>
+  <meta property="og:url" content="https://elegant-m.se"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="sv_SE"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="apple-touch-icon" href="favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
   <style>
@@ -309,6 +320,53 @@
       background: linear-gradient(135deg, #888, #ddd, #bbb, #f0f0f0, #999);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
     }
+
+    /* ── COOKIE BANNER ── */
+    .cookie-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 99998;
+      background: linear-gradient(135deg, rgba(5,25,20,0.97), rgba(3,15,12,0.98));
+      border-top: 0.5px solid rgba(255,255,255,0.12);
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem; flex-wrap: wrap;
+      backdrop-filter: blur(10px);
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+    .cookie-banner.visible { transform: translateY(0); }
+    .cookie-text {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.78rem; letter-spacing: 0.08em;
+      color: #bbb; font-weight: 300;
+    }
+    .cookie-text a {
+      color: #4caf82; text-decoration: underline; cursor: pointer;
+    }
+    .cookie-accept {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.55rem 1.6rem;
+      border: 0.5px solid rgba(76,175,130,0.5);
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(10,50,25,0.9), rgba(5,25,12,0.95));
+      color: #4cff80;
+      cursor: pointer; white-space: nowrap;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cookie-accept:hover {
+      border-color: rgba(76,175,130,0.9);
+      box-shadow: 0 0 12px rgba(76,175,130,0.2);
+    }
+    .cookie-decline {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #777; background: none; border: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .cookie-decline:hover { color: #aaa; }
+
     /* ── MODAL ── */
     .modal-overlay {
       display:none; position:fixed; inset:0; z-index:99999;
@@ -557,6 +615,38 @@
         }
       });
     });
+  </script>
+
+  <!-- COOKIE BANNER -->
+  <div class="cookie-banner" id="cookie-banner">
+    <span class="cookie-text">
+      Vi använder nödvändiga cookies för att webbplatsen ska fungera smidigt.
+      <a onclick="openModal('cookies')">Läs mer</a>
+    </span>
+    <button class="cookie-accept" onclick="acceptCookies()">Godkänn</button>
+    <button class="cookie-decline" onclick="declineCookies()">Avvisa</button>
+  </div>
+
+  <script>
+    // Cookie banner logic
+    (function() {
+      var consent = localStorage.getItem('cookie-consent');
+      if (!consent) {
+        setTimeout(function() {
+          document.getElementById('cookie-banner').classList.add('visible');
+        }, 800);
+      }
+    })();
+
+    function acceptCookies() {
+      localStorage.setItem('cookie-consent', 'accepted');
+      document.getElementById('cookie-banner').classList.remove('visible');
+    }
+
+    function declineCookies() {
+      localStorage.setItem('cookie-consent', 'declined');
+      document.getElementById('cookie-banner').classList.remove('visible');
+    }
   </script>
 
 </body>
