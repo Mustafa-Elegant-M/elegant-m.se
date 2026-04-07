@@ -406,6 +406,79 @@
       transition:color 0.2s;
     }
     .modal-close:hover { color:#fff; }
+
+    /* ══════════════════════════════
+       MOBILANPASSNING
+    ══════════════════════════════ */
+    @media (max-width: 600px) {
+
+      /* Hero & logga */
+      .hero { padding: 2rem 1rem 1rem; }
+      .logo {
+        font-size: clamp(2.8rem, 16vw, 5rem);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+      .tagline {
+        font-size: clamp(0.7rem, 4.5vw, 1rem);
+        letter-spacing: 0.18em;
+      }
+      .tagline-wrap { padding: 0.3rem 0.5rem; }
+      .hero::after { margin: 1rem auto 0; }
+
+      /* Välj material label */
+      .section-label { font-size: 0.7rem; letter-spacing: 0.2em; margin: 1.2rem 0 0.4rem; }
+
+      /* Hjärta — skalas ner lite så knappar inte skärs av */
+      .heart-container { width: 100vw; }
+
+      /* Knappar i hjärtat — större på mobil */
+      .mat-btn {
+        width: min(18vw, 80px);
+        height: min(18vw, 80px);
+        border-radius: 10px;
+      }
+      .lbl-wrap span { font-size: 0.55rem; letter-spacing: 0.08em; }
+
+      /* Footer — stapla kolumner vertikalt */
+      .footer-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 0 1.5rem;
+      }
+      .footer-left { align-items: center; text-align: center; }
+      .footer-left p { font-size: 0.9rem; line-height: 1.8; }
+      .footer-center { width: 100%; }
+      .footer-right { width: 100%; }
+      .s-title { font-size: 0.7rem; }
+
+      /* Mini-footer — stapla vertikalt */
+      .mini-footer-inner {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+        text-align: center;
+      }
+      .mini-footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem;
+      }
+      .mini-footer-links a {
+        font-size: 0.6rem;
+        padding: 0 0.5rem;
+      }
+      .mini-footer-copy { text-align: center; }
+
+      /* Cookie banner */
+      .cookie-banner {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 1.2rem 1.5rem;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
