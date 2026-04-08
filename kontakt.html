@@ -155,6 +155,49 @@
 
     /* ── SIGNATURE (in email only — shown as preview here) ── */
     /* This is used inside EmailJS template, not rendered on page */
+
+    /* ══════════════════════════════
+       MOBILANPASSNING
+    ══════════════════════════════ */
+    @media (max-width: 600px) {
+
+      .top-bar {
+        padding: 1.2rem 1.2rem 0;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .site-name {
+        font-size: clamp(1rem, 6vw, 1.4rem);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+      .top-spacer { width: 60px; }
+      .back-link { font-size: 0.65rem; }
+
+      .page-title { padding: 1.5rem 1rem 0; }
+      .page-title h1 {
+        font-size: clamp(2rem, 12vw, 3.5rem);
+        letter-spacing: 0.08em;
+      }
+      .page-title p {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+      }
+
+      .form-card {
+        width: 94vw;
+        padding: 1.5rem 1.2rem;
+        margin: 1.5rem auto 2rem;
+      }
+
+      .field input,
+      .field textarea {
+        font-size: 1rem; /* prevents iOS zoom on focus */
+        padding: 0.75rem 0.9rem;
+      }
+
+      .submit-btn { padding: 0.9rem; }
+    }
   </style>
 </head>
 <body>
