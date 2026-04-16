@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metallnyckelring — ELEGANT-M</title>
+  <meta name="description" content="Lasergraverad metallnyckelring med personlig text. ELEGANT-M."/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&family=Alegreya:ital,wght@0,400;0,700;1,400&family=Allura&family=Allerta+Stencil&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:linear-gradient(160deg,#2bb8c0 0%,#1e9aa2 30%,#178590 60%,#127880 100%);min-height:100vh;font-family:'Josefin Sans',sans-serif;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px),radial-gradient(circle,rgba(140,255,200,0.45) 0.4px,transparent 0.4px);background-size:28px 28px,18px 22px,40px 32px;background-position:0 0,7px 9px,15px 5px;animation:glitterShift 6s ease-in-out infinite alternate;}
+    @keyframes glitterShift{0%{opacity:0.4}50%{opacity:0.9}100%{opacity:0.45}}
+    .top-bar{position:relative;z-index:10;width:100%;max-width:1200px;margin:0 auto;padding:1.8rem 2.5rem 0;display:flex;align-items:center;justify-content:space-between;}
+    .back-link{font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.65;display:flex;align-items:center;gap:0.5rem;transition:opacity 0.2s;}
+    .back-link:hover{opacity:1;}
+    .back-link::before{content:'←';font-size:1rem;}
+    .site-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.3rem,2.5vw,1.9rem);font-weight:300;letter-spacing:0.18em;background:linear-gradient(135deg,#111 0%,#2a2a2a 50%,#111 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;white-space:nowrap;}
+    .site-name span{font-style:italic;}
+    .top-spacer{width:100px;}
+    .page-title{position:relative;z-index:10;text-align:center;padding:2rem 1rem 1.5rem;}
+    .page-title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,4.5rem);font-weight:300;letter-spacing:0.15em;background:linear-gradient(135deg,#111 0%,#333 50%,#111 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .page-title p{font-size:clamp(0.65rem,1.2vw,0.8rem);letter-spacing:0.28em;text-transform:uppercase;color:#111;opacity:0.55;margin-top:0.5rem;}
+    .title-line{width:120px;height:0.5px;margin:1.2rem auto 0;background:linear-gradient(90deg,transparent,#111a,transparent);}
+    .content{position:relative;z-index:10;width:min(96vw,960px);margin:0 auto;padding:0 1rem 3rem;}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;}
+    @media(max-width:680px){.cols{grid-template-columns:1fr;}}
+    .form-section{margin-bottom:1.3rem;}
+    .form-label{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:#111;opacity:0.7;margin-bottom:0.5rem;display:block;}
+    .form-input{width:100%;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.15);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.9rem;color:#111;outline:none;transition:border-color 0.2s;}
+    .form-input:focus{border-color:rgba(0,80,60,0.5);}
+    .form-input::placeholder{color:rgba(0,0,0,0.3);}
+    input[type="range"]{width:100%;accent-color:#007a5e;cursor:pointer;}
+    .style-btns{display:flex;gap:8px;flex-wrap:wrap;}
+    .style-btn{flex:1;min-width:80px;padding:0.65rem 0.4rem;background:rgba(255,255,255,0.2);border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;cursor:pointer;text-align:center;color:#111;transition:all 0.2s;}
+    .style-btn:hover{border-color:rgba(0,80,60,0.4);}
+    .style-btn.selected{border-color:rgba(0,100,70,0.7);background:rgba(0,100,70,0.12);}
+    .style-btn-name{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;display:block;margin-top:4px;font-family:'Josefin Sans',sans-serif;}
+    .f-alegreya{font-family:'Alegreya',serif;font-size:1rem;}
+    .f-allura{font-family:'Allura',cursive;font-size:1.1rem;}
+    .f-stencil{font-family:'Allerta Stencil',sans-serif;font-size:0.75rem;}
+    .qty-wrap{display:flex;align-items:center;gap:12px;}
+    .qty-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.15);color:#111;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;}
+    .qty-btn:hover{border-color:rgba(0,80,60,0.5);}
+    .qty-input{width:70px;text-align:center;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.15);border-radius:8px;padding:0.5rem;font-family:'Josefin Sans',sans-serif;font-size:1rem;color:#111;outline:none;}
+    .price-display{margin-left:auto;text-align:right;}
+    .price-per{font-size:0.65rem;letter-spacing:0.1em;color:#333;text-transform:uppercase;}
+    .price-total{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#111;}
+    .order-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,180,120,0.5);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1.5rem;transition:all 0.25s;}
+    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,180,120,0.2);transform:scale(1.02);}
+    .payment-overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
+    .payment-overlay.active{display:flex;}
+    .payment-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,520px);max-height:90vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,200,150,0.15),0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.3s ease both;padding:2rem;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
+    @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .payment-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;}
+    .pay-form-label{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:#aaa;margin-bottom:0.5rem;display:block;}
+    .pay-form-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.9rem;color:#ddd;outline:none;transition:border-color 0.2s;margin-bottom:1.3rem;}
+    .pay-form-input:focus{border-color:rgba(0,255,180,0.4);}
+    .pay-form-input::placeholder{color:rgba(255,255,255,0.2);}
+    .order-summary{background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.2rem;font-size:0.75rem;letter-spacing:0.08em;color:#999;line-height:1.8;}
+    .order-summary strong{color:rgba(0,255,180,0.7);}
+    .payment-methods{display:flex;gap:8px;margin-bottom:0.5rem;}
+    .pay-method{flex:1;padding:0.65rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;text-align:center;transition:all 0.2s;}
+    .pay-method.selected{border-color:rgba(0,255,180,0.6);background:rgba(0,255,180,0.06);color:#ccc;}
+    .send-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1rem;transition:all 0.25s;}
+    .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,255,180,0.2);}
+    .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .payment-status{text-align:center;margin-top:1rem;font-size:0.78rem;letter-spacing:0.1em;min-height:1.2rem;}
+    .payment-status.success{color:#4cff80;}
+    .payment-status.error{color:#ff7070;}
+    .pay-back-btn{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;margin-top:0.8rem;display:block;width:100%;text-align:center;transition:color 0.2s;}
+    .pay-back-btn:hover{color:#aaa;}
+    .mini-footer{position:relative;z-index:10;width:100%;border-top:0.5px solid rgba(0,0,0,0.2);padding:1rem 0;margin-top:2rem;}
+    .mini-footer-inner{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;width:100%;max-width:1200px;margin:0 auto;padding:0 2rem;gap:1rem;}
+    .mini-footer-links a{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.6;padding:0 0.7rem;border-right:1px solid rgba(0,0,0,0.2);line-height:1;transition:opacity 0.2s;}
+    .mini-footer-links a:first-child{padding-left:0;}
+    .mini-footer-links a:last-child{border-right:none;}
+    .mini-footer-links a:hover{opacity:1;}
+    .mini-footer-mid{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#111;opacity:0.6;}
+    .mini-footer-copy{font-size:0.62rem;letter-spacing:0.08em;color:#111;opacity:0.6;text-align:right;}
+    @media(max-width:600px){
+      .top-bar{padding:1.2rem 1.2rem 0;}
+      .site-name{font-size:1rem;}
+      .top-spacer{width:50px;}
+      .mini-footer-inner{flex-direction:column;align-items:center;gap:0.6rem;text-align:center;}
+      .payment-methods{flex-direction:column;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a class="back-link" href="metall.html">Metall</a>
+  <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
+  <div class="top-spacer"></div>
+</div>
+
+<div class="page-title">
+  <h1>Metallnyckelring</h1>
+  <p>Personlig lasergravyr — ett minnesvärdt nyckelband</p>
+  <div class="title-line"></div>
+</div>
+
+<div class="content">
+  <div class="cols">
+
+    <!-- VÄNSTER: FÖRHANDSVISNING -->
+    <div>
+      <div class="form-label" style="margin-bottom:0.7rem;">Förhandsvisning</div>
+      <div style="width:100%;max-width:200px;margin:0 auto 1.5rem;aspect-ratio:1;position:relative;">
+        <div style="width:100%;height:100%;background:radial-gradient(circle at 35% 30%,#e0e0e0,#a0a0a0 55%,#808080);border-radius:50%;box-shadow:0 6px 24px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;">
+          <div style="width:55%;height:55%;background:radial-gradient(circle at 35% 30%,#d4d4d4,#909090);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <div id="nk-preview" style="font-family:'Alegreya',serif;font-size:1rem;background:linear-gradient(135deg,#777,#ddd,#aaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;padding:4px;white-space:nowrap;">Din logo</div>
+          </div>
+        </div>
+        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:22px;height:22px;border:3px solid #888;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>
+      </div>
+
+      <div class="form-section">
+        <label class="form-label" for="nk-text">Din text / logotypnamn</label>
+        <input class="form-input" type="text" id="nk-text" placeholder="T.ex. ditt namn" oninput="document.getElementById('nk-preview').textContent=this.value||'Din logo'"/>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Textstorlek: <span id="nk-size-val">1.0 rem</span></label>
+        <input type="range" min="0.5" max="1.8" step="0.1" value="1.0" oninput="document.getElementById('nk-size-val').textContent=this.value+' rem';document.getElementById('nk-preview').style.fontSize=this.value+'rem';"/>
+      </div>
+    </div>
+
+    <!-- HÖGER: FONT + ANTAL -->
+    <div>
+      <div class="form-section">
+        <label class="form-label">Textstil</label>
+        <div class="style-btns">
+          <div class="style-btn selected" onclick="setFont('nk-preview','alegreya',this)"><span class="f-alegreya">Ag</span><span class="style-btn-name">Alegreya</span></div>
+          <div class="style-btn" onclick="setFont('nk-preview','allura',this)"><span class="f-allura">Ag</span><span class="style-btn-name">Allura</span></div>
+          <div class="style-btn" onclick="setFont('nk-preview','stencil',this)"><span class="f-stencil">AG</span><span class="style-btn-name">Allerta Stencil</span></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Antal</label>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-input" type="number" id="nk-qty" value="1" min="1" max="9999"/>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+          <div class="price-display">
+            <div class="price-per">Pris på förfrågan</div>
+            <div class="price-total">—</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:0.7rem;color:#333;letter-spacing:0.08em;line-height:1.7;margin-top:1rem;background:rgba(255,255,255,0.2);border-radius:10px;padding:0.9rem 1rem;">
+        ✦ Priset beror på antal och eventuell specialgravyr.<br>
+        Vi återkommer med offert inom 1–2 arbetsdagar.
+      </div>
+      <button class="order-btn" onclick="openPayment()">Skicka förfrågan →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAYMENT OVERLAY -->
+<div class="payment-overlay" id="payment-popup">
+  <div class="payment-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+      <div class="payment-title">Förfrågan</div>
+      <button style="background:none;border:none;cursor:pointer;color:#777;font-size:1.6rem;line-height:1;transition:color 0.2s;padding:0.2rem 0.5rem;" onclick="closePayment()" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#777'">&times;</button>
+    </div>
+    <div class="order-summary" id="order-summary"></div>
+    <div class="form-section"><label class="pay-form-label" for="pay-name">Namn</label><input class="pay-form-input" type="text" id="pay-name" placeholder="För- och efternamn"/></div>
+    <div class="form-section"><label class="pay-form-label" for="pay-email">E-postadress</label><input class="pay-form-input" type="email" id="pay-email" placeholder="din@email.com"/></div>
+    <div class="form-section"><label class="pay-form-label" for="pay-phone">Telefon (valfritt)</label><input class="pay-form-input" type="tel" id="pay-phone" placeholder="+46 70 000 00 00"/></div>
+    <div class="form-section"><label class="pay-form-label" for="pay-address">Leveransadress</label><input class="pay-form-input" type="text" id="pay-address" placeholder="Gatuadress, postnummer, ort"/></div>
+    <button class="send-btn" id="send-order-btn" onclick="sendOrder()">Skicka förfrågan</button>
+    <button class="pay-back-btn" onclick="closePayment()">← Tillbaka till produkten</button>
+    <div class="payment-status" id="payment-status"></div>
+  </div>
+</div>
+
+<div class="mini-footer">
+  <div class="mini-footer-inner">
+    <div class="mini-footer-links">
+      <a href="index.html">Köpvillkor</a>
+      <a href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="mini-footer-mid">Sverige &ndash; SEK</div>
+    <div class="mini-footer-copy">&copy; ALKAISY AB 559285-0588</div>
+  </div>
+</div>
+
+<script>
+  emailjs.init('syV4hDTJIVxj9xUyp');
+  var fontMap = { alegreya:"'Alegreya',serif", allura:"'Allura',cursive", stencil:"'Allerta Stencil',sans-serif" };
+  function setFont(id, f, btn) {
+    document.getElementById(id).style.fontFamily = fontMap[f];
+    btn.closest('.style-btns').querySelectorAll('.style-btn').forEach(function(b){b.classList.remove('selected');});
+    btn.classList.add('selected');
+  }
+  function changeQty(delta) {
+    var inp = document.getElementById('nk-qty');
+    inp.value = Math.max(1, (parseInt(inp.value)||1) + delta);
+  }
+  function openPayment() {
+    var text = document.getElementById('nk-text').value || '(ingen text)';
+    var qty  = document.getElementById('nk-qty').value;
+    var summary = '<strong>Produkt:</strong> Metallnyckelring<br>'
+                + '<strong>Text / Logo:</strong> ' + text + '<br>'
+                + '<strong>Antal:</strong> ' + qty + ' st<br>'
+                + '<strong>Pris:</strong> På förfrågan';
+    document.getElementById('order-summary').innerHTML = summary;
+    document.getElementById('payment-status').textContent = '';
+    document.getElementById('payment-status').className = 'payment-status';
+    var btn = document.getElementById('send-order-btn');
+    btn.disabled = false; btn.textContent = 'Skicka förfrågan';
+    document.getElementById('payment-popup').classList.add('active');
+  }
+  function closePayment() {
+    document.getElementById('payment-popup').classList.remove('active');
+  }
+  function sendOrder() {
+    var name    = document.getElementById('pay-name').value.trim();
+    var email   = document.getElementById('pay-email').value.trim();
+    var phone   = document.getElementById('pay-phone').value.trim();
+    var address = document.getElementById('pay-address').value.trim();
+    if (!name || !email) {
+      document.getElementById('payment-status').textContent = 'Fyll i namn och e-post.';
+      document.getElementById('payment-status').className = 'payment-status error';
+      return;
+    }
+    var btn = document.getElementById('send-order-btn');
+    btn.disabled = true; btn.textContent = 'Skickar...';
+    var summaryText = document.getElementById('order-summary').innerText;
+    var params = {
+      from_name:  name,
+      from_email: email,
+      phone:      phone || 'Ej angiven',
+      message:    'FÖRFRÅGAN:\n' + summaryText + '\n\nLeveransadress: ' + (address||'Ej angiven'),
+      to_email:   'elegant.m.se@gmail.com'
+    };
+    emailjs.send('service_rqr0oai','template_kvc84w1', params)
+      .then(function(){ return emailjs.send('service_rqr0oai','template_1qdf2dj', params); })
+      .then(function(){
+        document.getElementById('payment-status').textContent = '✓ Förfrågan skickad! Vi återkommer inom 1–2 arbetsdagar.';
+        document.getElementById('payment-status').className = 'payment-status success';
+        btn.textContent = 'Skickat!';
+      })
+      .catch(function(){
+        document.getElementById('payment-status').textContent = 'Något gick fel. Maila oss: elegant.m.se@gmail.com';
+        document.getElementById('payment-status').className = 'payment-status error';
+        btn.disabled = false; btn.textContent = 'Skicka förfrågan';
+      });
+  }
+</script>
+</body>
+</html>
