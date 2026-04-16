@@ -39,17 +39,41 @@
     .cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;}
     @media(max-width:680px){.cols{grid-template-columns:1fr;}}
 
-    /* LIVE CARD */
-    .card-canvas-wrap{position:relative;width:100%;aspect-ratio:85.6/54;background:linear-gradient(135deg,#c8c8c8 0%,#ececec 25%,#b0b0b0 55%,#dedede 80%,#c0c0c0 100%);border-radius:8px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.35);user-select:none;margin-bottom:0.8rem;}
+    /* ─── CARD PREVIEW ─── */
+    /* Card wrapper: 85×54mm ratio = 85.6:54 */
+    .card-canvas-wrap{position:relative;width:100%;aspect-ratio:85/54;border-radius:8px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.35);user-select:none;margin-bottom:0.8rem;transition:background 0.35s;}
     .card-canvas-wrap::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,0.05) 2px,rgba(255,255,255,0.05) 3px);pointer-events:none;z-index:1;}
     .card-canvas-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0.22) 0%,transparent 55%,rgba(0,0,0,0.14) 100%);pointer-events:none;z-index:2;}
-    .gravyr-hint{position:absolute;border:1px dashed rgba(0,160,100,0.4);border-radius:3px;pointer-events:none;z-index:3;display:flex;align-items:center;justify-content:center;}
-    .gravyr-hint span{font-size:0.42rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,130,80,0.6);background:rgba(255,255,255,0.5);padding:1px 4px;border-radius:2px;}
-    .card-drag{position:absolute;cursor:grab;z-index:10;touch-action:none;line-height:1.2;}
+
+    /* Gravyr area: 85-2mm margins each side = 83×52mm; as % of 85×54: left=1/85≈1.18%, top=1/54≈1.85% */
+    .gravyr-hint{position:absolute;border:1px dashed rgba(0,160,100,0.4);border-radius:3px;pointer-events:none;z-index:3;
+      left:1.18%;top:1.85%;width:97.64%;height:96.3%;
+      display:flex;align-items:flex-start;justify-content:flex-end;}
+    .gravyr-hint span{font-size:0.38rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,130,80,0.6);background:rgba(255,255,255,0.5);padding:1px 4px;border-radius:2px;margin:2px;}
+
+    /* Draggable text rows */
+    .card-drag{position:absolute;cursor:grab;z-index:10;touch-action:none;line-height:1.25;}
     .card-drag:active{cursor:grabbing;}
-    .card-text-el{background:linear-gradient(135deg,#777,#ddd,#aaa,#eee,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.5)) drop-shadow(0 -1px 0 rgba(0,0,0,0.25));white-space:nowrap;}
+
+    /* Silver text style */
+    .card-text-el{background:linear-gradient(135deg,#777,#ddd,#aaa,#eee,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.5)) drop-shadow(0 -1px 0 rgba(0,0,0,0.25));white-space:nowrap;display:block;}
     .card-code-el{background:white;padding:3px;border-radius:2px;}
     .card-hint{font-size:0.6rem;color:rgba(0,255,180,0.5);letter-spacing:0.08em;text-align:center;margin-bottom:1rem;font-style:italic;}
+
+    /* Resize handle on text row */
+    .row-resize-handle{position:absolute;right:-16px;top:50%;transform:translateY(-50%);width:12px;height:20px;cursor:ew-resize;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;opacity:0;transition:opacity 0.2s;z-index:20;}
+    .card-drag:hover .row-resize-handle{opacity:1;}
+    .row-resize-handle span{display:block;width:2px;height:6px;background:rgba(0,255,180,0.7);border-radius:1px;}
+
+    /* Angle handle */
+    .row-angle-handle{position:absolute;left:-20px;top:50%;transform:translateY(-50%);width:16px;height:16px;cursor:crosshair;opacity:0;transition:opacity 0.2s;z-index:20;display:flex;align-items:center;justify-content:center;}
+    .card-drag:hover .row-angle-handle{opacity:1;}
+    .row-angle-handle svg{width:14px;height:14px;fill:none;stroke:rgba(0,255,180,0.8);stroke-width:1.5;}
+
+    /* Curve handle */
+    .row-curve-handle{position:absolute;right:-20px;bottom:-8px;width:16px;height:16px;cursor:ns-resize;opacity:0;transition:opacity 0.2s;z-index:20;display:flex;align-items:center;justify-content:center;}
+    .card-drag:hover .row-curve-handle{opacity:1;}
+    .row-curve-handle svg{width:14px;height:14px;fill:none;stroke:rgba(0,200,120,0.8);stroke-width:1.5;}
 
     /* FORM */
     .form-section{margin-bottom:1.3rem;}
@@ -58,6 +82,36 @@
     .form-input:focus{border-color:rgba(0,80,60,0.5);}
     .form-input::placeholder{color:rgba(0,0,0,0.3);}
     input[type="range"]{width:100%;accent-color:#007a5e;cursor:pointer;}
+
+    /* TEXT ROW INPUTS */
+    .text-row-wrap{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.4rem;}
+    .text-row-item{display:flex;align-items:center;gap:0.4rem;}
+    .text-row-item input{flex:1;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.15);border-radius:8px;padding:0.55rem 0.8rem;font-family:'Josefin Sans',sans-serif;font-size:0.85rem;color:#111;outline:none;transition:border-color 0.2s;}
+    .text-row-item input:focus{border-color:rgba(0,80,60,0.5);}
+    .text-row-item input::placeholder{color:rgba(0,0,0,0.3);}
+    .text-row-badge{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,80,60,0.7);min-width:42px;text-align:right;}
+    .add-row-btn{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(0,80,60,0.8);background:none;border:0.5px dashed rgba(0,80,60,0.3);border-radius:6px;padding:0.35rem 0.7rem;cursor:pointer;transition:all 0.2s;font-family:'Josefin Sans',sans-serif;}
+    .add-row-btn:hover{border-color:rgba(0,100,70,0.6);color:rgba(0,100,70,1);}
+
+    /* SELECT ALL BUTTON */
+    .select-all-btn{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,80,60,0.7);background:rgba(255,255,255,0.2);border:0.5px solid rgba(0,80,60,0.2);border-radius:6px;padding:0.3rem 0.7rem;cursor:pointer;transition:all 0.2s;font-family:'Josefin Sans',sans-serif;margin-left:auto;display:block;}
+    .select-all-btn:hover{border-color:rgba(0,100,70,0.5);}
+
+    /* CARD COLOR SWATCHES */
+    .color-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:0.4rem;}
+    .color-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;position:relative;flex-shrink:0;}
+    .color-swatch.selected{border-color:#fff;box-shadow:0 0 0 1px rgba(0,0,0,0.4),0 2px 8px rgba(0,0,0,0.3);}
+    .color-swatch::after{content:attr(data-label);position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:0.42rem;letter-spacing:0.08em;white-space:nowrap;color:#222;opacity:0;transition:opacity 0.15s;pointer-events:none;}
+    .color-swatch:hover::after{opacity:1;}
+    .swatch-rosa{background:radial-gradient(circle at 35% 35%,#ffb0c8,#e05080);}
+    .swatch-rod{background:radial-gradient(circle at 35% 35%,#ff6060,#b80000);}
+    .swatch-svart-gloss{background:radial-gradient(circle at 35% 35%,#444,#000);border-color:rgba(255,255,255,0.2);}
+    .swatch-svart-matt{background:#1a1a1a;border-color:rgba(255,255,255,0.1);}
+    .swatch-silver{background:radial-gradient(circle at 35% 35%,#e8e8e8,#999);}
+    .swatch-guld{background:radial-gradient(circle at 35% 35%,#f5d879,#b8860b);}
+    .swatch-gron{background:radial-gradient(circle at 35% 35%,#5dc85d,#1a6b1a);}
+    .swatch-bla{background:radial-gradient(circle at 35% 35%,#60aaff,#1a4fa0);}
+    .swatch-koppar{background:radial-gradient(circle at 35% 35%,#e2a060,#8b4513);}
 
     /* STYLE BUTTONS */
     .style-btns{display:flex;gap:8px;flex-wrap:wrap;}
@@ -118,7 +172,28 @@
     .price-corner tr.active-row td{color:rgba(0,120,70,1);font-weight:600;}
     .price-corner-note{font-size:0.54rem;color:#777;margin-top:0.5rem;text-align:center;}
 
-    /* PAYMENT OVERLAY */
+    /* ─── DOUBLE-SIDE POPUP ─── */
+    .double-overlay{display:none;position:fixed;inset:0;z-index:9400;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
+    .double-overlay.active{display:flex;}
+    .double-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(98vw,900px);max-height:92vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,200,150,0.15),0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.3s ease both;padding:2rem;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
+    .double-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;}
+    .double-subtitle{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:#666;margin-bottom:1.5rem;}
+    .double-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+    @media(max-width:640px){.double-cols{grid-template-columns:1fr;}}
+    .double-side-title{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.7);border-bottom:0.5px solid rgba(0,255,180,0.15);padding-bottom:0.5rem;margin-bottom:1rem;}
+    .double-card-wrap{position:relative;width:100%;aspect-ratio:85/54;border-radius:6px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.5);margin-bottom:0.6rem;transition:background 0.35s;}
+    .double-card-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0.2) 0%,transparent 55%,rgba(0,0,0,0.12) 100%);pointer-events:none;z-index:2;}
+    .double-gravyr-hint{position:absolute;border:1px dashed rgba(0,160,100,0.35);border-radius:2px;pointer-events:none;z-index:3;left:1.18%;top:1.85%;width:97.64%;height:96.3%;}
+    .d-label{font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.55);text-align:right;padding:2px 4px;}
+    .d-form-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#aaa;margin-bottom:0.4rem;display:block;}
+    .d-form-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;padding:0.6rem 0.8rem;font-family:'Josefin Sans',sans-serif;font-size:0.85rem;color:#ddd;outline:none;transition:border-color 0.2s;margin-bottom:0.8rem;}
+    .d-form-input:focus{border-color:rgba(0,255,180,0.35);}
+    .d-form-input::placeholder{color:rgba(255,255,255,0.2);}
+    .double-close-row{display:flex;justify-content:flex-end;margin-bottom:1rem;}
+    .double-done-btn{background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,255,180,0.9);padding:0.6rem 1.5rem;transition:all 0.2s;}
+    .double-done-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 16px rgba(0,200,130,0.2);}
+
+    /* ─── PAYMENT OVERLAY ─── */
     .payment-overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
     .payment-overlay.active{display:flex;}
     .payment-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,520px);max-height:90vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,200,150,0.15),0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.3s ease both;padding:2rem;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
@@ -133,6 +208,8 @@
     .payment-methods{display:flex;gap:8px;margin-bottom:0.5rem;}
     .pay-method{flex:1;padding:0.65rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;text-align:center;transition:all 0.2s;}
     .pay-method.selected{border-color:rgba(0,255,180,0.6);background:rgba(0,255,180,0.06);color:#ccc;}
+    .pay-method.disabled{opacity:0.3;cursor:not-allowed;pointer-events:none;}
+    .pay-method-note{font-size:0.54rem;color:#555;letter-spacing:0.06em;text-align:center;margin-top:0.2rem;}
     .send-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1rem;transition:all 0.25s;}
     .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,255,180,0.2);}
     .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
@@ -141,6 +218,7 @@
     .payment-status.error{color:#ff7070;}
     .pay-back-btn{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;margin-top:0.8rem;display:block;width:100%;text-align:center;transition:color 0.2s;}
     .pay-back-btn:hover{color:#aaa;}
+    .invoice-note{font-size:0.68rem;color:rgba(0,255,180,0.5);letter-spacing:0.08em;text-align:center;margin-top:0.8rem;line-height:1.6;border-top:0.5px solid rgba(0,255,180,0.1);padding-top:0.8rem;}
 
     /* MINI FOOTER */
     .mini-footer{position:relative;z-index:10;width:100%;border-top:0.5px solid rgba(0,0,0,0.2);padding:1rem 0;margin-top:2rem;}
@@ -183,9 +261,37 @@
     <div>
       <div class="form-label" style="margin-bottom:0.7rem;">Förhandsvisning — dra text &amp; koder på kortet</div>
       <div class="card-canvas-wrap" id="vk-card">
-        <div class="gravyr-hint" style="width:82%;height:78%;top:11%;left:9%;"><span>Gravyryta</span></div>
-        <div class="card-drag" id="vk-drag-text" style="left:50%;top:45%;transform:translate(-50%,-50%);">
-          <span class="card-text-el" id="vk-text-display" style="font-family:'Alegreya',serif;font-size:18px;">Din logo</span>
+        <div class="gravyr-hint"><span>Gravyryta</span></div>
+        <!-- Text rader placerade på kortet -->
+        <div class="card-drag" id="vk-drag-row0" style="left:50%;top:35%;transform:translate(-50%,-50%);">
+          <span class="card-text-el" id="vk-text-display-0" style="font-family:'Alegreya',serif;font-size:18px;">Din rubrik</span>
+          <div class="row-resize-handle" title="Dra för att ändra storlek"><span></span><span></span></div>
+          <div class="row-angle-handle" title="Dra för att ändra vinkel">
+            <svg viewBox="0 0 16 16"><path d="M8 2 L14 8 L8 14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="8" r="2"/></svg>
+          </div>
+          <div class="row-curve-handle" title="Dra upp/ner för konvex/konkav text">
+            <svg viewBox="0 0 16 16"><path d="M2 12 Q8 4 14 12" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="card-drag" id="vk-drag-row1" style="left:50%;top:52%;transform:translate(-50%,-50%);">
+          <span class="card-text-el" id="vk-text-display-1" style="font-family:'Alegreya',serif;font-size:14px;display:none;"></span>
+          <div class="row-resize-handle" title="Dra för att ändra storlek"><span></span><span></span></div>
+          <div class="row-angle-handle" title="Dra för att ändra vinkel">
+            <svg viewBox="0 0 16 16"><path d="M8 2 L14 8 L8 14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="8" r="2"/></svg>
+          </div>
+          <div class="row-curve-handle" title="Dra upp/ner för konvex/konkav text">
+            <svg viewBox="0 0 16 16"><path d="M2 12 Q8 4 14 12" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="card-drag" id="vk-drag-row2" style="left:50%;top:68%;transform:translate(-50%,-50%);">
+          <span class="card-text-el" id="vk-text-display-2" style="font-family:'Alegreya',serif;font-size:12px;display:none;"></span>
+          <div class="row-resize-handle" title="Dra för att ändra storlek"><span></span><span></span></div>
+          <div class="row-angle-handle" title="Dra för att ändra vinkel">
+            <svg viewBox="0 0 16 16"><path d="M8 2 L14 8 L8 14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="8" r="2"/></svg>
+          </div>
+          <div class="row-curve-handle" title="Dra upp/ner för konvex/konkav text">
+            <svg viewBox="0 0 16 16"><path d="M2 12 Q8 4 14 12" stroke-linecap="round"/></svg>
+          </div>
         </div>
         <div class="card-drag card-code-el" id="vk-drag-qr" style="left:8%;top:8%;display:none;">
           <div id="vk-qr-canvas"></div>
@@ -194,7 +300,24 @@
           <svg id="vk-bar-svg" style="display:block;"></svg>
         </div>
       </div>
-      <div class="card-hint">✦ Dra texten och koderna för att placera dem exakt på kortet</div>
+      <div class="card-hint">✦ Dra texten och koderna för att placera dem exakt — handtagen styr storlek, vinkel och böjning</div>
+
+      <!-- KORTFÄRG -->
+      <div class="form-section">
+        <label class="form-label">Kortets färg</label>
+        <div class="color-swatches">
+          <div class="color-swatch swatch-rosa" data-label="Rosa" data-color="rosa" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-rod" data-label="Röd" data-color="rod" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-svart-gloss" data-label="Svart gloss" data-color="svart-gloss" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-svart-matt" data-label="Svart matt" data-color="svart-matt" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-silver selected" data-label="Silver" data-color="silver" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-guld" data-label="Guld" data-color="guld" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-gron" data-label="Grön" data-color="gron" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-bla" data-label="Blå" data-color="bla" onclick="setCardColor(this)"></div>
+          <div class="color-swatch swatch-koppar" data-label="Koppar" data-color="koppar" onclick="setCardColor(this)"></div>
+        </div>
+        <div style="font-size:0.58rem;color:rgba(0,80,60,0.7);margin-top:0.5rem;letter-spacing:0.07em;">✦ Gravyr är alltid i silver oavsett kortets färg</div>
+      </div>
 
       <div class="form-section">
         <label class="form-label">Gravyr på</label>
@@ -228,10 +351,29 @@
 
     <!-- HÖGER: TEXT + FONT + STORLEK + ANTAL + PRISLISTA -->
     <div>
+      <!-- TEXT RADER -->
       <div class="form-section">
-        <label class="form-label" for="vk-text-inp">Din logo / text</label>
-        <input class="form-input" type="text" id="vk-text-inp" placeholder="T.ex. ditt namn eller företag" oninput="updateCardText(this.value)"/>
-        <div style="font-size:0.6rem;color:rgba(0,100,60,0.7);margin-top:0.4rem;letter-spacing:0.07em;">✦ Graveras i silver — färgen är alltid silver</div>
+        <label class="form-label">Din logo / text</label>
+        <div style="font-size:0.6rem;color:rgba(0,100,60,0.7);margin-bottom:0.6rem;letter-spacing:0.07em;">✦ Varje rad visas direkt på kortet. Dra för att flytta. Tryck Enter i rad 2 för att öppna rad 3.</div>
+        <div class="text-row-wrap" id="text-rows-wrap">
+          <div class="text-row-item">
+            <span class="text-row-badge">Rad 1</span>
+            <input type="text" id="vk-text-row0" placeholder="Huvudrubrik (t.ex. företagsnamn)" oninput="updateCardRow(0,this.value)" onkeydown="handleRowKey(event,0)"/>
+          </div>
+          <div class="text-row-item">
+            <span class="text-row-badge">Rad 2</span>
+            <input type="text" id="vk-text-row1" placeholder="Undertitel (t.ex. din titel / roll)" oninput="updateCardRow(1,this.value)" onkeydown="handleRowKey(event,1)"/>
+          </div>
+          <div class="text-row-item" id="row2-wrap" style="display:none;">
+            <span class="text-row-badge">Rad 3</span>
+            <input type="text" id="vk-text-row2" placeholder="Ytterligare rad (t.ex. kontakt)" oninput="updateCardRow(2,this.value)" onkeydown="handleRowKey(event,2)"/>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+          <button class="add-row-btn" id="add-row-btn" onclick="showRow3()">+ Lägg till rad 3</button>
+          <button class="select-all-btn" onclick="selectAllText()">Markera all text</button>
+        </div>
+        <div style="font-size:0.58rem;color:rgba(0,80,60,0.6);margin-top:0.5rem;letter-spacing:0.06em;">Text utanför kortets yta syns inte — storlek begränsas av kortmåttet</div>
       </div>
 
       <div class="form-section">
@@ -253,8 +395,9 @@
       </div>
 
       <div class="form-section">
-        <label class="form-label">Textstorlek: <span id="vk-size-val">18 px</span></label>
-        <input type="range" min="10" max="42" step="1" value="18" oninput="setVkSize(this.value)"/>
+        <label class="form-label">Textstorlek rad 1: <span id="vk-size-val">18 px</span></label>
+        <input type="range" min="8" max="120" step="1" value="18" oninput="setVkSize(this.value)"/>
+        <div style="font-size:0.58rem;color:#666;margin-top:0.3rem;letter-spacing:0.06em;">Ingen maxgräns — text som går utanför gravyryta syns ej på gravyren</div>
       </div>
 
       <div class="section-divider"></div>
@@ -284,7 +427,7 @@
         </tbody>
       </table>
 
-      <button class="order-btn" onclick="openPayment()">Beställ nu →</button>
+      <button class="order-btn" onclick="openPayment()">Skicka förfrågan →</button>
     </div>
 
   </div>
@@ -306,11 +449,79 @@
   <div class="price-corner-note">Dubbelsidig gravyr = × 1,7</div>
 </div>
 
+<!-- DUBBELSIDIG POPUP -->
+<div class="double-overlay" id="double-popup">
+  <div class="double-box">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">
+      <div>
+        <div class="double-title">Dubbelsidig gravyr</div>
+        <div class="double-subtitle">Fyll i önskemål separat för varje sida av visitkortet</div>
+      </div>
+      <button style="background:none;border:none;cursor:pointer;color:#777;font-size:1.6rem;line-height:1;transition:color 0.2s;padding:0.2rem 0.5rem;" onclick="closeDouble()" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#777'">&times;</button>
+    </div>
+    <div class="double-cols">
+      <!-- SIDA 1 -->
+      <div>
+        <div class="double-side-title">◈ Sida 1 — Framsida</div>
+        <div id="d-card-1" class="double-card-wrap">
+          <div class="double-gravyr-hint"></div>
+          <div class="d-label">Sida 1</div>
+          <div class="card-drag" id="d-drag-row0-s1" style="left:50%;top:38%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s1-0" style="font-family:'Alegreya',serif;font-size:15px;">Din rubrik</span>
+          </div>
+          <div class="card-drag" id="d-drag-row1-s1" style="left:50%;top:55%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s1-1" style="font-family:'Alegreya',serif;font-size:12px;display:none;"></span>
+          </div>
+          <div class="card-drag" id="d-drag-row2-s1" style="left:50%;top:70%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s1-2" style="font-family:'Alegreya',serif;font-size:11px;display:none;"></span>
+          </div>
+        </div>
+        <label class="d-form-label">Rad 1 — Sida 1</label>
+        <input class="d-form-input" type="text" id="d-s1-row0" placeholder="Huvudrubrik framsida" oninput="updateDoubleRow(1,0,this.value)"/>
+        <label class="d-form-label">Rad 2 — Sida 1</label>
+        <input class="d-form-input" type="text" id="d-s1-row1" placeholder="Undertitel framsida" oninput="updateDoubleRow(1,1,this.value)"/>
+        <label class="d-form-label">Rad 3 — Sida 1 (valfri)</label>
+        <input class="d-form-input" type="text" id="d-s1-row2" placeholder="Extra rad framsida" oninput="updateDoubleRow(1,2,this.value)"/>
+        <label class="d-form-label">QR-kod URL (valfri)</label>
+        <input class="d-form-input" type="text" id="d-s1-qr" placeholder="https://..." oninput="updateDoubleQR(1,this.value)"/>
+      </div>
+      <!-- SIDA 2 -->
+      <div>
+        <div class="double-side-title">◈ Sida 2 — Baksida</div>
+        <div id="d-card-2" class="double-card-wrap">
+          <div class="double-gravyr-hint"></div>
+          <div class="d-label">Sida 2</div>
+          <div class="card-drag" id="d-drag-row0-s2" style="left:50%;top:38%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s2-0" style="font-family:'Alegreya',serif;font-size:15px;">Din rubrik</span>
+          </div>
+          <div class="card-drag" id="d-drag-row1-s2" style="left:50%;top:55%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s2-1" style="font-family:'Alegreya',serif;font-size:12px;display:none;"></span>
+          </div>
+          <div class="card-drag" id="d-drag-row2-s2" style="left:50%;top:70%;transform:translate(-50%,-50%);">
+            <span class="card-text-el" id="d-text-s2-2" style="font-family:'Alegreya',serif;font-size:11px;display:none;"></span>
+          </div>
+        </div>
+        <label class="d-form-label">Rad 1 — Sida 2</label>
+        <input class="d-form-input" type="text" id="d-s2-row0" placeholder="Huvudrubrik baksida" oninput="updateDoubleRow(2,0,this.value)"/>
+        <label class="d-form-label">Rad 2 — Sida 2</label>
+        <input class="d-form-input" type="text" id="d-s2-row1" placeholder="Undertitel baksida" oninput="updateDoubleRow(2,1,this.value)"/>
+        <label class="d-form-label">Rad 3 — Sida 2 (valfri)</label>
+        <input class="d-form-input" type="text" id="d-s2-row2" placeholder="Extra rad baksida" oninput="updateDoubleRow(2,2,this.value)"/>
+        <label class="d-form-label">QR-kod URL (valfri)</label>
+        <input class="d-form-input" type="text" id="d-s2-qr" placeholder="https://..." oninput="updateDoubleQR(2,this.value)"/>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:1.5rem;">
+      <button class="double-done-btn" onclick="closeDouble()">✓ Klar — gå vidare</button>
+    </div>
+  </div>
+</div>
+
 <!-- PAYMENT OVERLAY -->
 <div class="payment-overlay" id="payment-popup">
   <div class="payment-box">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
-      <div class="payment-title">Beställning</div>
+      <div class="payment-title">Skicka förfrågan</div>
       <button style="background:none;border:none;cursor:pointer;color:#777;font-size:1.6rem;line-height:1;transition:color 0.2s;padding:0.2rem 0.5rem;" onclick="closePayment()" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#777'">&times;</button>
     </div>
     <div class="order-summary" id="order-summary"></div>
@@ -322,14 +533,19 @@
       <label class="pay-form-label">Betalningsmetod</label>
       <div class="payment-methods">
         <div class="pay-method selected" onclick="selectPay(this)">Swish</div>
-        <div class="pay-method" onclick="selectPay(this)">Kort</div>
-        <div class="pay-method" onclick="selectPay(this)">Klarna</div>
+        <div class="pay-method" onclick="selectPay(this)">Kort / Faktura</div>
+        <div class="pay-method disabled" title="Klarna inte tillgänglig ännu">Klarna</div>
       </div>
-      <div style="font-size:0.62rem;color:#555;margin-top:0.4rem;letter-spacing:0.06em;">Vi kontaktar dig med betalningsinstruktioner efter bekräftad beställning.</div>
+      <div class="pay-method-note">Klarna aktiveras snart</div>
+      <div style="font-size:0.62rem;color:#555;margin-top:0.6rem;letter-spacing:0.06em;">Vi skickar en faktura till er e-post. Beställningen aktiveras när betalning är mottagen.</div>
     </div>
-    <button class="send-btn" id="send-order-btn" onclick="sendOrder()">Skicka beställning</button>
+    <button class="send-btn" id="send-order-btn" onclick="sendOrder()">Skicka förfrågan</button>
     <button class="pay-back-btn" onclick="closePayment()">← Tillbaka till produkten</button>
     <div class="payment-status" id="payment-status"></div>
+    <div class="invoice-note" id="invoice-note" style="display:none;">
+      ✦ Du kommer snart att få en faktura skickad till din e-postadress.<br>
+      Beställningen bearbetas så snart betalning är mottagen.
+    </div>
   </div>
 </div>
 
@@ -347,14 +563,37 @@
 <script>
   emailjs.init('syV4hDTJIVxj9xUyp');
 
+  /* ─── STATE ─── */
   var currentSide = 'single';
   var currentVkFont = 'alegreya';
   var orderSummaryText = '';
+  var currentCardColor = 'silver';
+  var row3Visible = false;
+  var rowAngles = [0, 0, 0]; // degrees for each row
+  var rowCurves  = [0, 0, 0]; // curve amount for each row
+  var rowFontSizes = [18, 14, 12];
 
   var fontMap = {
     alegreya: "'Alegreya', serif",
     allura:   "'Allura', cursive",
     stencil:  "'Allerta Stencil', sans-serif"
+  };
+
+  var cardColorMap = {
+    'rosa':       'linear-gradient(135deg,#ffb8cc 0%,#e05080 40%,#c03060 100%)',
+    'rod':        'linear-gradient(135deg,#ff6060 0%,#c00000 45%,#8a0000 100%)',
+    'svart-gloss':'linear-gradient(135deg,#444 0%,#111 40%,#000 100%)',
+    'svart-matt': '#1e1e1e',
+    'silver':     'linear-gradient(135deg,#c8c8c8 0%,#ececec 25%,#b0b0b0 55%,#dedede 80%,#c0c0c0 100%)',
+    'guld':       'linear-gradient(135deg,#c8a96e 0%,#f5d879 30%,#b8860b 65%,#e0c060 100%)',
+    'gron':       'linear-gradient(135deg,#2a7a2a 0%,#4db04d 35%,#1a5a1a 70%,#3a903a 100%)',
+    'bla':        'linear-gradient(135deg,#1a4fa0 0%,#4080d0 35%,#1030a0 70%,#3060c0 100%)',
+    'koppar':     'linear-gradient(135deg,#8b4513 0%,#e2a060 35%,#7a3010 70%,#c08040 100%)'
+  };
+
+  var cardColorNames = {
+    'rosa':'Rosa','rod':'Röd','svart-gloss':'Svart gloss','svart-matt':'Svart matt',
+    'silver':'Silver','guld':'Guld','gron':'Grön','bla':'Blå','koppar':'Koppar'
   };
 
   var vkPrices = [
@@ -365,181 +604,509 @@
     {min:200, max:99999, s:5,   d:9}
   ];
 
-  /* Show price corner on page load */
+  /* ─── INIT ─── */
   window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('price-corner').classList.add('visible');
     updatePrice();
-    makeDraggable(document.getElementById('vk-drag-text'), document.getElementById('vk-card'));
-    makeDraggable(document.getElementById('vk-drag-qr'),   document.getElementById('vk-card'));
-    makeDraggable(document.getElementById('vk-drag-bar'),  document.getElementById('vk-card'));
+    setCardBg('vk-card', currentCardColor);
+    // Make main card rows draggable
+    for (var i=0;i<3;i++) makeDraggable(document.getElementById('vk-drag-row'+i), document.getElementById('vk-card'));
+    makeDraggable(document.getElementById('vk-drag-qr'),  document.getElementById('vk-card'));
+    makeDraggable(document.getElementById('vk-drag-bar'), document.getElementById('vk-card'));
+    // Double popup draggables init when popup opens
+    setupResizeHandles();
+    setupAngleHandles();
+    setupCurveHandles();
   });
 
-  function updateCardText(val) {
-    document.getElementById('vk-text-display').textContent = val || 'Din logo';
+  /* ─── CARD BG ─── */
+  function setCardBg(id, color) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var bg = cardColorMap[color] || cardColorMap['silver'];
+    if (bg.startsWith('linear') || bg.startsWith('radial')) {
+      el.style.background = bg;
+    } else {
+      el.style.background = bg;
+    }
   }
-  function setVkSize(val) {
-    document.getElementById('vk-size-val').textContent = val + ' px';
-    document.getElementById('vk-text-display').style.fontSize = val + 'px';
+  function setCardColor(swatchEl) {
+    document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('selected');});
+    swatchEl.classList.add('selected');
+    currentCardColor = swatchEl.getAttribute('data-color');
+    setCardBg('vk-card', currentCardColor);
+    setCardBg('d-card-1', currentCardColor);
+    setCardBg('d-card-2', currentCardColor);
   }
+
+  /* ─── TEXT ROWS ─── */
+  function updateCardRow(rowIdx, val) {
+    var el = document.getElementById('vk-text-display-'+rowIdx);
+    if (!el) return;
+    if (val.trim()) {
+      el.textContent = val;
+      el.style.display = 'block';
+    } else {
+      el.textContent = '';
+      el.style.display = rowIdx===0 ? 'block' : 'none';
+      if (rowIdx===0) el.textContent = 'Din rubrik';
+    }
+  }
+  function handleRowKey(event, rowIdx) {
+    if (event.key === 'Enter' && rowIdx === 1) {
+      showRow3();
+      setTimeout(function(){ document.getElementById('vk-text-row2') && document.getElementById('vk-text-row2').focus(); }, 50);
+    }
+  }
+  function showRow3() {
+    var wrap = document.getElementById('row2-wrap');
+    var btn  = document.getElementById('add-row-btn');
+    if (!row3Visible) {
+      wrap.style.display = 'flex';
+      btn.style.display  = 'none';
+      row3Visible = true;
+      var el = document.getElementById('vk-text-display-2');
+      if (el) el.style.display = 'block';
+    }
+  }
+  function selectAllText() {
+    var inputs = ['vk-text-row0','vk-text-row1','vk-text-row2'];
+    var combined = inputs.map(function(id){
+      var el = document.getElementById(id);
+      return el ? el.value : '';
+    }).filter(Boolean).join(' ');
+    var tmp = document.createElement('textarea');
+    tmp.value = combined;
+    document.body.appendChild(tmp);
+    tmp.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(tmp);
+    var btn = document.querySelector('.select-all-btn');
+    var orig = btn.textContent;
+    btn.textContent = '✓ Kopierad';
+    setTimeout(function(){btn.textContent = orig;}, 1500);
+  }
+
+  /* ─── FONT & SIZE ─── */
   function setVkFont(f, btn) {
     currentVkFont = f;
-    document.getElementById('vk-text-display').style.fontFamily = fontMap[f];
+    var ff = fontMap[f];
+    for (var i=0;i<3;i++) {
+      var el = document.getElementById('vk-text-display-'+i);
+      if (el) el.style.fontFamily = ff;
+      // also double popup
+      ['s1','s2'].forEach(function(s){
+        var de = document.getElementById('d-text-'+s+'-'+i);
+        if (de) de.style.fontFamily = ff;
+      });
+    }
     btn.closest('.style-btns').querySelectorAll('.style-btn').forEach(function(b){b.classList.remove('selected');});
     btn.classList.add('selected');
   }
+  function setVkSize(val) {
+    document.getElementById('vk-size-val').textContent = val + ' px';
+    rowFontSizes[0] = parseInt(val);
+    applyRowStyles(0);
+  }
+  function applyRowStyles(rowIdx) {
+    var el = document.getElementById('vk-drag-row'+rowIdx);
+    if (!el) return;
+    var span = document.getElementById('vk-text-display-'+rowIdx);
+    if (span) span.style.fontSize = rowFontSizes[rowIdx] + 'px';
+    var angle = rowAngles[rowIdx];
+    var curve  = rowCurves[rowIdx];
+    el.style.transform = 'translate(-50%,-50%) rotate('+angle+'deg)';
+    // Curve via SVG text path is complex for live preview; we store and report in order
+    span && applyTextCurve(span, curve, rowFontSizes[rowIdx]);
+  }
+  function applyTextCurve(spanEl, curve, fontSize) {
+    // For visual curve we use skewY as approximation
+    // curve: -100 (concave) to +100 (convex)
+    var skew = curve * 0.08;
+    spanEl.style.transform = 'skewY('+skew+'deg)';
+  }
+
+  /* ─── RESIZE HANDLES ─── */
+  function setupResizeHandles() {
+    for (var i=0;i<3;i++) {
+      (function(idx){
+        var row = document.getElementById('vk-drag-row'+idx);
+        if (!row) return;
+        var handle = row.querySelector('.row-resize-handle');
+        if (!handle) return;
+        var startX, startSize;
+        handle.addEventListener('pointerdown', function(e){
+          e.stopPropagation(); e.preventDefault();
+          handle.setPointerCapture(e.pointerId);
+          startX = e.clientX;
+          startSize = rowFontSizes[idx];
+        });
+        handle.addEventListener('pointermove', function(e){
+          if (!handle.hasPointerCapture(e.pointerId)) return;
+          var delta = e.clientX - startX;
+          var newSize = Math.max(6, startSize + Math.round(delta * 0.3));
+          rowFontSizes[idx] = newSize;
+          var span = document.getElementById('vk-text-display-'+idx);
+          if (span) span.style.fontSize = newSize + 'px';
+          if (idx===0) document.getElementById('vk-size-val').textContent = newSize + ' px';
+        });
+      })(i);
+    }
+  }
+
+  /* ─── ANGLE HANDLES ─── */
+  function setupAngleHandles() {
+    for (var i=0;i<3;i++) {
+      (function(idx){
+        var row = document.getElementById('vk-drag-row'+idx);
+        if (!row) return;
+        var handle = row.querySelector('.row-angle-handle');
+        if (!handle) return;
+        var startX, startAngle;
+        handle.addEventListener('pointerdown', function(e){
+          e.stopPropagation(); e.preventDefault();
+          handle.setPointerCapture(e.pointerId);
+          startX = e.clientX;
+          startAngle = rowAngles[idx];
+        });
+        handle.addEventListener('pointermove', function(e){
+          if (!handle.hasPointerCapture(e.pointerId)) return;
+          var delta = e.clientX - startX;
+          rowAngles[idx] = startAngle + Math.round(delta * 0.5);
+          applyRowStyles(idx);
+        });
+      })(i);
+    }
+  }
+
+  /* ─── CURVE HANDLES ─── */
+  function setupCurveHandles() {
+    for (var i=0;i<3;i++) {
+      (function(idx){
+        var row = document.getElementById('vk-drag-row'+idx);
+        if (!row) return;
+        var handle = row.querySelector('.row-curve-handle');
+        if (!handle) return;
+        var startY, startCurve;
+        handle.addEventListener('pointerdown', function(e){
+          e.stopPropagation(); e.preventDefault();
+          handle.setPointerCapture(e.pointerId);
+          startY = e.clientY;
+          startCurve = rowCurves[idx];
+        });
+        handle.addEventListener('pointermove', function(e){
+          if (!handle.hasPointerCapture(e.pointerId)) return;
+          var delta = startY - e.clientY; // up = convex positive
+          rowCurves[idx] = Math.max(-100, Math.min(100, startCurve + delta));
+          var span = document.getElementById('vk-text-display-'+idx);
+          if (span) applyTextCurve(span, rowCurves[idx], rowFontSizes[idx]);
+        });
+      })(i);
+    }
+  }
+
+  /* ─── SIDE TOGGLE ─── */
   function setSide(side) {
     currentSide = side;
     document.getElementById('vk-side-single').classList.toggle('selected', side==='single');
     document.getElementById('vk-side-double').classList.toggle('selected', side==='double');
     updatePrice();
+    if (side === 'double') {
+      openDouble();
+    }
   }
+
+  /* ─── DOUBLE POPUP ─── */
+  function openDouble() {
+    setCardBg('d-card-1', currentCardColor);
+    setCardBg('d-card-2', currentCardColor);
+    // init draggables for double popup
+    ['s1','s2'].forEach(function(side,si){
+      var cardId = 'd-card-'+(si+1);
+      var card = document.getElementById(cardId);
+      if (!card) return;
+      for (var r=0;r<3;r++) {
+        var el = document.getElementById('d-drag-row'+r+'-'+side);
+        if (el && !el._draggable) {
+          makeDraggable(el, card);
+          el._draggable = true;
+        }
+      }
+    });
+    document.getElementById('double-popup').classList.add('active');
+  }
+  function closeDouble() {
+    document.getElementById('double-popup').classList.remove('active');
+  }
+  function updateDoubleRow(sideNum, rowIdx, val) {
+    var side = sideNum===1 ? 's1' : 's2';
+    var el = document.getElementById('d-text-'+side+'-'+rowIdx);
+    if (!el) return;
+    if (val.trim()) {
+      el.textContent = val;
+      el.style.display = 'block';
+    } else {
+      el.textContent = '';
+      el.style.display = rowIdx===0 ? 'block' : 'none';
+      if (rowIdx===0) el.textContent = 'Din rubrik';
+    }
+  }
+  function updateDoubleQR(sideNum, val) {
+    // store for summary
+    window['doubleQR'+sideNum] = val;
+  }
+
+  /* ─── PRICE ─── */
   function getPrice(qty) {
-    for (var i = 0; i < vkPrices.length; i++) {
-      if (qty >= vkPrices[i].min && qty <= vkPrices[i].max) {
-        return currentSide === 'double' ? vkPrices[i].d : vkPrices[i].s;
+    for (var i=0;i<vkPrices.length;i++) {
+      if (qty>=vkPrices[i].min && qty<=vkPrices[i].max) {
+        return currentSide==='double' ? vkPrices[i].d : vkPrices[i].s;
       }
     }
     return 50;
   }
   function updatePrice() {
-    var qty = parseInt(document.getElementById('vk-qty').value) || 1;
-    var pp = getPrice(qty);
-    document.getElementById('vk-per').textContent = pp + ' kr / st';
-    document.getElementById('vk-total').textContent = (qty * pp).toLocaleString('sv-SE') + ' kr';
-    for (var i = 1; i <= 5; i++) {
-      var r = document.getElementById('vk-row-'+i);
+    var qty = parseInt(document.getElementById('vk-qty').value)||1;
+    var pp  = getPrice(qty);
+    document.getElementById('vk-per').textContent   = pp + ' kr / st';
+    document.getElementById('vk-total').textContent = (qty*pp).toLocaleString('sv-SE') + ' kr';
+    for (var i=1;i<=5;i++) {
+      var r  = document.getElementById('vk-row-'+i);
       var pc = document.getElementById('pc-row-'+i);
-      if (r) r.classList.remove('active-row');
+      if (r)  r.classList.remove('active-row');
       if (pc) pc.classList.remove('active-row');
     }
-    var ranges = [{min:1,max:24,r:1},{min:25,max:49,r:2},{min:50,max:99,r:3},{min:100,max:199,r:4},{min:200,max:99999,r:5}];
+    var ranges=[{min:1,max:24,r:1},{min:25,max:49,r:2},{min:50,max:99,r:3},{min:100,max:199,r:4},{min:200,max:99999,r:5}];
     ranges.forEach(function(row){
-      if (qty >= row.min && qty <= row.max) {
-        var el = document.getElementById('vk-row-'+row.r);
-        var pc2 = document.getElementById('pc-row-'+row.r);
-        if (el) el.classList.add('active-row');
+      if (qty>=row.min&&qty<=row.max){
+        var el=document.getElementById('vk-row-'+row.r);
+        var pc2=document.getElementById('pc-row-'+row.r);
+        if (el)  el.classList.add('active-row');
         if (pc2) pc2.classList.add('active-row');
       }
     });
   }
   function changeQty(delta) {
-    var inp = document.getElementById('vk-qty');
-    inp.value = Math.max(1, (parseInt(inp.value)||1) + delta);
+    var inp=document.getElementById('vk-qty');
+    inp.value=Math.max(1,(parseInt(inp.value)||1)+delta);
     updatePrice();
   }
+
+  /* ─── QR / BARCODE ─── */
   function toggleCode(type) {
-    var checked = document.getElementById('vk-'+type).checked;
-    document.getElementById('vk-'+type+'-section').classList.toggle('visible', checked);
-    if (type === 'qr') {
-      document.getElementById('vk-drag-qr').style.display = checked ? 'block' : 'none';
+    var checked=document.getElementById('vk-'+type).checked;
+    document.getElementById('vk-'+type+'-section').classList.toggle('visible',checked);
+    if (type==='qr') {
+      document.getElementById('vk-drag-qr').style.display=checked?'block':'none';
       if (checked) generateQR();
     }
-    if (type === 'bar') {
-      document.getElementById('vk-drag-bar').style.display = checked ? 'block' : 'none';
+    if (type==='bar') {
+      document.getElementById('vk-drag-bar').style.display=checked?'block':'none';
       if (checked) generateBar();
     }
   }
   function generateQR() {
-    var t = document.getElementById('vk-qr-input').value.trim();
-    var c = document.getElementById('vk-qr-canvas');
-    c.innerHTML = '';
+    var t=document.getElementById('vk-qr-input').value.trim();
+    var c=document.getElementById('vk-qr-canvas');
+    c.innerHTML='';
     if (!t) return;
-    try { new QRCode(c, {text:t, width:52, height:52, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.M}); } catch(e) {}
+    try { new QRCode(c,{text:t,width:52,height:52,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M}); } catch(e){}
   }
   function generateBar() {
-    var t = document.getElementById('vk-bar-input').value.trim();
-    var s = document.getElementById('vk-bar-svg');
-    if (!t) { s.innerHTML=''; return; }
-    try { JsBarcode(s, t, {format:'CODE128', width:1.4, height:36, displayValue:true, fontSize:9, background:'#fff', lineColor:'#000'}); } catch(e) { s.innerHTML=''; }
+    var t=document.getElementById('vk-bar-input').value.trim();
+    var s=document.getElementById('vk-bar-svg');
+    if (!t){s.innerHTML='';return;}
+    try { JsBarcode(s,t,{format:'CODE128',width:1.4,height:36,displayValue:true,fontSize:9,background:'#fff',lineColor:'#000'}); } catch(e){s.innerHTML='';}
   }
+
+  /* ─── DRAGGABLE ─── */
   function makeDraggable(el, container) {
-    var sx, sy, sl, st;
-    el.addEventListener('pointerdown', function(e) {
+    if (!el||!container) return;
+    var sx,sy,sl,st;
+    el.addEventListener('pointerdown',function(e){
+      // Don't drag if clicking a handle child
+      if (e.target.closest && (e.target.closest('.row-resize-handle')||e.target.closest('.row-angle-handle')||e.target.closest('.row-curve-handle'))) return;
       e.preventDefault();
       el.setPointerCapture(e.pointerId);
-      var cr = container.getBoundingClientRect();
-      var er = el.getBoundingClientRect();
-      sx = e.clientX; sy = e.clientY;
-      sl = er.left - cr.left; st = er.top - cr.top;
-      el.style.transform = 'none';
-      el.style.bottom = 'auto';
+      var cr=container.getBoundingClientRect();
+      var er=el.getBoundingClientRect();
+      sx=e.clientX; sy=e.clientY;
+      sl=er.left-cr.left; st=er.top-cr.top;
+      el.style.bottom='auto';
     });
-    el.addEventListener('pointermove', function(e) {
+    el.addEventListener('pointermove',function(e){
       if (!el.hasPointerCapture(e.pointerId)) return;
-      var cr = container.getBoundingClientRect();
-      var nl = Math.max(0, Math.min(cr.width  - el.offsetWidth,  sl + e.clientX - sx));
-      var nt = Math.max(0, Math.min(cr.height - el.offsetHeight, st + e.clientY - sy));
-      el.style.left = (nl / cr.width  * 100).toFixed(2) + '%';
-      el.style.top  = (nt / cr.height * 100).toFixed(2) + '%';
+      var cr=container.getBoundingClientRect();
+      var nl=Math.max(0,Math.min(cr.width -el.offsetWidth, sl+e.clientX-sx));
+      var nt=Math.max(0,Math.min(cr.height-el.offsetHeight,st+e.clientY-sy));
+      el.style.left=(nl/cr.width *100).toFixed(2)+'%';
+      el.style.top =(nt/cr.height*100).toFixed(2)+'%';
+      el.style.transform='none';
     });
   }
 
-  /* PAYMENT */
+  /* ─── CAPTURE CARD IMAGE ─── */
+  function captureCardAsImage(cardEl) {
+    // Create a canvas representing the card in B&W (white background, black content)
+    var w = 850; var h = 540;
+    var canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    // White background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,w,h);
+    // Draw card border
+    ctx.strokeStyle = '#cccccc';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1,1,w-2,h-2);
+    // Draw gravyr margin dotted border
+    var ml = Math.round(w*0.0118), mt = Math.round(h*0.0185);
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle = '#aaaaaa';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(ml, mt, w-2*ml, h-2*mt);
+    ctx.setLineDash([]);
+    // Draw text rows
+    var cardRect = cardEl.getBoundingClientRect();
+    for (var i=0;i<3;i++) {
+      var rowEl = cardEl.querySelector('#vk-drag-row'+i) || document.getElementById('vk-drag-row'+i);
+      var spanEl = document.getElementById('vk-text-display-'+i);
+      if (!rowEl || !spanEl || spanEl.style.display==='none') continue;
+      var txt = spanEl.textContent;
+      if (!txt || txt==='Din rubrik') continue;
+      var rRect = rowEl.getBoundingClientRect();
+      var rx = ((rRect.left - cardRect.left) / cardRect.width) * w;
+      var ry = ((rRect.top  - cardRect.top ) / cardRect.height) * h;
+      var fs = Math.round(rowFontSizes[i] * (w/cardRect.width));
+      ctx.save();
+      ctx.fillStyle = '#000000';
+      var ff = fontMap[currentVkFont].replace(/'/g,'');
+      ctx.font = fs+'px '+ff;
+      ctx.textBaseline = 'top';
+      if (rowAngles[i]) {
+        ctx.translate(rx, ry);
+        ctx.rotate(rowAngles[i]*Math.PI/180);
+        ctx.fillText(txt, 0, 0);
+      } else {
+        ctx.fillText(txt, rx, ry);
+      }
+      ctx.restore();
+    }
+    return canvas.toDataURL('image/png');
+  }
+
+  /* ─── BUILD ORDER SUMMARY ─── */
+  function buildSummary() {
+    var rows = [];
+    for (var i=0;i<3;i++) {
+      var inp = document.getElementById('vk-text-row'+i);
+      if (inp && inp.value.trim()) rows.push('Rad '+(i+1)+': '+inp.value.trim());
+    }
+    var qty    = document.getElementById('vk-qty').value;
+    var side   = currentSide==='double' ? 'Dubbelsidig' : 'Enkelsidig';
+    var fLabel = {alegreya:'Alegreya', allura:'Allura', stencil:'Allerta Stencil'}[currentVkFont];
+    var pp     = getPrice(parseInt(qty));
+    var qr     = document.getElementById('vk-qr').checked ? 'Ja ('+document.getElementById('vk-qr-input').value+')' : 'Nej';
+    var bar    = document.getElementById('vk-bar').checked ? 'Ja ('+document.getElementById('vk-bar-input').value+')' : 'Nej';
+    var colorName = cardColorNames[currentCardColor] || currentCardColor;
+
+    var s1Text='', s2Text='';
+    if (currentSide==='double') {
+      var s1rows=[];
+      for (var j=0;j<3;j++){var el=document.getElementById('d-s1-row'+j);if(el&&el.value.trim())s1rows.push('Rad '+(j+1)+': '+el.value.trim());}
+      s1Text = s1rows.join(' | ') || '(ej ifylld)';
+      var s2rows=[];
+      for (var k=0;k<3;k++){var el2=document.getElementById('d-s2-row'+k);if(el2&&el2.value.trim())s2rows.push('Rad '+(k+1)+': '+el2.value.trim());}
+      s2Text = s2rows.join(' | ') || '(ej ifylld)';
+    }
+
+    var html  = '<strong>Produkt:</strong> Metall Visitkort<br>';
+    html += '<strong>Kortfärg:</strong> '+colorName+'<br>';
+    html += '<strong>Gravyr:</strong> '+side+'<br>';
+    if (rows.length) html += '<strong>Text (enkelsidig / framsida):</strong> '+rows.join(' | ')+'<br>';
+    if (currentSide==='double') {
+      html += '<strong>Sida 1:</strong> '+s1Text+'<br>';
+      html += '<strong>Sida 2:</strong> '+s2Text+'<br>';
+    }
+    html += '<strong>Textstil:</strong> '+fLabel+'<br>';
+    html += '<strong>Vinkel rad 1:</strong> '+rowAngles[0]+'°<br>';
+    html += '<strong>Böjning rad 1:</strong> '+rowCurves[0]+'<br>';
+    html += '<strong>QR-kod:</strong> '+qr+'<br>';
+    html += '<strong>Streckkod:</strong> '+bar+'<br>';
+    html += '<strong>Antal:</strong> '+qty+' st<br>';
+    html += '<strong>Pris per st:</strong> '+pp+' kr<br>';
+    html += '<strong>Totalt:</strong> '+(parseInt(qty)*pp).toLocaleString('sv-SE')+' kr';
+    return html;
+  }
+
+  /* ─── PAYMENT ─── */
   function openPayment() {
-    var text    = document.getElementById('vk-text-inp').value || '(ingen text)';
-    var qty     = document.getElementById('vk-qty').value;
-    var side    = currentSide === 'double' ? 'Dubbelsidig' : 'Enkelsidig';
-    var fLabel  = {alegreya:'Alegreya', allura:'Allura', stencil:'Allerta Stencil'}[currentVkFont];
-    var pp      = getPrice(parseInt(qty));
-    var qr      = document.getElementById('vk-qr').checked ? 'Ja' : 'Nej';
-    var bar     = document.getElementById('vk-bar').checked ? 'Ja' : 'Nej';
-    var qrVal   = document.getElementById('vk-qr-input').value || '—';
-    var barVal  = document.getElementById('vk-bar-input').value || '—';
-    var summary = '<strong>Produkt:</strong> Metall Visitkort<br>'
-                + '<strong>Text / Logo:</strong> ' + text + '<br>'
-                + '<strong>Textstil:</strong> ' + fLabel + '<br>'
-                + '<strong>Gravyr:</strong> ' + side + '<br>'
-                + '<strong>Antal:</strong> ' + qty + ' st<br>'
-                + '<strong>QR-kod:</strong> ' + qr + (qr==='Ja' ? ' (' + qrVal + ')' : '') + '<br>'
-                + '<strong>Streckkod:</strong> ' + bar + (bar==='Ja' ? ' (' + barVal + ')' : '') + '<br>'
-                + '<strong>Pris per st:</strong> ' + pp + ' kr<br>'
-                + '<strong>Totalt:</strong> ' + (parseInt(qty)*pp).toLocaleString('sv-SE') + ' kr';
-    document.getElementById('order-summary').innerHTML = summary;
+    document.getElementById('order-summary').innerHTML = buildSummary();
     orderSummaryText = document.getElementById('order-summary').innerText;
     document.getElementById('payment-status').textContent = '';
     document.getElementById('payment-status').className = 'payment-status';
-    var btn = document.getElementById('send-order-btn');
-    btn.disabled = false; btn.textContent = 'Skicka beställning';
+    document.getElementById('invoice-note').style.display = 'none';
+    var btn=document.getElementById('send-order-btn');
+    btn.disabled=false; btn.textContent='Skicka förfrågan';
     document.getElementById('payment-popup').classList.add('active');
   }
   function closePayment() {
     document.getElementById('payment-popup').classList.remove('active');
   }
   function selectPay(btn) {
-    document.querySelectorAll('.pay-method').forEach(function(b){b.classList.remove('selected');});
+    document.querySelectorAll('.pay-method:not(.disabled)').forEach(function(b){b.classList.remove('selected');});
     btn.classList.add('selected');
   }
+
   function sendOrder() {
     var name    = document.getElementById('pay-name').value.trim();
     var email   = document.getElementById('pay-email').value.trim();
     var phone   = document.getElementById('pay-phone').value.trim();
     var address = document.getElementById('pay-address').value.trim();
     var payM    = (document.querySelector('.pay-method.selected')||{}).textContent || 'Ej vald';
-    if (!name || !email) {
-      document.getElementById('payment-status').textContent = 'Fyll i namn och e-post.';
-      document.getElementById('payment-status').className = 'payment-status error';
+    if (!name||!email) {
+      document.getElementById('payment-status').textContent='Fyll i namn och e-post.';
+      document.getElementById('payment-status').className='payment-status error';
       return;
     }
-    var btn = document.getElementById('send-order-btn');
-    btn.disabled = true; btn.textContent = 'Skickar...';
+
+    // Capture card image (B&W for Mustafa)
+    var cardImg = '';
+    try {
+      var cardEl = document.getElementById('vk-card');
+      cardImg = captureCardAsImage(cardEl);
+    } catch(e) { cardImg = '(bild ej tillgänglig)'; }
+
+    var btn=document.getElementById('send-order-btn');
+    btn.disabled=true; btn.textContent='Skickar...';
+
+    var colorName = cardColorNames[currentCardColor]||currentCardColor;
+    var fullMsg = 'FÖRFRÅGAN — Metall Visitkort\n\n' + orderSummaryText
+      + '\n\nKortfärg: '+colorName
+      + '\n\nLeveransadress: '+(address||'Ej angiven')
+      + '\nBetalningsmetod: '+payM
+      + '\n\n[Designbild bifogas som data-URL — se nedan]\n'+cardImg.substring(0,300)+'...';
+
     var params = {
       from_name:  name,
       from_email: email,
-      phone:      phone || 'Ej angiven',
-      message:    'BESTÄLLNING:\n' + orderSummaryText + '\n\nLeveransadress: ' + (address||'Ej angiven') + '\nBetalningsmetod: ' + payM,
+      phone:      phone||'Ej angiven',
+      message:    fullMsg,
       to_email:   'elegant.m.se@gmail.com'
     };
+
     emailjs.send('service_rqr0oai','template_kvc84w1', params)
       .then(function(){ return emailjs.send('service_rqr0oai','template_1qdf2dj', params); })
       .then(function(){
-        document.getElementById('payment-status').textContent = '✓ Beställning skickad! Vi återkommer inom 1–2 arbetsdagar.';
-        document.getElementById('payment-status').className = 'payment-status success';
-        btn.textContent = 'Skickat!';
+        document.getElementById('payment-status').textContent='✓ Förfrågan skickad! Vi återkommer inom 1–2 arbetsdagar.';
+        document.getElementById('payment-status').className='payment-status success';
+        btn.textContent='Skickat!';
+        document.getElementById('invoice-note').style.display='block';
       })
       .catch(function(){
-        document.getElementById('payment-status').textContent = 'Något gick fel. Maila oss: elegant.m.se@gmail.com';
-        document.getElementById('payment-status').className = 'payment-status error';
-        btn.disabled = false; btn.textContent = 'Skicka beställning';
+        document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
+        document.getElementById('payment-status').className='payment-status error';
+        btn.disabled=false; btn.textContent='Skicka förfrågan';
       });
   }
 </script>
