@@ -7,17 +7,13 @@
   <meta name="description" content="Personliga lasergravyrer på metall. Visitkort, nyckelringar och mer. ELEGANT-M."/>
   <link rel="icon" type="image/x-icon" href="favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&family=Alegreya:ital,wght@0,400;0,700;1,400&family=Allura&family=Allerta+Stencil&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:linear-gradient(160deg,#2bb8c0 0%,#1e9aa2 30%,#178590 60%,#127880 100%);min-height:100vh;font-family:'Josefin Sans',sans-serif;overflow-x:hidden;}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px),radial-gradient(circle,rgba(140,255,200,0.45) 0.4px,transparent 0.4px);background-size:28px 28px,18px 22px,40px 32px;background-position:0 0,7px 9px,15px 5px;animation:glitterShift 6s ease-in-out infinite alternate;}
     @keyframes glitterShift{0%{opacity:0.4}50%{opacity:0.9}100%{opacity:0.45}}
 
-    /* TOP BAR */
     .top-bar{position:relative;z-index:10;width:100%;max-width:1200px;margin:0 auto;padding:1.8rem 2.5rem 0;display:flex;align-items:center;justify-content:space-between;}
     .back-link{font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.65;display:flex;align-items:center;gap:0.5rem;transition:opacity 0.2s;}
     .back-link:hover{opacity:1;}
@@ -26,15 +22,13 @@
     .site-name span{font-style:italic;}
     .top-spacer{width:100px;}
 
-    /* PAGE TITLE */
     .page-title{position:relative;z-index:10;text-align:center;padding:2rem 1rem 0.5rem;}
     .page-title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,8vw,6rem);font-weight:300;letter-spacing:0.15em;background:linear-gradient(135deg,#111 0%,#333 50%,#111 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
     .page-title p{font-size:clamp(0.7rem,1.3vw,0.85rem);letter-spacing:0.28em;text-transform:uppercase;color:#111;opacity:0.55;margin-top:0.5rem;}
     .title-line{width:120px;height:0.5px;margin:1.2rem auto 0;background:linear-gradient(90deg,transparent,#111a,transparent);}
 
-    /* BUTTON GRID */
     .btn-container{position:relative;z-index:10;width:min(98vw,1200px);aspect-ratio:980/920;margin:0 auto;}
-    .hex-btn{position:absolute;transform:translate(-50%,-50%);width:min(13.5vw,126px);height:min(13.5vw,126px);cursor:pointer;transition:transform 0.25s;display:block;}
+    .hex-btn{position:absolute;transform:translate(-50%,-50%);width:min(13.5vw,126px);height:min(13.5vw,126px);cursor:pointer;transition:transform 0.25s;display:block;text-decoration:none;}
     .hex-btn.coming{cursor:default;}
     .hex-btn.active:hover{transform:translate(-50%,-50%) scale(1.08);}
     .hex-btn svg{width:100%;height:100%;overflow:visible;}
@@ -47,7 +41,6 @@
     .hex-label{font-family:'Josefin Sans',sans-serif;font-size:clamp(0.48rem,0.95vw,0.68rem);letter-spacing:0.13em;text-transform:uppercase;font-weight:600;background:linear-gradient(135deg,#999,#eee,#bbb,#f5f5f5,#aaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.3;width:100%;padding:0 6px;}
     .hex-btn.coming .hex-label{background:none;-webkit-text-fill-color:rgba(160,160,160,0.4);font-size:clamp(0.4rem,0.8vw,0.56rem);}
 
-    /* MINI FOOTER */
     .mini-footer{position:relative;z-index:10;width:100%;border-top:0.5px solid rgba(0,0,0,0.2);padding:1rem 0;margin-top:2rem;}
     .mini-footer-inner{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;width:100%;max-width:1200px;margin:0 auto;padding:0 2rem;gap:1rem;}
     .mini-footer-links{display:flex;gap:0;align-items:center;}
@@ -58,128 +51,6 @@
     .mini-footer-mid{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#111;opacity:0.6;}
     .mini-footer-copy{font-size:0.62rem;letter-spacing:0.08em;color:#111;opacity:0.6;text-align:right;}
 
-    /* POPUP SYSTEM */
-    .popup-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem;}
-    .popup-overlay.active{display:flex;}
-    .popup-box{background:linear-gradient(160deg,#071a12 0%,#040f0a 100%);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,960px);max-height:92vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,200,150,0.15),0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.3s ease both;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
-    @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .popup-header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem 1rem;border-bottom:0.5px solid rgba(0,255,180,0.1);position:sticky;top:0;z-index:10;background:linear-gradient(160deg,#071a12,#071a12);}
-    .popup-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb,#f5f5f5,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .popup-close{background:none;border:none;cursor:pointer;color:#777;font-size:1.6rem;line-height:1;transition:color 0.2s;padding:0.2rem 0.5rem;}
-    .popup-close:hover{color:#fff;}
-    .popup-body{padding:1.5rem 2rem 2rem;}
-
-    /* TWO-COLUMN */
-    .popup-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;}
-    @media(max-width:680px){.popup-cols{grid-template-columns:1fr;}}
-
-    /* LIVE CARD */
-    .card-canvas-wrap{position:relative;width:100%;aspect-ratio:85.6/54;background:linear-gradient(135deg,#c8c8c8 0%,#ececec 25%,#b0b0b0 55%,#dedede 80%,#c0c0c0 100%);border-radius:8px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.35);user-select:none;margin-bottom:0.8rem;}
-    .card-canvas-wrap::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,0.05) 2px,rgba(255,255,255,0.05) 3px);pointer-events:none;z-index:1;}
-    .card-canvas-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0.22) 0%,transparent 55%,rgba(0,0,0,0.14) 100%);pointer-events:none;z-index:2;}
-    .gravyr-hint{position:absolute;border:1px dashed rgba(0,160,100,0.4);border-radius:3px;pointer-events:none;z-index:3;display:flex;align-items:center;justify-content:center;}
-    .gravyr-hint span{font-size:0.42rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,130,80,0.6);background:rgba(255,255,255,0.5);padding:1px 4px;border-radius:2px;}
-
-    /* draggable items on card */
-    .card-drag{position:absolute;cursor:grab;z-index:10;touch-action:none;line-height:1.2;}
-    .card-drag:active{cursor:grabbing;}
-    .card-text-el{
-      /* silver engraved look */
-      background:linear-gradient(135deg,#777,#ddd,#aaa,#eee,#999);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      filter:drop-shadow(0 1px 0 rgba(255,255,255,0.5)) drop-shadow(0 -1px 0 rgba(0,0,0,0.25));
-      white-space:nowrap;
-    }
-    .card-code-el{background:white;padding:3px;border-radius:2px;}
-
-    .card-hint{font-size:0.6rem;color:rgba(0,255,180,0.5);letter-spacing:0.08em;text-align:center;margin-bottom:1rem;font-style:italic;}
-
-    /* FORM */
-    .form-section{margin-bottom:1.3rem;}
-    .form-label{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:#aaa;margin-bottom:0.5rem;display:block;}
-    .form-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.9rem;color:#ddd;outline:none;transition:border-color 0.2s;}
-    .form-input:focus{border-color:rgba(0,255,180,0.4);}
-    .form-input::placeholder{color:rgba(255,255,255,0.2);}
-    input[type="range"]{width:100%;accent-color:#00ffcc;cursor:pointer;}
-
-    /* style buttons */
-    .style-btns{display:flex;gap:8px;flex-wrap:wrap;}
-    .style-btn{flex:1;min-width:80px;padding:0.65rem 0.4rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;text-align:center;color:#ccc;transition:all 0.2s;}
-    .style-btn:hover{border-color:rgba(0,255,180,0.35);}
-    .style-btn.selected{border-color:rgba(0,255,180,0.6);background:rgba(0,255,180,0.06);}
-    .style-btn-name{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;display:block;margin-top:4px;font-family:'Josefin Sans',sans-serif;}
-    .f-alegreya{font-family:'Alegreya',serif;font-size:1rem;}
-    .f-allura{font-family:'Allura',cursive;font-size:1.1rem;}
-    .f-stencil{font-family:'Allerta Stencil',sans-serif;font-size:0.75rem;letter-spacing:0.04em;}
-
-    /* side buttons */
-    .side-btns{display:flex;gap:8px;}
-    .side-btn{flex:1;padding:0.65rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:#aaa;text-align:center;transition:all 0.2s;}
-    .side-btn:hover{border-color:rgba(0,255,180,0.35);}
-    .side-btn.selected{border-color:rgba(0,255,180,0.6);background:rgba(0,255,180,0.06);color:#ccc;}
-
-    /* qty */
-    .qty-wrap{display:flex;align-items:center;gap:12px;}
-    .qty-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15);color:#ccc;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;}
-    .qty-btn:hover{border-color:rgba(0,255,180,0.5);}
-    .qty-input{width:70px;text-align:center;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;padding:0.5rem;font-family:'Josefin Sans',sans-serif;font-size:1rem;color:#ddd;outline:none;}
-    .price-display{margin-left:auto;text-align:right;}
-    .price-per{font-size:0.65rem;letter-spacing:0.1em;color:#777;text-transform:uppercase;}
-    .price-total{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-
-    /* price table in popup */
-    .price-table{width:100%;border-collapse:collapse;margin-top:0.6rem;}
-    .price-table th{font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,255,180,0.6);padding:0.28rem 0.5rem;border-bottom:0.5px solid rgba(0,255,180,0.15);text-align:left;}
-    .price-table th:not(:first-child){text-align:right;}
-    .price-table td{font-size:0.64rem;letter-spacing:0.06em;color:#666;padding:0.26rem 0.5rem;border-bottom:0.5px solid rgba(255,255,255,0.04);}
-    .price-table td:not(:first-child){text-align:right;color:#888;}
-    .price-table tr.active-row td{color:rgba(0,255,180,0.85);}
-
-    /* checkbox */
-    .check-row{display:flex;align-items:center;gap:10px;margin-bottom:0.6rem;}
-    .check-row input[type="checkbox"]{width:16px;height:16px;accent-color:#00ffcc;cursor:pointer;flex-shrink:0;}
-    .check-label{font-size:0.78rem;letter-spacing:0.08em;color:#bbb;cursor:pointer;}
-    .code-section{display:none;margin-top:0.5rem;background:rgba(255,255,255,0.02);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:0.8rem;}
-    .code-section.visible{display:block;}
-    .code-note{font-size:0.6rem;color:rgba(0,255,180,0.45);letter-spacing:0.07em;text-align:center;font-style:italic;margin-top:0.4rem;}
-
-    /* order btn */
-    .order-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1.5rem;transition:all 0.25s;}
-    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,255,180,0.2);transform:scale(1.02);}
-
-    .section-divider{height:0.5px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.15),transparent);margin:1.2rem 0;}
-
-    /* FIXED PRICE CORNER */
-    .price-corner{position:fixed;bottom:1.2rem;right:1.2rem;z-index:9100;background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.25);border-radius:12px;padding:0.9rem 1.1rem;box-shadow:0 4px 24px rgba(0,0,0,0.5);min-width:230px;display:none;}
-    .price-corner.visible{display:block;}
-    .price-corner-title{font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.7);margin-bottom:0.6rem;text-align:center;}
-    .price-corner table{width:100%;border-collapse:collapse;}
-    .price-corner th{font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,255,180,0.5);padding:0.2rem 0.4rem;border-bottom:0.5px solid rgba(0,255,180,0.12);text-align:left;}
-    .price-corner th:not(:first-child){text-align:right;}
-    .price-corner td{font-size:0.62rem;letter-spacing:0.05em;color:#666;padding:0.22rem 0.4rem;border-bottom:0.5px solid rgba(255,255,255,0.04);}
-    .price-corner td:not(:first-child){text-align:right;color:#888;}
-    .price-corner tr.active-row td{color:rgba(0,255,180,0.85);}
-    .price-corner-note{font-size:0.54rem;color:#555;margin-top:0.5rem;text-align:center;}
-
-    /* PAYMENT */
-    .payment-overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.78);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
-    .payment-overlay.active{display:flex;}
-    .payment-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,520px);max-height:90vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,200,150,0.15),0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.3s ease both;padding:2rem;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
-    .payment-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;}
-    .order-summary{background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.2rem;font-size:0.75rem;letter-spacing:0.08em;color:#999;line-height:1.8;}
-    .order-summary strong{color:rgba(0,255,180,0.7);}
-    .payment-methods{display:flex;gap:8px;margin-bottom:0.5rem;}
-    .pay-method{flex:1;padding:0.65rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;text-align:center;transition:all 0.2s;}
-    .pay-method.selected{border-color:rgba(0,255,180,0.6);background:rgba(0,255,180,0.06);color:#ccc;}
-    .send-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1rem;transition:all 0.25s;}
-    .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,255,180,0.2);}
-    .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
-    .payment-status{text-align:center;margin-top:1rem;font-size:0.78rem;letter-spacing:0.1em;min-height:1.2rem;}
-    .payment-status.success{color:#4cff80;}
-    .payment-status.error{color:#ff7070;}
-    .pay-back-btn{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;margin-top:0.8rem;display:block;width:100%;text-align:center;transition:color 0.2s;}
-    .pay-back-btn:hover{color:#aaa;}
-
     @media(max-width:600px){
       .top-bar{padding:1.2rem 1.2rem 0;}
       .site-name{font-size:1rem;letter-spacing:0.1em;}
@@ -187,12 +58,7 @@
       .hex-btn{width:min(18vw,80px);height:min(18vw,80px);}
       .hex-label{font-size:0.42rem;letter-spacing:0.08em;}
       .hex-icon{font-size:0.95rem;}
-      .popup-body{padding:1rem 1rem 1.5rem;}
-      .popup-header{padding:1.2rem 1rem 0.8rem;}
-      .payment-box{padding:1.5rem 1rem;}
-      .payment-methods{flex-direction:column;}
       .mini-footer-inner{flex-direction:column;align-items:center;gap:0.6rem;text-align:center;}
-      .price-corner{display:none!important;}
     }
   </style>
 </head>
@@ -201,7 +67,7 @@
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <radialGradient id="hexGrad" cx="40%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#0d2e18"/><stop offset="60%" stop-color="#071a0d"/><stop offset="100%" stop-color="#040f08"/>
+      <stop offset="0%" stop-color="#0d2e18"/><stop offset="50%" stop-color="#071a0d"/><stop offset="100%" stop-color="#030b06"/>
     </radialGradient>
     <radialGradient id="hexGradDim" cx="50%" cy="50%" r="60%">
       <stop offset="0%" stop-color="#0a2214"/><stop offset="100%" stop-color="#030b06"/>
@@ -214,25 +80,22 @@
   </defs>
 </svg>
 
-<!-- TOP BAR -->
 <div class="top-bar">
   <a class="back-link" href="index.html">Tillbaka</a>
   <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
   <div class="top-spacer"></div>
 </div>
 
-<!-- PAGE TITLE -->
 <div class="page-title">
   <h1>Metall</h1>
   <p>Lasergravyr med precision — för ett bestående intryck</p>
   <div class="title-line"></div>
 </div>
 
-<!-- BUTTON GRID -->
 <div class="btn-container">
 
-  <!-- VISITKORT -->
-  <div class="hex-btn active" style="left:29%;top:18%;" onclick="openProduct('visitkort')">
+  <!-- VISITKORT → egen sida -->
+  <a class="hex-btn active" style="left:29%;top:18%;" href="metall-visitkort.html">
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
       <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
@@ -248,10 +111,10 @@
         </div>
       </foreignObject>
     </svg>
-  </div>
+  </a>
 
-  <!-- NYCKELRING -->
-  <div class="hex-btn active" style="left:71%;top:18%;" onclick="openProduct('nyckelring')">
+  <!-- NYCKELRING → egen sida -->
+  <a class="hex-btn active" style="left:71%;top:18%;" href="metall-nyckelring.html">
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
       <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
@@ -262,10 +125,10 @@
         </div>
       </foreignObject>
     </svg>
-  </div>
+  </a>
 
-  <!-- PENNA -->
-  <div class="hex-btn active" style="left:50%;top:28%;" onclick="openProduct('penna')">
+  <!-- PENNA → egen sida -->
+  <a class="hex-btn active" style="left:50%;top:28%;" href="metall-penna.html">
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
       <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
@@ -276,7 +139,7 @@
         </div>
       </foreignObject>
     </svg>
-  </div>
+  </a>
 
   <!-- COMING SOON x5 -->
   <div class="hex-btn coming" style="left:14%;top:42%;"><svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/><foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg></div>
@@ -286,7 +149,6 @@
   <div class="hex-btn coming" style="left:50%;top:84%;width:min(14vw,128px);height:min(14vw,128px);"><svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/><foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg></div>
 </div>
 
-<!-- MINI FOOTER -->
 <div class="mini-footer">
   <div class="mini-footer-inner">
     <div class="mini-footer-links">
@@ -298,549 +160,5 @@
   </div>
 </div>
 
-<!-- ═══════════════════ VISITKORT POPUP ═══════════════════ -->
-<div class="popup-overlay" id="popup-visitkort">
-  <div class="popup-box">
-    <div class="popup-header">
-      <div class="popup-title">Metall Visitkort</div>
-      <button class="popup-close" onclick="closeProduct('visitkort')">&times;</button>
-    </div>
-    <div class="popup-body">
-      <div class="popup-cols">
-
-        <!-- LEFT: LIVE CARD + SIDE + QR/BAR -->
-        <div>
-          <div class="form-label" style="margin-bottom:0.7rem;">Förhandsvisning — dra text &amp; koder på kortet</div>
-          <div class="card-canvas-wrap" id="vk-card">
-            <div class="gravyr-hint" style="width:82%;height:78%;top:11%;left:9%;"><span>Gravyryta</span></div>
-            <!-- draggable text -->
-            <div class="card-drag" id="vk-drag-text" style="left:50%;top:45%;transform:translate(-50%,-50%);">
-              <span class="card-text-el" id="vk-text-display" style="font-family:'Alegreya',serif;font-size:18px;">Din logo</span>
-            </div>
-            <!-- draggable QR -->
-            <div class="card-drag card-code-el" id="vk-drag-qr" style="left:8%;top:8%;display:none;">
-              <div id="vk-qr-canvas"></div>
-            </div>
-            <!-- draggable barcode -->
-            <div class="card-drag card-code-el" id="vk-drag-bar" style="left:8%;bottom:8%;display:none;">
-              <svg id="vk-bar-svg" style="display:block;"></svg>
-            </div>
-          </div>
-          <div class="card-hint">✦ Dra texten och koderna för att placera dem exakt på kortet</div>
-
-          <!-- SIDE -->
-          <div class="form-section">
-            <label class="form-label">Gravyr på</label>
-            <div class="side-btns">
-              <div class="side-btn selected" id="vk-side-single" onclick="setSide('single')">Enkelsidig</div>
-              <div class="side-btn" id="vk-side-double" onclick="setSide('double')">Dubbelsidig</div>
-            </div>
-          </div>
-
-          <!-- QR -->
-          <div class="form-section">
-            <div class="check-row">
-              <input type="checkbox" id="vk-qr" onchange="toggleCode('qr')"/>
-              <label class="check-label" for="vk-qr">Lägg till QR-kod på kortet</label>
-            </div>
-            <div class="code-section" id="vk-qr-section">
-              <label class="form-label" style="margin-bottom:0.3rem;">QR-innehåll (URL, telefon, text)</label>
-              <input class="form-input" type="text" id="vk-qr-input" placeholder="T.ex. https://elegant-m.se" oninput="generateQR()"/>
-              <div class="code-note">QR syns direkt på kortet — dra för att placera</div>
-            </div>
-            <!-- BAR -->
-            <div class="check-row" style="margin-top:0.6rem;">
-              <input type="checkbox" id="vk-bar" onchange="toggleCode('bar')"/>
-              <label class="check-label" for="vk-bar">Lägg till streckkod på kortet</label>
-            </div>
-            <div class="code-section" id="vk-bar-section">
-              <label class="form-label" style="margin-bottom:0.3rem;">Streckkod innehåll (siffror)</label>
-              <input class="form-input" type="text" id="vk-bar-input" placeholder="T.ex. 1234567890" oninput="generateBar()"/>
-              <div class="code-note">Streckkod syns direkt på kortet — dra för att placera</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT: TEXT + FONT + SIZE + QTY + PRICE TABLE -->
-        <div>
-          <div class="form-section">
-            <label class="form-label" for="vk-text-inp">Din logo / text</label>
-            <input class="form-input" type="text" id="vk-text-inp" placeholder="T.ex. ditt namn eller företag" oninput="updateCardText(this.value)"/>
-            <div style="font-size:0.6rem;color:rgba(0,255,180,0.5);margin-top:0.4rem;letter-spacing:0.07em;">✦ Graveras i silver — färgen är alltid silver</div>
-          </div>
-
-          <div class="form-section">
-            <label class="form-label">Textstil</label>
-            <div class="style-btns">
-              <div class="style-btn selected" onclick="setVkFont('alegreya',this)">
-                <span class="f-alegreya">Ag</span>
-                <span class="style-btn-name">Alegreya</span>
-              </div>
-              <div class="style-btn" onclick="setVkFont('allura',this)">
-                <span class="f-allura">Ag</span>
-                <span class="style-btn-name">Allura</span>
-              </div>
-              <div class="style-btn" onclick="setVkFont('stencil',this)">
-                <span class="f-stencil">AG</span>
-                <span class="style-btn-name">Allerta Stencil</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <label class="form-label">Textstorlek: <span id="vk-size-val">18 px</span></label>
-            <input type="range" min="10" max="42" step="1" value="18" oninput="setVkSize(this.value)"/>
-          </div>
-
-          <div class="section-divider"></div>
-
-          <div class="form-section">
-            <label class="form-label">Antal</label>
-            <div class="qty-wrap">
-              <button class="qty-btn" onclick="changeQty(-1)">−</button>
-              <input class="qty-input" type="number" id="vk-qty" value="1" min="1" max="9999" oninput="updatePrice()"/>
-              <button class="qty-btn" onclick="changeQty(1)">+</button>
-              <div class="price-display">
-                <div class="price-per" id="vk-per">50 kr / st</div>
-                <div class="price-total" id="vk-total">50 kr</div>
-              </div>
-            </div>
-            <div style="font-size:0.6rem;color:#555;margin-top:0.4rem;letter-spacing:0.06em;">* Dubbelsidig = pris × 1,7</div>
-          </div>
-
-          <table class="price-table">
-            <thead><tr><th>Antal</th><th>Enkelsida</th><th>Dubbelsida</th></tr></thead>
-            <tbody>
-              <tr id="vk-row-1"><td>1–24 st</td><td>50 kr/st</td><td>85 kr/st</td></tr>
-              <tr id="vk-row-2"><td>25–49 st</td><td>30 kr/st</td><td>51 kr/st</td></tr>
-              <tr id="vk-row-3"><td>50–99 st</td><td>20 kr/st</td><td>34 kr/st</td></tr>
-              <tr id="vk-row-4"><td>100–199 st</td><td>10 kr/st</td><td>17 kr/st</td></tr>
-              <tr id="vk-row-5"><td>200+ st</td><td>5 kr/st</td><td>9 kr/st</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div><!-- end popup-cols -->
-      <button class="order-btn" onclick="proceedToPayment('visitkort')">Beställ nu →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ NYCKELRING POPUP ═══════════════════ -->
-<div class="popup-overlay" id="popup-nyckelring">
-  <div class="popup-box">
-    <div class="popup-header">
-      <div class="popup-title">Metall&#8209;nyckelring</div>
-      <button class="popup-close" onclick="closeProduct('nyckelring')">&times;</button>
-    </div>
-    <div class="popup-body">
-      <div class="popup-cols">
-        <div>
-          <div class="form-label" style="margin-bottom:0.7rem;">Förhandsvisning</div>
-          <div style="width:100%;max-width:200px;margin:0 auto 1rem;aspect-ratio:1;position:relative;">
-            <div style="width:100%;height:100%;background:radial-gradient(circle at 35% 30%,#e0e0e0,#a0a0a0 55%,#808080);border-radius:50%;box-shadow:0 6px 24px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;">
-              <div style="width:55%;height:55%;background:radial-gradient(circle at 35% 30%,#d4d4d4,#909090);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                <div id="nk-preview" style="font-family:'Alegreya',serif;font-size:1rem;background:linear-gradient(135deg,#777,#ddd,#aaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;padding:4px;white-space:nowrap;">Din logo</div>
-              </div>
-            </div>
-            <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:22px;height:22px;border:3px solid #888;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>
-          </div>
-          <div class="form-section">
-            <label class="form-label" for="nk-text">Din text / logotypnamn</label>
-            <input class="form-input" type="text" id="nk-text" placeholder="T.ex. ditt namn" oninput="document.getElementById('nk-preview').textContent=this.value||'Din logo'"/>
-          </div>
-          <div class="form-section">
-            <label class="form-label">Textstorlek: <span id="nk-size-val">1.0rem</span></label>
-            <input type="range" min="0.5" max="1.8" step="0.1" value="1.0" oninput="document.getElementById('nk-size-val').textContent=this.value+'rem';document.getElementById('nk-preview').style.fontSize=this.value+'rem';"/>
-          </div>
-        </div>
-        <div>
-          <div class="form-section">
-            <label class="form-label">Textstil</label>
-            <div class="style-btns">
-              <div class="style-btn selected" onclick="setFont('nk-preview','alegreya',this)"><span class="f-alegreya">Ag</span><span class="style-btn-name">Alegreya</span></div>
-              <div class="style-btn" onclick="setFont('nk-preview','allura',this)"><span class="f-allura">Ag</span><span class="style-btn-name">Allura</span></div>
-              <div class="style-btn" onclick="setFont('nk-preview','stencil',this)"><span class="f-stencil">AG</span><span class="style-btn-name">Allerta Stencil</span></div>
-            </div>
-          </div>
-          <div class="form-section">
-            <label class="form-label">Antal</label>
-            <div class="qty-wrap">
-              <button class="qty-btn" onclick="changeQtySimple('nk',-1)">−</button>
-              <input class="qty-input" type="number" id="nk-qty" value="1" min="1" max="9999"/>
-              <button class="qty-btn" onclick="changeQtySimple('nk',1)">+</button>
-              <div class="price-display"><div class="price-per">Pris på förfrågan</div><div class="price-total">—</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="order-btn" onclick="proceedToPayment('nyckelring')">Beställ nu →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ PENNA POPUP ═══════════════════ -->
-<div class="popup-overlay" id="popup-penna">
-  <div class="popup-box">
-    <div class="popup-header">
-      <div class="popup-title">Elegant Penna</div>
-      <button class="popup-close" onclick="closeProduct('penna')">&times;</button>
-    </div>
-    <div class="popup-body">
-      <div class="popup-cols">
-        <div>
-          <div class="form-label" style="margin-bottom:0.7rem;">Förhandsvisning</div>
-          <div style="width:100%;height:72px;background:linear-gradient(90deg,#b0b0b0,#e4e4e4 30%,#a4a4a4 65%,#d0d0d0);border-radius:5px 36px 36px 5px;box-shadow:0 4px 18px rgba(0,0,0,0.45);display:flex;align-items:center;padding:0 18px;margin-bottom:1rem;overflow:hidden;">
-            <div id="pe-preview" style="font-family:'Alegreya',serif;font-size:1rem;background:linear-gradient(135deg,#777,#ddd,#aaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;">Din logo</div>
-          </div>
-          <div class="form-section">
-            <label class="form-label" for="pe-text">Din text / logotypnamn</label>
-            <input class="form-input" type="text" id="pe-text" placeholder="T.ex. ditt namn" oninput="document.getElementById('pe-preview').textContent=this.value||'Din logo'"/>
-          </div>
-          <div class="form-section">
-            <label class="form-label">Textstorlek: <span id="pe-size-val">1.0rem</span></label>
-            <input type="range" min="0.5" max="1.8" step="0.1" value="1.0" oninput="document.getElementById('pe-size-val').textContent=this.value+'rem';document.getElementById('pe-preview').style.fontSize=this.value+'rem';"/>
-          </div>
-        </div>
-        <div>
-          <div class="form-section">
-            <label class="form-label">Textstil</label>
-            <div class="style-btns">
-              <div class="style-btn selected" onclick="setFont('pe-preview','alegreya',this)"><span class="f-alegreya">Ag</span><span class="style-btn-name">Alegreya</span></div>
-              <div class="style-btn" onclick="setFont('pe-preview','allura',this)"><span class="f-allura">Ag</span><span class="style-btn-name">Allura</span></div>
-              <div class="style-btn" onclick="setFont('pe-preview','stencil',this)"><span class="f-stencil">AG</span><span class="style-btn-name">Allerta Stencil</span></div>
-            </div>
-          </div>
-          <div class="form-section">
-            <label class="form-label">Antal</label>
-            <div class="qty-wrap">
-              <button class="qty-btn" onclick="changeQtySimple('pe',-1)">−</button>
-              <input class="qty-input" type="number" id="pe-qty" value="1" min="1" max="9999"/>
-              <button class="qty-btn" onclick="changeQtySimple('pe',1)">+</button>
-              <div class="price-display"><div class="price-per">Pris på förfrågan</div><div class="price-total">—</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="order-btn" onclick="proceedToPayment('penna')">Beställ nu →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ FIXED PRICE CORNER ═══════════════════ -->
-<div class="price-corner" id="price-corner">
-  <div class="price-corner-title">Prisguide — Visitkort</div>
-  <table>
-    <thead><tr><th>Antal</th><th>Enkelsida</th><th>Dubbelsida</th></tr></thead>
-    <tbody>
-      <tr id="pc-row-1"><td>1–24 st</td><td>50 kr/st</td><td>85 kr/st</td></tr>
-      <tr id="pc-row-2"><td>25–49 st</td><td>30 kr/st</td><td>51 kr/st</td></tr>
-      <tr id="pc-row-3"><td>50–99 st</td><td>20 kr/st</td><td>34 kr/st</td></tr>
-      <tr id="pc-row-4"><td>100–199 st</td><td>10 kr/st</td><td>17 kr/st</td></tr>
-      <tr id="pc-row-5"><td>200+ st</td><td>5 kr/st</td><td>9 kr/st</td></tr>
-    </tbody>
-  </table>
-  <div class="price-corner-note">Dubbelsidig gravyr = × 1,7</div>
-</div>
-
-<!-- ═══════════════════ PAYMENT POPUP ═══════════════════ -->
-<div class="payment-overlay" id="payment-popup">
-  <div class="payment-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
-      <div class="payment-title">Beställning</div>
-      <button class="popup-close" onclick="closePayment()">&times;</button>
-    </div>
-    <div class="order-summary" id="order-summary"></div>
-    <div class="form-section"><label class="form-label" for="pay-name">Namn</label><input class="form-input" type="text" id="pay-name" placeholder="För- och efternamn"/></div>
-    <div class="form-section"><label class="form-label" for="pay-email">E-postadress</label><input class="form-input" type="email" id="pay-email" placeholder="din@email.com"/></div>
-    <div class="form-section"><label class="form-label" for="pay-phone">Telefon (valfritt)</label><input class="form-input" type="tel" id="pay-phone" placeholder="+46 70 000 00 00"/></div>
-    <div class="form-section"><label class="form-label" for="pay-address">Leveransadress</label><input class="form-input" type="text" id="pay-address" placeholder="Gatuadress, postnummer, ort"/></div>
-    <div class="form-section">
-      <label class="form-label">Betalningsmetod</label>
-      <div class="payment-methods">
-        <div class="pay-method selected" onclick="selectPay(this)">Swish</div>
-        <div class="pay-method" onclick="selectPay(this)">Kort</div>
-        <div class="pay-method" onclick="selectPay(this)">Klarna</div>
-      </div>
-      <div style="font-size:0.62rem;color:#555;margin-top:0.4rem;letter-spacing:0.06em;">Vi kontaktar dig med betalningsinstruktioner efter bekräftad beställning.</div>
-    </div>
-    <button class="send-btn" id="send-order-btn" onclick="sendOrder()">Skicka beställning</button>
-    <button class="pay-back-btn" onclick="backToProduct()">← Tillbaka till produkten</button>
-    <div class="payment-status" id="payment-status"></div>
-  </div>
-</div>
-
-<script>
-  emailjs.init('syV4hDTJIVxj9xUyp');
-
-  /* ── STATE ── */
-  var currentProduct = '';
-  var currentSide = 'single';
-  var currentVkFont = 'alegreya';
-  var orderSummaryText = '';
-
-  var fontMap = {
-    alegreya: "'Alegreya', serif",
-    allura:   "'Allura', cursive",
-    stencil:  "'Allerta Stencil', sans-serif"
-  };
-
-  var vkPrices = [
-    {min:1,   max:24,    s:50,  d:85},
-    {min:25,  max:49,    s:30,  d:51},
-    {min:50,  max:99,    s:20,  d:34},
-    {min:100, max:199,   s:10,  d:17},
-    {min:200, max:99999, s:5,   d:9}
-  ];
-
-  /* ── OPEN / CLOSE ── */
-  function openProduct(id) {
-    document.getElementById('popup-'+id).classList.add('active');
-    document.body.style.overflow = 'hidden';
-    currentProduct = id;
-    if (id === 'visitkort') {
-      document.getElementById('price-corner').classList.add('visible');
-      updatePrice();
-    }
-  }
-  function closeProduct(id) {
-    document.getElementById('popup-'+id).classList.remove('active');
-    document.body.style.overflow = '';
-    document.getElementById('price-corner').classList.remove('visible');
-  }
-  document.querySelectorAll('.popup-overlay').forEach(function(el){
-    el.addEventListener('click', function(e){
-      if (e.target === el) {
-        el.classList.remove('active');
-        document.body.style.overflow = '';
-        document.getElementById('price-corner').classList.remove('visible');
-      }
-    });
-  });
-
-  /* ── CARD TEXT ── */
-  function updateCardText(val) {
-    document.getElementById('vk-text-display').textContent = val || 'Din logo';
-  }
-
-  /* ── FONT SIZE ── */
-  function setVkSize(val) {
-    document.getElementById('vk-size-val').textContent = val + ' px';
-    document.getElementById('vk-text-display').style.fontSize = val + 'px';
-  }
-
-  /* ── FONTS ── */
-  function setVkFont(f, btn) {
-    currentVkFont = f;
-    document.getElementById('vk-text-display').style.fontFamily = fontMap[f];
-    btn.closest('.style-btns').querySelectorAll('.style-btn').forEach(function(b){b.classList.remove('selected');});
-    btn.classList.add('selected');
-  }
-  function setFont(previewId, f, btn) {
-    document.getElementById(previewId).style.fontFamily = fontMap[f];
-    btn.closest('.style-btns').querySelectorAll('.style-btn').forEach(function(b){b.classList.remove('selected');});
-    btn.classList.add('selected');
-  }
-
-  /* ── SIDE ── */
-  function setSide(side) {
-    currentSide = side;
-    document.getElementById('vk-side-single').classList.toggle('selected', side==='single');
-    document.getElementById('vk-side-double').classList.toggle('selected', side==='double');
-    updatePrice();
-  }
-
-  /* ── PRICE ── */
-  function getPrice(qty) {
-    for (var i = 0; i < vkPrices.length; i++) {
-      if (qty >= vkPrices[i].min && qty <= vkPrices[i].max) {
-        return currentSide === 'double' ? vkPrices[i].d : vkPrices[i].s;
-      }
-    }
-    return 50;
-  }
-  function updatePrice() {
-    var qty = parseInt(document.getElementById('vk-qty').value) || 1;
-    var pp = getPrice(qty);
-    document.getElementById('vk-per').textContent = pp + ' kr / st';
-    document.getElementById('vk-total').textContent = (qty * pp).toLocaleString('sv-SE') + ' kr';
-    // highlight rows
-    for (var i = 1; i <= 5; i++) {
-      var r  = document.getElementById('vk-row-'+i);
-      var pc = document.getElementById('pc-row-'+i);
-      if (r)  r.classList.remove('active-row');
-      if (pc) pc.classList.remove('active-row');
-    }
-    var ranges = [{min:1,max:24,r:1},{min:25,max:49,r:2},{min:50,max:99,r:3},{min:100,max:199,r:4},{min:200,max:99999,r:5}];
-    ranges.forEach(function(row){
-      if (qty >= row.min && qty <= row.max) {
-        var el  = document.getElementById('vk-row-'+row.r);
-        var pc2 = document.getElementById('pc-row-'+row.r);
-        if (el)  el.classList.add('active-row');
-        if (pc2) pc2.classList.add('active-row');
-      }
-    });
-  }
-
-  /* ── QTY ── */
-  function changeQty(delta) {
-    var inp = document.getElementById('vk-qty');
-    inp.value = Math.max(1, (parseInt(inp.value)||1) + delta);
-    updatePrice();
-  }
-  function changeQtySimple(prefix, delta) {
-    var inp = document.getElementById(prefix+'-qty');
-    inp.value = Math.max(1, (parseInt(inp.value)||1) + delta);
-  }
-
-  /* ── QR ── */
-  function toggleCode(type) {
-    var checked = document.getElementById('vk-'+type).checked;
-    document.getElementById('vk-'+type+'-section').classList.toggle('visible', checked);
-    if (type === 'qr') {
-      document.getElementById('vk-drag-qr').style.display = checked ? 'block' : 'none';
-      if (checked) generateQR();
-    }
-    if (type === 'bar') {
-      document.getElementById('vk-drag-bar').style.display = checked ? 'block' : 'none';
-      if (checked) generateBar();
-    }
-  }
-  function generateQR() {
-    var t = document.getElementById('vk-qr-input').value.trim();
-    var c = document.getElementById('vk-qr-canvas');
-    c.innerHTML = '';
-    if (!t) return;
-    try { new QRCode(c, {text:t, width:52, height:52, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.M}); } catch(e) {}
-  }
-  function generateBar() {
-    var t = document.getElementById('vk-bar-input').value.trim();
-    var s = document.getElementById('vk-bar-svg');
-    if (!t) { s.innerHTML=''; return; }
-    try { JsBarcode(s, t, {format:'CODE128', width:1.4, height:36, displayValue:true, fontSize:9, background:'#fff', lineColor:'#000'}); } catch(e) { s.innerHTML=''; }
-  }
-
-  /* ── DRAG ── */
-  function makeDraggable(el, container) {
-    var sx, sy, sl, st;
-    el.addEventListener('pointerdown', function(e) {
-      e.preventDefault();
-      el.setPointerCapture(e.pointerId);
-      var cr = container.getBoundingClientRect();
-      var er = el.getBoundingClientRect();
-      sx = e.clientX; sy = e.clientY;
-      sl = er.left - cr.left; st = er.top - cr.top;
-      el.style.transform = 'none';
-      el.style.bottom = 'auto';
-    });
-    el.addEventListener('pointermove', function(e) {
-      if (!el.hasPointerCapture(e.pointerId)) return;
-      var cr = container.getBoundingClientRect();
-      var nl = Math.max(0, Math.min(cr.width  - el.offsetWidth,  sl + e.clientX - sx));
-      var nt = Math.max(0, Math.min(cr.height - el.offsetHeight, st + e.clientY - sy));
-      el.style.left = (nl / cr.width  * 100).toFixed(2) + '%';
-      el.style.top  = (nt / cr.height * 100).toFixed(2) + '%';
-    });
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var card = document.getElementById('vk-card');
-    makeDraggable(document.getElementById('vk-drag-text'), card);
-    makeDraggable(document.getElementById('vk-drag-qr'),   card);
-    makeDraggable(document.getElementById('vk-drag-bar'),  card);
-  });
-
-  /* ── PAYMENT FLOW ── */
-  function proceedToPayment(product) {
-    currentProduct = product;
-    var summary = '';
-    if (product === 'visitkort') {
-      var text = document.getElementById('vk-text-inp').value || '(ingen text)';
-      var qty  = document.getElementById('vk-qty').value;
-      var side = currentSide === 'double' ? 'Dubbelsidig' : 'Enkelsidig';
-      var fLabel = {alegreya:'Alegreya', allura:'Allura', stencil:'Allerta Stencil'}[currentVkFont];
-      var pp   = getPrice(parseInt(qty));
-      var qr   = document.getElementById('vk-qr').checked ? 'Ja' : 'Nej';
-      var bar  = document.getElementById('vk-bar').checked ? 'Ja' : 'Nej';
-      var qrVal  = document.getElementById('vk-qr-input').value || '—';
-      var barVal = document.getElementById('vk-bar-input').value || '—';
-      summary = '<strong>Produkt:</strong> Metall Visitkort<br>'
-              + '<strong>Text / Logo:</strong> ' + text + '<br>'
-              + '<strong>Textstil:</strong> ' + fLabel + '<br>'
-              + '<strong>Gravyr:</strong> ' + side + '<br>'
-              + '<strong>Antal:</strong> ' + qty + ' st<br>'
-              + '<strong>QR-kod:</strong> ' + qr + (qr==='Ja' ? ' (' + qrVal + ')' : '') + '<br>'
-              + '<strong>Streckkod:</strong> ' + bar + (bar==='Ja' ? ' (' + barVal + ')' : '') + '<br>'
-              + '<strong>Pris per st:</strong> ' + pp + ' kr<br>'
-              + '<strong>Totalt:</strong> ' + (parseInt(qty)*pp).toLocaleString('sv-SE') + ' kr';
-    } else if (product === 'nyckelring') {
-      var nkText = document.getElementById('nk-text').value || '(ingen text)';
-      var nkQty  = document.getElementById('nk-qty').value;
-      summary = '<strong>Produkt:</strong> Metallnyckelring<br>'
-              + '<strong>Text / Logo:</strong> ' + nkText + '<br>'
-              + '<strong>Antal:</strong> ' + nkQty + ' st<br>'
-              + '<strong>Pris:</strong> På förfrågan';
-    } else {
-      var peText = document.getElementById('pe-text').value || '(ingen text)';
-      var peQty  = document.getElementById('pe-qty').value;
-      summary = '<strong>Produkt:</strong> Elegant Penna<br>'
-              + '<strong>Text / Logo:</strong> ' + peText + '<br>'
-              + '<strong>Antal:</strong> ' + peQty + ' st<br>'
-              + '<strong>Pris:</strong> På förfrågan';
-    }
-    document.getElementById('order-summary').innerHTML = summary;
-    orderSummaryText = document.getElementById('order-summary').innerText;
-    document.getElementById('payment-status').textContent = '';
-    document.getElementById('payment-status').className = 'payment-status';
-    var btn = document.getElementById('send-order-btn');
-    btn.disabled = false; btn.textContent = 'Skicka beställning';
-    document.getElementById('payment-popup').classList.add('active');
-    document.getElementById('price-corner').classList.remove('visible');
-  }
-  function closePayment() {
-    document.getElementById('payment-popup').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  function backToProduct() {
-    document.getElementById('payment-popup').classList.remove('active');
-    if (currentProduct) openProduct(currentProduct);
-  }
-  function selectPay(btn) {
-    document.querySelectorAll('.pay-method').forEach(function(b){b.classList.remove('selected');});
-    btn.classList.add('selected');
-  }
-  function sendOrder() {
-    var name    = document.getElementById('pay-name').value.trim();
-    var email   = document.getElementById('pay-email').value.trim();
-    var phone   = document.getElementById('pay-phone').value.trim();
-    var address = document.getElementById('pay-address').value.trim();
-    var payM    = (document.querySelector('.pay-method.selected')||{}).textContent || 'Ej vald';
-    if (!name || !email) {
-      document.getElementById('payment-status').textContent = 'Fyll i namn och e-post.';
-      document.getElementById('payment-status').className = 'payment-status error';
-      return;
-    }
-    var btn = document.getElementById('send-order-btn');
-    btn.disabled = true; btn.textContent = 'Skickar...';
-    var params = {
-      from_name:  name,
-      from_email: email,
-      phone:      phone || 'Ej angiven',
-      message:    'BESTÄLLNING:\n' + orderSummaryText + '\n\nLeveransadress: ' + (address||'Ej angiven') + '\nBetalningsmetod: ' + payM,
-      to_email:   'elegant.m.se@gmail.com'
-    };
-    emailjs.send('service_rqr0oai','template_kvc84w1', params)
-      .then(function(){ return emailjs.send('service_rqr0oai','template_1qdf2dj', params); })
-      .then(function(){
-        document.getElementById('payment-status').textContent = '✓ Beställning skickad! Vi återkommer inom 1–2 arbetsdagar.';
-        document.getElementById('payment-status').className = 'payment-status success';
-        btn.textContent = 'Skickat!';
-      })
-      .catch(function(){
-        document.getElementById('payment-status').textContent = 'Något gick fel. Maila oss: elegant.m.se@gmail.com';
-        document.getElementById('payment-status').className = 'payment-status error';
-        btn.disabled = false; btn.textContent = 'Skicka beställning';
-      });
-  }
-</script>
 </body>
 </html>
