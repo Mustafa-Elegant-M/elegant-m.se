@@ -48,8 +48,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 /* Row handle divs inside gravyr-zone */
 .row-handle-div{position:absolute;z-index:11;cursor:grab;touch-action:none;}
 .row-handle-div:active{cursor:grabbing;}
-.row-handle-strip{display:flex;align-items:center;gap:3px;padding:2px 3px;background:rgba(0,18,12,0.82);border:0.5px solid rgba(0,255,180,0.35);border-radius:5px;margin-bottom:2px;opacity:0;transition:opacity 0.15s;pointer-events:none;white-space:nowrap;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);}
-.row-handle-div:hover .row-handle-strip,.row-handle-div.handles-active .row-handle-strip{opacity:1;pointer-events:auto;}
+.row-handle-strip{display:flex;align-items:center;gap:3px;padding:2px 3px;background:rgba(0,18,12,0.82);border:0.5px solid rgba(0,255,180,0.35);border-radius:5px;margin-bottom:2px;opacity:0;transition:opacity 0.12s;pointer-events:none;white-space:nowrap;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);}
+.row-handle-div.strip-visible .row-handle-strip{opacity:1;pointer-events:auto;}
 .hbtn{width:20px;height:17px;border-radius:3px;background:rgba(0,40,25,0.85);border:0.5px solid rgba(0,255,180,0.45);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .hbtn svg{width:11px;height:11px;fill:none;stroke:rgba(0,255,180,0.9);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
 .hsize{flex:0 0 58px;height:17px;background:rgba(0,40,25,0.65);border:0.5px solid rgba(0,255,180,0.28);border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:ew-resize;}
@@ -689,16 +689,33 @@ function renderRows(svg,rowArr,pfx,zoneEl){
       if(ang)te2.setAttribute('transform','rotate('+ang+','+cx+','+cy+')');
       te2.textContent=t;svg.appendChild(te2);
     }
-    if(pfx==='m') updateHandle(r,W,H,zoneEl);
+    /* Attach drag handles for both main card and double-popup cards */
+    if(pfx==='m'){
+      updateHandle(r,W,H,zoneEl);
+    } else {
+      /* double popup: extract side number from prefix (d1 or d2) */
+      var sNum=parseInt(pfx.replace('d',''));
+      if(!isNaN(sNum)){
+        var dZone=document.getElementById('d-zone-'+sNum);
+        if(dZone) makeHandles(r, dZone, function(){redrawD(sNum);}, null);
+      }
+    }
   });
-  if(pfx==='m') cleanHandles();
+  cleanHandles();
 }
 
 function redraw(){renderRows(document.getElementById('vk-svg'),rows,'m',document.getElementById('vk-zone'));}
 function redrawD(s){renderRows(document.getElementById('d-svg-'+s),dRows[s],'d'+s,document.getElementById('d-zone-'+s));}
 
-/* ═══ HANDLE DIVS ═══ */
-function updateHandle(r,zoneW,zoneH,zone){
+/* placeholder so renderRows can reference makeHandles before it's fully parsed —
+   JS hoists function declarations so this is fine as long as makeHandles is a declaration */
+
+/* ═══ SHARED: build drag handles on any row+zone ═══
+   redrawFn = the function to call after each change
+   sizeSyncId = optional id of an <input> to sync size value to (null for double-popup rows)
+*/
+function makeHandles(r, zone, redrawFn, sizeSyncId){
+  /* hDivs keyed by r.id — reuse across redraws */
   var div=hDivs[r.id];
   if(!div){
     div=document.createElement('div');
@@ -706,109 +723,134 @@ function updateHandle(r,zoneW,zoneH,zone){
     zone.appendChild(div);
     hDivs[r.id]=div;
 
-    /* Angle badge */
+    /* ── Hover show/hide via mouseenter/leave, but stay visible during pointer drag ── */
+    var dragActive=0;
+    div.addEventListener('mouseenter',function(){div.classList.add('strip-visible');});
+    div.addEventListener('mouseleave',function(){if(!dragActive)div.classList.remove('strip-visible');});
+
+    /* Angle-degree badge (shows only during angle drag) */
     var abadge=document.createElement('div'); abadge.className='angle-badge'; abadge.id='abadge-'+r.id;
     div.appendChild(abadge);
 
     /* Handle strip */
     var strip=document.createElement('div'); strip.className='row-handle-strip'; div.appendChild(strip);
 
-    /* Angle btn ─ left */
+    /* ── Angle btn ── */
     var anb=document.createElement('div'); anb.className='hbtn'; anb.title='← → vinkel';
     anb.innerHTML='<svg viewBox="0 0 11 11"><path d="M1 10L10 1M7 1L10 1L10 4"/></svg>';
     anb.style.cursor='ew-resize';
-    /* Angle drag: show badge while dragging, hide on release */
-    (function(r,anb,abadge){
+    (function(){
       var sx,sa;
       anb.addEventListener('pointerdown',function(e){
         e.preventDefault();e.stopPropagation();
         anb.setPointerCapture(e.pointerId);
-        div.classList.add('handles-active');
+        dragActive++;
         sx=e.clientX; sa=r.angle||0;
         abadge.style.display='block';
         function onMove(ev){
           if(!anb.hasPointerCapture(ev.pointerId))return;
           r.angle=sa+(ev.clientX-sx)*0.5;
           abadge.textContent=Math.round(r.angle)+'°';
-          redraw();
+          redrawFn();
         }
         function onUp(){
           anb.removeEventListener('pointermove',onMove);
           abadge.style.display='none';
+          dragActive=Math.max(0,dragActive-1);
+          /* hide strip if mouse already left the div */
+          if(!div.matches(':hover'))div.classList.remove('strip-visible');
         }
         anb.addEventListener('pointermove',onMove);
         anb.addEventListener('pointerup',onUp,{once:true});
       });
-    })(r,anb,abadge);
+    })();
     strip.appendChild(anb);
 
-    /* Size bar ─ centre */
+    /* ── Size bar ── */
     var sb=document.createElement('div'); sb.className='hsize'; sb.title='← → storlek';
     var sl=document.createElement('span'); sl.className='hsize-lbl'; sl.id='hsl-'+r.id; sl.textContent=r.size+'px';
     sb.appendChild(sl);
-    (function(r,sb,sl){
+    (function(){
       var sx,ss;
       sb.addEventListener('pointerdown',function(e){
         e.preventDefault();e.stopPropagation();
         sb.setPointerCapture(e.pointerId);
+        dragActive++;
         sx=e.clientX; ss=r.size;
         function onMove(ev){
           if(!sb.hasPointerCapture(ev.pointerId))return;
           r.size=Math.max(4,ss+Math.round((ev.clientX-sx)*0.28));
           sl.textContent=r.size+'px';
-          /* sync input */
-          var si=document.getElementById('rsize-'+r.id); if(si)si.value=r.size;
-          redraw();
+          if(sizeSyncId){var si=document.getElementById(sizeSyncId);if(si)si.value=r.size;}
+          redrawFn();
+        }
+        function onUp(){
+          sb.removeEventListener('pointermove',onMove);
+          dragActive=Math.max(0,dragActive-1);
+          if(!div.matches(':hover'))div.classList.remove('strip-visible');
         }
         sb.addEventListener('pointermove',onMove);
-        sb.addEventListener('pointerup',function(){sb.removeEventListener('pointermove',onMove);},{once:true});
+        sb.addEventListener('pointerup',onUp,{once:true});
       });
-    })(r,sb,sl);
+    })();
     strip.appendChild(sb);
 
-    /* Curve btn ─ right */
+    /* ── Curve btn ── */
     var crb=document.createElement('div'); crb.className='hbtn'; crb.title='↑ konvex ↓ konkav';
     crb.innerHTML='<svg viewBox="0 0 11 11"><path d="M1 9Q5.5 2 10 9"/></svg>';
     crb.style.cursor='ns-resize';
-    (function(r,crb){
+    (function(){
       var sy,sc;
       crb.addEventListener('pointerdown',function(e){
         e.preventDefault();e.stopPropagation();
         crb.setPointerCapture(e.pointerId);
+        dragActive++;
         sy=e.clientY; sc=r.curve||0;
         function onMove(ev){
           if(!crb.hasPointerCapture(ev.pointerId))return;
           r.curve=Math.max(-130,Math.min(130,sc-(ev.clientY-sy)*0.9));
-          redraw();
+          redrawFn();
+        }
+        function onUp(){
+          crb.removeEventListener('pointermove',onMove);
+          dragActive=Math.max(0,dragActive-1);
+          if(!div.matches(':hover'))div.classList.remove('strip-visible');
         }
         crb.addEventListener('pointermove',onMove);
-        crb.addEventListener('pointerup',function(){crb.removeEventListener('pointermove',onMove);},{once:true});
+        crb.addEventListener('pointerup',onUp,{once:true});
       });
-    })(r,crb);
+    })();
     strip.appendChild(crb);
 
-    /* Main drag ─ move row. Preserves current angle transform. */
-    (function(r,div,zone){
+    /* ── Main drag — move the row, preserving rotation ── */
+    (function(){
       var sx,sy,spx,spy;
       div.addEventListener('pointerdown',function(e){
         if(e.target.closest&&e.target.closest('.hbtn,.hsize'))return;
         e.preventDefault();e.stopPropagation();
         div.setPointerCapture(e.pointerId);
+        dragActive++;
         var zr=zone.getBoundingClientRect();
         sx=e.clientX;sy=e.clientY;spx=r.px;spy=r.py;
         function onMove(ev){
           if(!div.hasPointerCapture(ev.pointerId))return;
           r.px=Math.max(0,Math.min(100,spx+(ev.clientX-sx)/zr.width*100));
           r.py=Math.max(0,Math.min(100,spy+(ev.clientY-sy)/zr.height*100));
-          redraw();
+          redrawFn();
+        }
+        function onUp(){
+          div.removeEventListener('pointermove',onMove);
+          dragActive=Math.max(0,dragActive-1);
+          if(!div.matches(':hover'))div.classList.remove('strip-visible');
         }
         div.addEventListener('pointermove',onMove);
-        div.addEventListener('pointerup',function(){div.removeEventListener('pointermove',onMove);},{once:true});
+        div.addEventListener('pointerup',onUp,{once:true});
       });
-    })(r,div,zone);
+    })();
   }
 
-  /* Position handle div — respects row angle via CSS transform */
+  /* ── Position the handle div over the text each redraw ── */
+  var zoneW=zone.offsetWidth||300, zoneH=zone.offsetHeight||190;
   var estW=Math.max(40,r.size*0.62*(r.text.length||3));
   var estH=r.size*1.3;
   var cx=(r.px/100)*zoneW, cy=(r.py/100)*zoneH;
@@ -816,16 +858,24 @@ function updateHandle(r,zoneW,zoneH,zone){
   div.style.top=(cy-estH/2)+'px';
   div.style.width=estW+'px';
   div.style.height=estH+'px';
-  /* Apply angle so the handle box rotates with the text */
   div.style.transform='rotate('+r.angle+'deg)';
   div.style.transformOrigin='50% 50%';
   var sl2=document.getElementById('hsl-'+r.id); if(sl2)sl2.textContent=r.size+'px';
 }
 
+/* ── Called from renderRows for main card ── */
+function updateHandle(r,zoneW,zoneH,zone){
+  makeHandles(r, zone, redraw, 'rsize-'+r.id);
+}
+
 function cleanHandles(){
-  var ids=rows.map(function(r){return r.id;});
+  var allIds=rows.map(function(r){return r.id;}).concat(
+    dRows[1].map(function(r){return r.id;}),
+    dRows[2].map(function(r){return r.id;})
+  );
   Object.keys(hDivs).forEach(function(k){
-    if(ids.indexOf(parseInt(k))===-1){hDivs[k].remove();delete hDivs[k];}
+    var numK=isNaN(k)?k:parseInt(k);
+    if(allIds.indexOf(numK)===-1&&allIds.indexOf(k)===-1){hDivs[k].remove();delete hDivs[k];}
   });
 }
 
@@ -847,7 +897,10 @@ function buildDRowInput(s,r){
   inp.addEventListener('input',function(){r.text=this.value;redrawD(s);});
   inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addDRow(s);}});
   var del=document.createElement('button'); del.className='d-row-del'; del.textContent='×';
-  del.addEventListener('click',function(){dRows[s]=dRows[s].filter(function(x){return x.id!==r.id;});item.remove();redrawD(s);if(dRows[s].length===0)addDRow(s);});
+  del.addEventListener('click',function(){dRows[s]=dRows[s].filter(function(x){return x.id!==r.id;});item.remove();
+    /* remove handle div */
+    if(hDivs[r.id]){hDivs[r.id].remove();delete hDivs[r.id];}
+    redrawD(s);if(dRows[s].length===0)addDRow(s);});
   top.appendChild(lbl); top.appendChild(inp); top.appendChild(del);
 
   /* font + size */
@@ -1113,47 +1166,92 @@ function sendOrder(){
     document.getElementById('payment-status').textContent='Fyll i namn och e-post.';
     document.getElementById('payment-status').className='payment-status error'; return;
   }
-  var btn=document.getElementById('send-order-btn'); btn.disabled=true; btn.textContent='Förbereder...';
+  var btn=document.getElementById('send-order-btn'); btn.disabled=true; btn.textContent='Skickar...';
 
-  makeDesignImage(function(imgUrl){
-    btn.textContent='Skickar...';
-    var summaryTxt=document.getElementById('order-summary').innerText;
-    var qty=isSample?1:(parseInt(document.getElementById('vk-qty').value)||1);
-    var pp=getPrice(qty);
-    /* Company fields */
-    var compInfo='';
-    if(custType==='foret'){
-      compInfo='\nBeställartyp: Företag'
-        +'\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')
-        +'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')
-        +'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');
-    } else {
-      compInfo='\nBeställartyp: Privatperson';
-    }
-    var fullMsg='══ FÖRFRÅGAN — Metall Visitkort ══\n\n'
-      +summaryTxt
-      +'\n\nLeveransadress: '+(addr||'Ej angiven')
-      +'\nBetalningsmetod: '+payM
-      +compInfo
-      +'\n\n══ DESIGNBILD (svart/vit 850×540px PNG) ══'
-      +'\nÖppna URL i webbläsare för att se kundens design:\n\n'+imgUrl;
+  /* Build text summary — no image data-URL (too large for EmailJS free plan) */
+  var summaryTxt=document.getElementById('order-summary').innerText;
+  var qty=isSample?1:(parseInt(document.getElementById('vk-qty').value)||1);
+  var pp=getPrice(qty);
 
-    var params={from_name:name,from_email:email,phone:phone||'Ej angiven',message:fullMsg,to_email:'elegant.m.se@gmail.com'};
-    emailjs.send('service_rqr0oai','template_kvc84w1',params)
-      .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',params);})
-      .then(function(){
-        document.getElementById('payment-status').textContent='✓ Förfrågan skickad! Vi återkommer inom 1–2 arbetsdagar.';
-        document.getElementById('payment-status').className='payment-status success';
-        btn.textContent='Skickat!';
-        document.getElementById('invoice-note').style.display='block';
-      })
-      .catch(function(err){
-        console.error(err);
-        document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
-        document.getElementById('payment-status').className='payment-status error';
-        btn.disabled=false; btn.textContent='Skicka förfrågan';
-      });
+  /* Design details as plain text */
+  var designTxt='';
+  rows.filter(function(r){return r.text;}).forEach(function(r,i){
+    var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
+    var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
+    designTxt+='Rad '+(i+1)+': "'+r.text+'" | Stil: '+FONT_LABELS[r.font]+' | Storlek: '+r.size+'px'+aNote+cNote+'\n';
   });
+  if(currentSide==='double'){
+    designTxt+='\nSIDA 1 (Framsida):\n';
+    dRows[1].filter(function(r){return r.text;}).forEach(function(r,i){
+      var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
+      var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
+      designTxt+='  Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+aNote+cNote+'\n';
+    });
+    var s1qr=document.getElementById('d-s1-qr').value;
+    var s1bar=document.getElementById('d-s1-bar').value;
+    if(s1qr)designTxt+='  QR: '+s1qr+'\n';
+    if(s1bar)designTxt+='  Streckkod: '+s1bar+'\n';
+    designTxt+='\nSIDA 2 (Baksida):\n';
+    dRows[2].filter(function(r){return r.text;}).forEach(function(r,i){
+      var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
+      var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
+      designTxt+='  Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+aNote+cNote+'\n';
+    });
+    var s2qr=document.getElementById('d-s2-qr').value;
+    var s2bar=document.getElementById('d-s2-bar').value;
+    if(s2qr)designTxt+='  QR: '+s2qr+'\n';
+    if(s2bar)designTxt+='  Streckkod: '+s2bar+'\n';
+  }
+
+  var compInfo='';
+  if(custType==='foret'){
+    compInfo='\nBeställartyp: Företag'
+      +'\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')
+      +'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')
+      +'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');
+  } else {
+    compInfo='\nBeställartyp: Privatperson';
+  }
+
+  /* Keep message well under EmailJS 50KB limit */
+  var msgToMustafa='══ FÖRFRÅGAN — Metall Visitkort ══\n\n'
+    +'Produkt: Metall Visitkort'+(isSample?' — SAMPLE':'')+'\n'
+    +'Kortfärg: '+(COLOR_NAMES[currentColor]||currentColor)+'\n'
+    +'Gravyr: '+(currentSide==='double'?'Dubbelsidig':'Enkelsidig')+'\n'
+    +'Antal: '+qty+' st\n'
+    +'Pris per st: '+pp+' kr\n'
+    +'Totalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)\n'
+    +'\n── DESIGN ──\n'+designTxt
+    +'\nLeveransadress: '+(addr||'Ej angiven')
+    +'\nBetalningsmetod: '+payM
+    +compInfo;
+
+  var msgToCustomer='Tack för din förfrågan, '+name+'!\n\n'
+    +'Vi har mottagit din beställning av Metall Visitkort och återkommer inom 1–2 arbetsdagar med en faktura.\n\n'
+    +'Beställningen aktiveras så snart betalning är mottagen.\n\n'
+    +'── Din beställning ──\n'
+    +'Kortfärg: '+(COLOR_NAMES[currentColor]||currentColor)+'\n'
+    +'Antal: '+qty+' st\n'
+    +'Totalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)\n\n'
+    +'Med vänliga hälsningar\nELEGANT-M\nelegant.m.se@gmail.com';
+
+  var paramsOwner={from_name:name,from_email:email,phone:phone||'Ej angiven',message:msgToMustafa,to_email:'elegant.m.se@gmail.com'};
+  var paramsCustomer={from_name:name,from_email:email,phone:phone||'Ej angiven',message:msgToCustomer,to_email:'elegant.m.se@gmail.com'};
+
+  emailjs.send('service_rqr0oai','template_kvc84w1',paramsOwner)
+    .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',paramsCustomer);})
+    .then(function(){
+      document.getElementById('payment-status').textContent='✓ Förfrågan skickad! Vi återkommer inom 1–2 arbetsdagar.';
+      document.getElementById('payment-status').className='payment-status success';
+      btn.textContent='Skickat!';
+      document.getElementById('invoice-note').style.display='block';
+    })
+    .catch(function(err){
+      console.error('EmailJS error:',err);
+      document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
+      document.getElementById('payment-status').className='payment-status error';
+      btn.disabled=false; btn.textContent='Skicka förfrågan';
+    });
 }
 </script>
 </body>
