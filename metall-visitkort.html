@@ -503,12 +503,29 @@ input[type="range"]{width:100%;accent-color:#007a5e;cursor:pointer;}
       <div style="font-size:0.6rem;color:#555;letter-spacing:0.06em;">Vi skickar faktura till din e-post. Beställningen aktiveras när betalning är mottagen.</div>
     </div>
     <button class="send-btn" id="send-order-btn" onclick="sendOrder()">Skicka förfrågan</button>
+
+    <!-- Info box — always visible before sending -->
+    <div style="margin-top:1rem;background:rgba(0,255,180,0.05);border:0.5px solid rgba(0,255,180,0.18);border-radius:10px;padding:0.85rem 1rem;">
+      <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.6);margin-bottom:0.55rem;">Så här fungerar det</div>
+      <div style="font-size:0.7rem;color:#aaa;line-height:1.75;letter-spacing:0.04em;">
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.35rem;">
+          <span style="color:rgba(0,255,180,0.7);flex-shrink:0;">①</span>
+          <span>När du klickar <em>Skicka förfrågan</em> genereras ett <strong style="color:#ccc;">beställningsnummer</strong> och dina designfiler laddas ned automatiskt till din dator — en <strong style="color:#ccc;">PNG-bild</strong> och en <strong style="color:#ccc;">SVG-fil</strong>.</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.35rem;">
+          <span style="color:rgba(0,255,180,0.7);flex-shrink:0;">②</span>
+          <span>Skicka sedan ett mejl till <strong style="color:rgba(0,255,180,0.85);">elegant.m.se@gmail.com</strong> med ditt beställningsnummer i ämnesraden och <strong style="color:#ccc;">bifoga båda filerna</strong> (PNG + SVG).</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <span style="color:rgba(0,255,180,0.7);flex-shrink:0;">③</span>
+          <span>Vi granskar din design, skickar en faktura och sätter igång arbetet så snart betalning är mottagen.</span>
+        </div>
+      </div>
+    </div>
+
     <button class="pay-back-btn" onclick="closePayment()">← Tillbaka till produkten</button>
     <div class="payment-status" id="payment-status"></div>
-    <div class="invoice-note" id="invoice-note">
-      ✦ Du kommer snart att få en faktura skickad till din e-postadress.<br>
-      Beställningen bearbetas så snart betalning är mottagen.
-    </div>
+    <div class="invoice-note" id="invoice-note"></div>
   </div>
 </div>
 
