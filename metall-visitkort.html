@@ -1468,36 +1468,52 @@ function sendOrder(){
   var isDouble=(currentSide==='double');
 
   /* ── Capture ALL positions NOW while DOM is visible ──
-     For text rows: px/py are already stored as % in the row objects.
-     For QR and barcode draggables: read their current left/top % from style.
-     Card/zone dimensions: read offsetWidth/Height now. */
+     Strategy: read card dimensions (always visible on main page).
+     Zone = card minus 1mm margin each side (1/85 = 1.176% lr, 1/54 = 1.852% tb).
+     For double popup: if popup is open (active class) read its dims; if closed, derive from card ratio.
+     QR/bar: read style.left/top (% of their card container) and convert to fraction. */
 
-  function getCodePos(elId, containerEl){
-    /* Returns {pctX, pctY} as fraction 0-1 of container size */
-    var el=document.getElementById(elId);
-    if(!el||!containerEl) return {pctX:0.06, pctY:0.06};
-    var cW=containerEl.offsetWidth||300;
-    var cH=containerEl.offsetHeight||190;
-    /* style.left / style.top are set as %-strings by makeDraggable */
-    var lStr=el.style.left||'6%';
-    var tStr=el.style.top||'6%';
-    var lPct=parseFloat(lStr)/100;
-    var tPct=parseFloat(tStr)/100;
-    /* Convert from % of full card to % of zone (zone starts at 1.176% / 1.852%) */
-    return {pctX: lPct, pctY: tPct};
+  function getCardDims(cardId){
+    var el=document.getElementById(cardId);
+    if(!el) return {cW:400,cH:254};
+    var cW=el.offsetWidth; var cH=el.offsetHeight;
+    /* If hidden (offsetWidth=0), derive from card aspect 85:54 */
+    if(cW<10){
+      /* Try to get from the main vk-card which is always visible */
+      var ref=document.getElementById('vk-card');
+      cW=ref?ref.offsetWidth:400;
+      cH=Math.round(cW*54/85);
+    }
+    return {cW:cW, cH:cH};
   }
 
-  /* Zone elements */
-  var zone1Id = isDouble ? 'd-zone-1' : 'vk-zone';
-  var zone1El = document.getElementById(zone1Id);
-  var zone2El = document.getElementById('d-zone-2');
-  var card1El = document.getElementById(isDouble ? 'd-card-1' : 'vk-card');
-  var card2El = document.getElementById('d-card-2');
+  function cardToZoneDims(cW,cH){
+    /* Zone starts at 1.176% from left/right, 1.852% from top/bottom */
+    var zW=cW*(1-2*0.01176);
+    var zH=cH*(1-2*0.01852);
+    return {zW:Math.round(zW), zH:Math.round(zH)};
+  }
 
-  var zW1=zone1El?Math.max(zone1El.offsetWidth,10):300;
-  var zH1=zone1El?Math.max(zone1El.offsetHeight,10):190;
-  var zW2=zone2El?Math.max(zone2El.offsetWidth,10):300;
-  var zH2=zone2El?Math.max(zone2El.offsetHeight,10):190;
+  function getCodePosFrac(elId, cardW, cardH){
+    /* Returns {pctX, pctY} as 0-1 fraction of card width/height */
+    var el=document.getElementById(elId);
+    if(!el) return {pctX:0.06, pctY:0.06};
+    var lStr=el.style.left||'6%';
+    var tStr=el.style.top||'6%';
+    /* makeDraggable sets left/top as % of container (the card) */
+    return {pctX:parseFloat(lStr)/100, pctY:parseFloat(tStr)/100};
+  }
+
+  /* Card 1 */
+  var card1Id = isDouble ? 'd-card-1' : 'vk-card';
+  var c1=getCardDims(card1Id);
+  var z1=cardToZoneDims(c1.cW,c1.cH);
+  var zW1=z1.zW, zH1=z1.zH;
+
+  /* Card 2 (only used when double) */
+  var c2=getCardDims('d-card-2');
+  var z2=cardToZoneDims(c2.cW,c2.cH);
+  var zW2=z2.zW, zH2=z2.zH;
 
   /* QR/bar values */
   var qr1=isDouble?(document.getElementById('d-s1-qr').value.trim()):(document.getElementById('vk-qr').checked?document.getElementById('vk-qr-input').value.trim():'');
@@ -1506,10 +1522,10 @@ function sendOrder(){
   var bar2=isDouble?document.getElementById('d-s2-bar').value.trim():'';
 
   /* QR/bar POSITIONS — read from draggable elements (as % of their card) */
-  var qrPos1  = getCodePos(isDouble?'d-qr-1':'vk-drag-qr',   card1El);
-  var barPos1 = getCodePos(isDouble?'d-bar-1':'vk-drag-bar',  card1El);
-  var qrPos2  = getCodePos('d-qr-2',  card2El);
-  var barPos2 = getCodePos('d-bar-2', card2El);
+  var qrPos1  = getCodePosFrac(isDouble?'d-qr-1':'vk-drag-qr',  c1.cW, c1.cH);
+  var barPos1 = getCodePosFrac(isDouble?'d-bar-1':'vk-drag-bar', c1.cW, c1.cH);
+  var qrPos2  = getCodePosFrac('d-qr-2',  c2.cW, c2.cH);
+  var barPos2 = getCodePosFrac('d-bar-2', c2.cW, c2.cH);
 
   /* Row data */
   var rows1=isDouble?dRows[1]:rows;
@@ -1552,89 +1568,86 @@ function sendOrder(){
     +(isDouble?'\n  \u2022 design-'+orderNr+'-baksida.png\n  \u2022 design-'+orderNr+'-baksida.svg':'');
 
   /* ══ PNG GENERATOR ══
-     zW/zH = gravyr-zone pixel size (captured above)
-     qrPos/barPos = {pctX, pctY} as fraction of the CARD (not zone)
-     Card is 85×54, zone is 83×52 starting at 1mm
-     Canvas is 850×540 (10px/mm)
+     Canvas 850x540 = 85x54mm at 10px/mm.
+     Gravyr zone on canvas: gX=10,gY=10,gW=830,gH=520 (83x52mm).
+     r.px/r.py = % of zone screen-pixels -> maps directly to % of gW/gH.
+     r.size    = font size in screen zone-pixels -> scale by scX = gW/zW.
+     qrPos/barPos = fraction (0-1) of card width/height -> multiply by CW/CH.
   */
   function makePNG(rowsArr, zW, zH, qrV, barV, qrPos, barPos, cb){
-    var CW=850, CH=540;       /* canvas = 10px per mm */
-    var PX_PER_MM=10;
-    /* Gravyr zone on canvas: 1mm margin each side */
-    var gX=PX_PER_MM, gY=PX_PER_MM;
-    var gW=CW-2*gX, gH=CH-2*gY; /* 830×520 px = 83×52mm */
+    var CW=850, CH=540;
+    var gX=10, gY=10, gW=830, gH=520;
 
     var cv=document.createElement('canvas'); cv.width=CW; cv.height=CH;
     var ctx=cv.getContext('2d');
     ctx.fillStyle='#fff'; ctx.fillRect(0,0,CW,CH);
-    ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
-    ctx.strokeRect(1,1,CW-2,CH-2);
-    ctx.setLineDash([5,4]); ctx.strokeStyle='#ccc';
-    ctx.strokeRect(gX,gY,gW,gH); ctx.setLineDash([]);
+    ctx.strokeStyle='#ccc'; ctx.lineWidth=1; ctx.strokeRect(1,1,CW-2,CH-2);
+    ctx.setLineDash([5,4]); ctx.strokeRect(gX,gY,gW,gH); ctx.setLineDash([]);
     ctx.fillStyle='#bbb'; ctx.font='9px Arial';
-    ctx.fillText('Gravyryta 83\u00d752mm \u2014 ELEGANT-M',gX+2,gY-2);
+    ctx.fillText('Gravyryta 83\u00d752mm \u2014 ELEGANT-M', gX+2, gY-2);
 
     var p=document.fonts?document.fonts.ready:Promise.resolve();
     p.then(function(){
-      /* Scale: zone-px on screen → canvas px in gravyr area */
-      var scX=gW/zW, scY=gH/zH;
+      var scX=gW/zW;  /* canvas-px per screen-zone-px */
 
       rowsArr.forEach(function(r){
         var t=r.text; if(!t)return;
-        /* px/py are % of zone width/height */
-        var cx=gX+(r.px/100)*gW;
-        var cy=gY+(r.py/100)*gH;
-        var fs=r.size*Math.min(scX,scY);
-        var fk=FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
-        ctx.save(); ctx.fillStyle='#000';
-        ctx.font=Math.round(fs)+'px '+fk;
-        ctx.textAlign='center'; ctx.textBaseline='middle';
+        var cx = gX + (r.px/100)*gW;   /* % of zone -> canvas coords */
+        var cy = gY + (r.py/100)*gH;
+        var fs = Math.round(r.size * scX);
+        var fk = FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
+        ctx.save();
+        ctx.fillStyle='#000';
+        ctx.font = fs+'px '+fk;
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+
         if(Math.abs(r.curve)>2){
-          var chars=t.split(''); var estW=fs*0.6*t.length;
+          var chars=t.split('');
+          var estW=fs*0.6*t.length;
+          ctx.save();
+          if(r.angle){ ctx.translate(cx,cy); ctx.rotate(r.angle*Math.PI/180); ctx.translate(-cx,-cy); }
           chars.forEach(function(ch,i){
             var frac=chars.length>1?i/(chars.length-1):0.5;
-            var chX=cx-estW/2+estW*frac;
-            var chY=cy-4*(r.curve/100)*fs*1.5*frac*(1-frac);
-            ctx.save();
-            if(r.angle){ctx.translate(cx,cy);ctx.rotate(r.angle*Math.PI/180);ctx.translate(-cx,-cy);}
-            ctx.fillText(ch,chX,chY); ctx.restore();
+            var chX=cx - estW/2 + estW*frac;
+            var chY=cy - 4*(r.curve/100)*fs*1.5*frac*(1-frac);
+            ctx.fillText(ch, chX, chY);
           });
+          ctx.restore();
         } else {
           ctx.translate(cx,cy);
-          if(r.angle)ctx.rotate(r.angle*Math.PI/180);
+          if(r.angle) ctx.rotate(r.angle*Math.PI/180);
           ctx.fillText(t,0,0);
         }
         ctx.restore();
       });
 
-      /* QR — position from qrPos (% of card), QR size ~80px on canvas */
       function doBar(){
         if(barV&&barV.trim()){
-          /* barPos is % of full card */
-          var bX=barPos.pctX*CW;
-          var bY=barPos.pctY*CH;
+          var bX=Math.round(barPos.pctX*CW);
+          var bY=Math.round(barPos.pctY*CH);
           var bsvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
           bsvg.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
           document.body.appendChild(bsvg);
           try{
             JsBarcode(bsvg,barV.trim(),{format:'CODE128',width:1.8,height:44,displayValue:true,fontSize:11,background:'#fff',lineColor:'#000'});
             var sd=new XMLSerializer().serializeToString(bsvg);
-            var sb=new Blob([sd],{type:'image/svg+xml;charset=utf-8'});
-            var su=URL.createObjectURL(sb);
-            var img=new Image();
-            img.onload=function(){
-              ctx.drawImage(img,Math.max(0,bX),Math.max(0,bY),180,50);
+            var sblob=new Blob([sd],{type:'image/svg+xml;charset=utf-8'});
+            var su=URL.createObjectURL(sblob);
+            var bimg=new Image();
+            bimg.onload=function(){
+              ctx.drawImage(bimg,Math.min(bX,CW-185),Math.min(bY,CH-55),180,50);
               URL.revokeObjectURL(su);if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));
             };
-            img.onerror=function(){URL.revokeObjectURL(su);if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));};
-            img.src=su;
+            bimg.onerror=function(){URL.revokeObjectURL(su);if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));};
+            bimg.src=su;
           }catch(e){if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));}
         } else { cb(cv.toDataURL('image/png')); }
       }
 
       if(qrV&&qrV.trim()){
-        var qX=qrPos.pctX*CW;
-        var qY=qrPos.pctY*CH;
+        var qX=Math.round(qrPos.pctX*CW);
+        var qY=Math.round(qrPos.pctY*CH);
         var tmp=document.createElement('div');
         tmp.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
         document.body.appendChild(tmp);
@@ -1642,7 +1655,7 @@ function sendOrder(){
           new QRCode(tmp,{text:qrV.trim(),width:80,height:80,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
           setTimeout(function(){
             var srcCV=tmp.querySelector('canvas');
-            if(srcCV)ctx.drawImage(srcCV,Math.max(0,qX),Math.max(0,qY),80,80);
+            if(srcCV) ctx.drawImage(srcCV,Math.min(qX,CW-85),Math.min(qY,CH-85),80,80);
             if(tmp.parentNode)tmp.remove();
             doBar();
           },150);
@@ -1650,8 +1663,6 @@ function sendOrder(){
       } else { doBar(); }
     });
   }
-
-  /* ══ SVG GENERATOR ══ */
   function makeSVG(rowsArr, zW, zH, qrV, barV, qrPos, barPos){
     var CW=85, CH=54, GM=1, GW=83, GH=52;
     /* px/py are % of zone. Zone is GW×GH mm. */
