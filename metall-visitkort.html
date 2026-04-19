@@ -1455,128 +1455,255 @@ function sendOrder(){
   var payM=(document.querySelector('.pay-method.selected')||{}).textContent||'Ej vald';
   if(!name||!email){
     document.getElementById('payment-status').textContent='Fyll i namn och e-post.';
-    document.getElementById('payment-status').className='payment-status error'; return;
+    document.getElementById('payment-status').className='payment-status error';return;
   }
-  var btn=document.getElementById('send-order-btn'); btn.disabled=true; btn.textContent='Genererar filer...';
+  var btn=document.getElementById('send-order-btn');
+  btn.disabled=true; btn.textContent='Genererar filer...';
 
-  /* ── Generate order number: EM-YYYYMMDD-HHMM ── */
+  /* Order number */
   var now=new Date();
-  var pad=function(n){return n<10?'0'+n:n;};
-  var orderNr='EM-'+now.getFullYear()+(pad(now.getMonth()+1))+(pad(now.getDate()))+'-'+(pad(now.getHours()))+(pad(now.getMinutes()));
+  var pad=function(n){return n<10?'0'+n:''+n;};
+  var orderNr='EM-'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'-'+pad(now.getHours())+pad(now.getMinutes());
 
-  /* Store on button so success screen can reference it */
-  btn.dataset.orderNr=orderNr;
+  var isDouble=(currentSide==='double');
 
-  /* ── Step 1: Collect correct row data per side ── */
-  var frontRows, frontQR, frontBar, frontZoneId;
-  if(currentSide==='double'){
-    /* Dubbelsidig: framsida = dRows[1], baksida = dRows[2] */
-    frontRows  = dRows[1];
-    frontQR    = (document.getElementById('d-s1-qr')||{value:''}).value.trim();
-    frontBar   = (document.getElementById('d-s1-bar')||{value:''}).value.trim();
-    frontZoneId= 'd-zone-1';
+  /* Which rows/zone/codes for each side */
+  var rows1=isDouble?dRows[1]:rows;
+  var qr1=isDouble?(document.getElementById('d-s1-qr').value.trim()):(document.getElementById('vk-qr').checked?document.getElementById('vk-qr-input').value.trim():'');
+  var bar1=isDouble?(document.getElementById('d-s1-bar').value.trim()):(document.getElementById('vk-bar').checked?document.getElementById('vk-bar-input').value.trim():'');
+  var rows2=dRows[2];
+  var qr2=isDouble?document.getElementById('d-s2-qr').value.trim():'';
+  var bar2=isDouble?document.getElementById('d-s2-bar').value.trim():'';
+
+  /* Zone pixel dimensions — read BEFORE popup might be closed.
+     For double, the popup is still open at this point (user just clicked send).
+     For single, use main card zone. */
+  var zone1El=document.getElementById(isDouble?'d-zone-1':'vk-zone');
+  var zone2El=document.getElementById('d-zone-2');
+  /* Capture dimensions now while elements are visible */
+  var zW1=zone1El?zone1El.offsetWidth:300;
+  var zH1=zone1El?zone1El.offsetHeight:190;
+  var zW2=zone2El?zone2El.offsetWidth:300;
+  var zH2=zone2El?zone2El.offsetHeight:190;
+  /* Fallback: if zone is hidden (offsetWidth=0), use a standard ratio */
+  if(zW1<10){zW1=300;zH1=190;}
+  if(zW2<10){zW2=300;zH2=190;}
+
+  /* Build design text for emails */
+  var designTxt='';
+  function descRows(arr,indent){
+    arr.filter(function(r){return r.text;}).forEach(function(r,i){
+      var a=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'\u00b0':'';
+      var c=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
+      designTxt+=indent+'Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+a+c+'\n';
+    });
+  }
+  if(isDouble){
+    designTxt+='SIDA 1 (Framsida):\n'; descRows(dRows[1],'  ');
+    if(qr1)  designTxt+='  QR: '+qr1+'\n';
+    if(bar1) designTxt+='  Streckkod: '+bar1+'\n';
+    designTxt+='\nSIDA 2 (Baksida):\n'; descRows(dRows[2],'  ');
+    if(qr2)  designTxt+='  QR: '+qr2+'\n';
+    if(bar2) designTxt+='  Streckkod: '+bar2+'\n';
   } else {
-    /* Enkelsidig: använd main card rows */
-    frontRows  = rows;
-    frontQR    = document.getElementById('vk-qr').checked ? document.getElementById('vk-qr-input').value.trim() : '';
-    frontBar   = document.getElementById('vk-bar').checked ? document.getElementById('vk-bar-input').value.trim() : '';
-    frontZoneId= 'vk-zone';
+    descRows(rows,'');
+    if(qr1)  designTxt+='QR: '+qr1+'\n';
+    if(bar1) designTxt+='Streckkod: '+bar1+'\n';
   }
 
-  /* ── Step 2: Generate PNG (framsida) and download, then SVG files ── */
-  makeDesignPNG(frontRows, frontZoneId, frontQR, frontBar, function(pngDataUrl){
-    /* Download PNG */
-    downloadFile('design-'+orderNr+'-framsida.png', pngDataUrl);
+  var compInfo='';
+  if(custType==='foret'){
+    compInfo='\nBeställartyp: Företag'
+      +'\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')
+      +'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')
+      +'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');
+  } else { compInfo='\nBeställartyp: Privatperson'; }
 
-    /* Download SVG framsida */
-    var svgStr = makeDesignSVG(frontRows, frontZoneId, frontQR, frontBar);
-    var svgBlob = new Blob([svgStr],{type:'image/svg+xml;charset=utf-8'});
-    var svgUrl  = URL.createObjectURL(svgBlob);
-    setTimeout(function(){
-      downloadFile('design-'+orderNr+'-framsida.svg', svgUrl);
-      URL.revokeObjectURL(svgUrl);
-    }, 400);
+  var qty=isSample?1:(parseInt(document.getElementById('vk-qty').value)||1);
+  var pp=getPrice(qty);
 
-    /* If double-sided: download Sida 2 SVG as well */
-    if(currentSide==='double'){
-      var s2qr  = (document.getElementById('d-s2-qr')||{value:''}).value.trim();
-      var s2bar = (document.getElementById('d-s2-bar')||{value:''}).value.trim();
-      setTimeout(function(){
-        var svg2Str  = makeDesignSVG(dRows[2], 'd-zone-2', s2qr, s2bar);
-        var svg2Blob = new Blob([svg2Str],{type:'image/svg+xml;charset=utf-8'});
-        var svg2Url  = URL.createObjectURL(svg2Blob);
-        downloadFile('design-'+orderNr+'-baksida.svg', svg2Url);
-        URL.revokeObjectURL(svg2Url);
-      }, 800);
-    }
+  var filLista='  \u2022 design-'+orderNr+'-framsida.png\n  \u2022 design-'+orderNr+'-framsida.svg'
+    +(isDouble?'\n  \u2022 design-'+orderNr+'-baksida.png\n  \u2022 design-'+orderNr+'-baksida.svg':'');
 
-    /* ── Step 2: Build email + download baksida ── */
-    var isDouble=(currentSide==='double');
-    var qty=isSample?1:(parseInt(document.getElementById('vk-qty').value)||1);
-    var pp=getPrice(qty);
-
-    var designTxt='';
-    function descRows(arr,ind){arr.filter(function(r){return r.text;}).forEach(function(r,i){var a=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';var c=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';designTxt+=ind+'Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+a+c+'\n';});}
-    if(isDouble){
-      designTxt+='SIDA 1 (Framsida):\n'; descRows(dRows[1],'  ');
-      if(frontQR) designTxt+='  QR: '+frontQR+'\n';
-      if(frontBar)designTxt+='  Streckkod: '+frontBar+'\n';
-      var s2qrV=(document.getElementById('d-s2-qr')||{value:''}).value.trim();
-      var s2barV=(document.getElementById('d-s2-bar')||{value:''}).value.trim();
-      designTxt+='\nSIDA 2 (Baksida):\n'; descRows(dRows[2],'  ');
-      if(s2qrV) designTxt+='  QR: '+s2qrV+'\n';
-      if(s2barV)designTxt+='  Streckkod: '+s2barV+'\n';
-    } else {
-      descRows(rows,'');
-      if(frontQR) designTxt+='QR: '+frontQR+'\n';
-      if(frontBar)designTxt+='Streckkod: '+frontBar+'\n';
-    }
-
-    var compInfo='';
-    if(custType==='foret'){compInfo='\nBeställartyp: Företag\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')+'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')+'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');}
-    else{compInfo='\nBeställartyp: Privatperson';}
-
-    var filLista='  \u2022 design-'+orderNr+'-framsida.png\n  \u2022 design-'+orderNr+'-framsida.svg'+(isDouble?'\n  \u2022 design-'+orderNr+'-baksida.png\n  \u2022 design-'+orderNr+'-baksida.svg':'');
-
-    function sendEmails(){
-      btn.textContent='Skickar...';
-      var mo='\u2550\u2550 NY F\u00d6RFRÅGAN \u2014 Metall Visitkort \u2550\u2550\nBeställningsnummer: '+orderNr+'\n\nKund: '+name+'\nE-post: '+email+'\nTelefon: '+(phone||'Ej angiven')+'\n'+compInfo+'\n\n\u2500\u2500 PRODUKT \u2500\u2500\nMetall Visitkort'+(isSample?' \u2014 SAMPLE':'')+'\nKortfärg: '+(COLOR_NAMES[currentColor]||currentColor)+'\nGravyr: '+(isDouble?'Dubbelsidig':'Enkelsidig')+'\nAntal: '+qty+' st | Pris/st: '+pp+' kr\nTotalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)\n\n\u2500\u2500 DESIGN \u2500\u2500\n'+designTxt+'\nLeveransadress: '+(addr||'Ej angiven')+'\nBetalningsmetod: '+payM+'\n\n\u2500\u2500 FILER \u2500\u2500\n'+filLista+'\nKunden skickar filerna till elegant.m.se@gmail.com med '+orderNr+' i ämnesraden.';
-      var mc='Tack för din beställning, '+name+'!\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBeställningsnummer: '+orderNr+'\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nSpara ditt beställningsnummer \u2014 du behöver det i nästa steg.\n\n\u2500\u2500 VIKTIGT: SKICKA DINA DESIGNFILER \u2500\u2500\n\nDina designfiler har laddats ned till din dator:\n'+filLista+'\n\nFör att slutföra beställningen:\n  1. Öppna din e-postklient\n  2. Skapa ett nytt mejl till:  elegant.m.se@gmail.com\n  3. Skriv i ämnesraden:  '+orderNr+'\n  4. Bifoga alla nedladdade filer (PNG + SVG)\n  5. Skicka mejlet\n\n\u2500\u2500 VAD HÄNDER SEDAN \u2500\u2500\n\nNär vi mottagit filerna skickar vi faktura till '+email+'.\nBeställningen sätts igång så snart betalning är mottagen.\nVi återkommer inom 1\u20132 arbetsdagar.\n\nMed vänliga hälsningar\nELEGANT-M\nelegant.m.se@gmail.com';
-      emailjs.send('service_rqr0oai','template_kvc84w1',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mo,to_email:'elegant.m.se@gmail.com'})
-        .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mc,to_email:'elegant.m.se@gmail.com'});})
-        .then(function(){
-          document.getElementById('payment-status').textContent='\u2713 Förfrågan skickad!';
-          document.getElementById('payment-status').className='payment-status success';
-          btn.textContent='Skickat!';
-          var invNote=document.getElementById('invoice-note');
-          invNote.innerHTML='<div style="font-size:0.72rem;color:rgba(0,255,180,0.85);font-weight:600;letter-spacing:0.12em;margin-bottom:0.5rem;">Beställningsnummer: '+orderNr+'</div><div style="color:rgba(0,255,180,0.55);font-size:0.67rem;line-height:1.8;letter-spacing:0.06em;">Dina designfiler har laddats ned automatiskt.<br><strong style="color:rgba(0,255,180,0.8);">Skicka filerna (PNG + SVG) via mejl till:</strong><br><span style="font-size:0.78rem;color:rgba(0,255,180,0.95);">elegant.m.se@gmail.com</span><br>Skriv <strong style="color:rgba(0,255,180,0.9);">'+orderNr+'</strong> i ämnesraden.<br><br>Du har fått bekräftelse med instruktioner till din e-post.<br>Faktura skickas när vi mottagit dina filer.</div>';
-          invNote.style.display='block';
-        })
-        .catch(function(err){
-          console.error('EmailJS error:',err);
-          document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
-          document.getElementById('payment-status').className='payment-status error';
-          btn.disabled=false; btn.textContent='Skicka förfrågan';
-        });
-    }
-
-    if(isDouble){
-      var s2qrV2=(document.getElementById('d-s2-qr')||{value:''}).value.trim();
-      var s2barV2=(document.getElementById('d-s2-bar')||{value:''}).value.trim();
-      makeDesignPNG(dRows[2],'d-zone-2',s2qrV2,s2barV2,function(png2){
-        setTimeout(function(){downloadFile('design-'+orderNr+'-baksida.png',png2);},200);
-        var sv2=makeDesignSVG(dRows[2],'d-zone-2',s2qrV2,s2barV2);
-        var sb2=new Blob([sv2],{type:'image/svg+xml;charset=utf-8'});
-        var su2=URL.createObjectURL(sb2);
-        setTimeout(function(){downloadFile('design-'+orderNr+'-baksida.svg',su2);URL.revokeObjectURL(su2);},600);
-        setTimeout(sendEmails,900);
+  /* Generate PNG using pre-captured zone dimensions */
+  function makePNG(rowsArr, zW, zH, qrV, barV, cb){
+    var W=850, H=540;
+    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    var ctx=cv.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#999'; ctx.lineWidth=2; ctx.strokeRect(1,1,W-2,H-2);
+    var ml=Math.round(W/85), mt=Math.round(H/54);
+    ctx.setLineDash([6,4]); ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
+    ctx.strokeRect(ml,mt,W-2*ml,H-2*mt); ctx.setLineDash([]);
+    ctx.fillStyle='#aaa'; ctx.font='10px Arial';
+    ctx.fillText('Gravyryta 83\u00d752mm \u2014 ELEGANT-M',ml+4,mt+12);
+    var p=document.fonts?document.fonts.ready:Promise.resolve();
+    p.then(function(){
+      var scX=(W-2*ml)/zW, scY=(H-2*mt)/zH, sc=Math.min(scX,scY);
+      rowsArr.forEach(function(r){
+        var t=r.text; if(!t)return;
+        var cx=ml+(r.px/100)*zW*scX;
+        var cy=mt+(r.py/100)*zH*scY;
+        var fs=r.size*sc;
+        var fk=FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
+        ctx.save(); ctx.fillStyle='#000';
+        ctx.font=Math.round(fs)+'px '+fk;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        if(Math.abs(r.curve)>2){
+          var chars=t.split(''); var estW=fs*0.6*t.length;
+          chars.forEach(function(ch,i){
+            var frac=chars.length>1?i/(chars.length-1):0.5;
+            var chX=cx-estW/2+estW*frac;
+            var chY=cy-4*(r.curve/100)*fs*1.5*frac*(1-frac);
+            ctx.save();
+            if(r.angle){ctx.translate(cx,cy);ctx.rotate(r.angle*Math.PI/180);ctx.translate(-cx,-cy);}
+            ctx.fillText(ch,chX,chY); ctx.restore();
+          });
+        } else {
+          ctx.translate(cx,cy);
+          if(r.angle)ctx.rotate(r.angle*Math.PI/180);
+          ctx.fillText(t,0,0);
+        }
+        ctx.restore();
       });
-    } else { sendEmails(); }
+      /* QR code */
+      function doBar(){
+        if(barV&&barV.trim()){
+          var bsvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+          bsvg.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
+          document.body.appendChild(bsvg);
+          try{
+            JsBarcode(bsvg,barV.trim(),{format:'CODE128',width:2,height:50,displayValue:true,fontSize:12,background:'#fff',lineColor:'#000'});
+            var sd=new XMLSerializer().serializeToString(bsvg);
+            var sb=new Blob([sd],{type:'image/svg+xml;charset=utf-8'});
+            var su=URL.createObjectURL(sb);
+            var img=new Image();
+            img.onload=function(){ctx.drawImage(img,ml+8,H-mt-65,200,55);URL.revokeObjectURL(su);if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));};
+            img.onerror=function(){URL.revokeObjectURL(su);if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));};
+            img.src=su;
+          }catch(e){if(bsvg.parentNode)bsvg.remove();cb(cv.toDataURL('image/png'));}
+        } else { cb(cv.toDataURL('image/png')); }
+      }
+      if(qrV&&qrV.trim()){
+        var tmp=document.createElement('div');
+        tmp.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
+        document.body.appendChild(tmp);
+        try{
+          new QRCode(tmp,{text:qrV.trim(),width:80,height:80,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+          setTimeout(function(){
+            var srcCV=tmp.querySelector('canvas');
+            if(srcCV)ctx.drawImage(srcCV,ml+8,mt+20,80,80);
+            if(tmp.parentNode)tmp.remove();
+            doBar();
+          },150);
+        }catch(e){if(tmp.parentNode)tmp.remove();doBar();}
+      } else { doBar(); }
+    });
+  }
+
+  /* Generate SVG using pre-captured zone dimensions */
+  function makeSVG(rowsArr, zW, zH, qrV, barV){
+    var CW=85,CH=54,GM=1,GW=83,GH=52;
+    var pxPerMm=zW/GW;
+    var ns='http://www.w3.org/2000/svg';
+    var svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('xmlns',ns);svg.setAttribute('width',CW+'mm');svg.setAttribute('height',CH+'mm');svg.setAttribute('viewBox','0 0 '+CW+' '+CH);
+    var bg=document.createElementNS(ns,'rect');bg.setAttribute('x','0');bg.setAttribute('y','0');bg.setAttribute('width',CW);bg.setAttribute('height',CH);bg.setAttribute('fill','white');bg.setAttribute('stroke','#ccc');bg.setAttribute('stroke-width','0.2');svg.appendChild(bg);
+    var gr=document.createElementNS(ns,'rect');gr.setAttribute('x',GM);gr.setAttribute('y',GM);gr.setAttribute('width',GW);gr.setAttribute('height',GH);gr.setAttribute('fill','none');gr.setAttribute('stroke','#aaa');gr.setAttribute('stroke-width','0.15');gr.setAttribute('stroke-dasharray','0.8 0.5');svg.appendChild(gr);
+    var lbl=document.createElementNS(ns,'text');lbl.setAttribute('x','0.5');lbl.setAttribute('y','0.4');lbl.setAttribute('font-size','0.5');lbl.setAttribute('fill','#aaa');lbl.setAttribute('font-family','Arial,sans-serif');lbl.textContent='Gravyryta 83\u00d752mm \u2014 ELEGANT-M';svg.appendChild(lbl);
+    rowsArr.forEach(function(r,i){
+      var t=r.text||''; if(!t)return;
+      var cx=GM+(r.px/100)*GW, cy=GM+(r.py/100)*GH;
+      var fsMm=r.size/pxPerMm, ang=r.angle||0, crv=r.curve||0;
+      var ff=FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
+      if(Math.abs(crv)>2){
+        var aW=Math.min(fsMm*0.62*t.length,GW*0.95);
+        var pid='p'+i;
+        var path=document.createElementNS(ns,'path');
+        path.id=pid;path.setAttribute('d','M '+(cx-aW/2).toFixed(2)+' '+cy.toFixed(2)+' Q '+cx.toFixed(2)+' '+(cy-(crv/100)*fsMm*1.5).toFixed(2)+' '+(cx+aW/2).toFixed(2)+' '+cy.toFixed(2));
+        path.setAttribute('fill','none');path.setAttribute('stroke','none');
+        if(ang)path.setAttribute('transform','rotate('+ang+','+cx.toFixed(2)+','+cy.toFixed(2)+')');
+        svg.appendChild(path);
+        var te=document.createElementNS(ns,'text');te.setAttribute('font-family',ff);te.setAttribute('font-size',fsMm.toFixed(2));te.setAttribute('fill','black');
+        var tp=document.createElementNS(ns,'textPath');tp.setAttribute('href','#'+pid);tp.setAttribute('startOffset','50%');tp.setAttribute('text-anchor','middle');tp.textContent=t;te.appendChild(tp);svg.appendChild(te);
+      } else {
+        var te2=document.createElementNS(ns,'text');te2.setAttribute('x',cx.toFixed(2));te2.setAttribute('y',cy.toFixed(2));te2.setAttribute('font-family',ff);te2.setAttribute('font-size',fsMm.toFixed(2));te2.setAttribute('text-anchor','middle');te2.setAttribute('dominant-baseline','middle');te2.setAttribute('fill','black');
+        if(ang)te2.setAttribute('transform','rotate('+ang+','+cx.toFixed(2)+','+cy.toFixed(2)+')');te2.textContent=t;svg.appendChild(te2);
+      }
+    });
+    if(qrV&&qrV.trim()){
+      var qn=document.createElementNS(ns,'text');qn.setAttribute('x',(GM+1).toFixed(1));qn.setAttribute('y',(GM+3.5).toFixed(1));qn.setAttribute('font-size','1.2');qn.setAttribute('fill','#555');qn.setAttribute('font-family','Arial,sans-serif');qn.textContent='QR: '+qrV.trim();svg.appendChild(qn);
+    }
+    if(barV&&barV.trim()){
+      var bn=document.createElementNS(ns,'text');bn.setAttribute('x',(GM+1).toFixed(1));bn.setAttribute('y',(GH-0.5).toFixed(1));bn.setAttribute('font-size','1.2');bn.setAttribute('fill','#555');bn.setAttribute('font-family','Arial,sans-serif');bn.textContent='Streckkod: '+barV.trim();svg.appendChild(bn);
+    }
+    return new XMLSerializer().serializeToString(svg);
+  }
+
+  function dl(name, dataUrl){ var a=document.createElement('a');a.href=dataUrl;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},300); }
+  function dlSVG(name, svgStr){ var blob=new Blob([svgStr],{type:'image/svg+xml;charset=utf-8'});var u=URL.createObjectURL(blob);dl(name,u);setTimeout(function(){URL.revokeObjectURL(u);},500); }
+
+  function sendEmails(){
+    var mo='\u2550\u2550 NY F\u00d6RFRÅGAN \u2014 Metall Visitkort \u2550\u2550\nBeställningsnummer: '+orderNr
+      +'\n\nKund: '+name+'\nE-post: '+email+'\nTelefon: '+(phone||'Ej angiven')
+      +'\n'+compInfo
+      +'\n\n\u2500\u2500 PRODUKT \u2500\u2500\nMetall Visitkort'+(isSample?' \u2014 SAMPLE':'')
+      +'\nKortfärg: '+(COLOR_NAMES[currentColor]||currentColor)
+      +'\nGravyr: '+(isDouble?'Dubbelsidig':'Enkelsidig')
+      +'\nAntal: '+qty+' st | Pris/st: '+pp+' kr'
+      +'\nTotalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)'
+      +'\n\n\u2500\u2500 DESIGN \u2500\u2500\n'+designTxt
+      +'\nLeveransadress: '+(addr||'Ej angiven')+'\nBetalningsmetod: '+payM
+      +'\n\n\u2500\u2500 FILER \u2500\u2500\n'+filLista
+      +'\nKunden skickar filerna till elegant.m.se@gmail.com med '+orderNr+' i ämnesraden.';
+    var mc='Tack för din beställning, '+name+'!'
+      +'\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBeställningsnummer: '+orderNr
+      +'\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501'
+      +'\n\nSpara ditt beställningsnummer \u2014 du behöver det i nästa steg.'
+      +'\n\n\u2500\u2500 VIKTIGT: SKICKA DINA DESIGNFILER \u2500\u2500\n\nDina designfiler har laddats ned till din dator:\n'+filLista
+      +'\n\nFör att slutföra beställningen:\n  1. Öppna din e-postklient\n  2. Skapa ett nytt mejl till:  elegant.m.se@gmail.com\n  3. Skriv i ämnesraden:  '+orderNr+'\n  4. Bifoga alla nedladdade filer (PNG + SVG)\n  5. Skicka mejlet'
+      +'\n\n\u2500\u2500 VAD HÄNDER SEDAN \u2500\u2500\n\nNär vi mottagit filerna skickar vi faktura till '+email+'.\nBeställningen sätts igång så snart betalning är mottagen.\nVi återkommer inom 1\u20132 arbetsdagar.\n\nMed vänliga hälsningar\nELEGANT-M\nelegant.m.se@gmail.com';
+    btn.textContent='Skickar...';
+    emailjs.send('service_rqr0oai','template_kvc84w1',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mo,to_email:'elegant.m.se@gmail.com'})
+      .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mc,to_email:'elegant.m.se@gmail.com'});})
+      .then(function(){
+        document.getElementById('payment-status').textContent='\u2713 Förfrågan skickad!';
+        document.getElementById('payment-status').className='payment-status success';
+        btn.textContent='Skickat!';
+        var invNote=document.getElementById('invoice-note');
+        invNote.innerHTML='<div style="font-size:0.72rem;color:rgba(0,255,180,0.85);font-weight:600;letter-spacing:0.12em;margin-bottom:0.5rem;">Beställningsnummer: '+orderNr+'</div>'
+          +'<div style="color:rgba(0,255,180,0.55);font-size:0.67rem;line-height:1.8;letter-spacing:0.06em;">'
+          +'Dina designfiler har laddats ned automatiskt.<br>'
+          +'<strong style="color:rgba(0,255,180,0.8);">Skicka filerna via mejl till:</strong><br>'
+          +'<span style="font-size:0.78rem;color:rgba(0,255,180,0.95);">elegant.m.se@gmail.com</span><br>'
+          +'Skriv <strong style="color:rgba(0,255,180,0.9);">'+orderNr+'</strong> i ämnesraden.<br><br>'
+          +'Du har fått bekräftelse med instruktioner till din e-post.<br>'
+          +'Faktura skickas när vi mottagit dina filer.</div>';
+        invNote.style.display='block';
+      })
+      .catch(function(err){
         console.error('EmailJS error:',err);
         document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
         document.getElementById('payment-status').className='payment-status error';
         btn.disabled=false; btn.textContent='Skicka förfrågan';
       });
+  }
+
+  /* Generate side 1 PNG → download → generate side 2 (if double) → download → send emails */
+  makePNG(rows1,zW1,zH1,qr1,bar1,function(png1){
+    dl('design-'+orderNr+'-framsida.png', png1);
+    dlSVG('design-'+orderNr+'-framsida.svg', makeSVG(rows1,zW1,zH1,qr1,bar1));
+    if(isDouble){
+      setTimeout(function(){
+        makePNG(rows2,zW2,zH2,qr2,bar2,function(png2){
+          setTimeout(function(){dl('design-'+orderNr+'-baksida.png',png2);},200);
+          setTimeout(function(){dlSVG('design-'+orderNr+'-baksida.svg',makeSVG(rows2,zW2,zH2,qr2,bar2));},600);
+          setTimeout(sendEmails,900);
+        });
+      },500);
+    } else {
+      setTimeout(sendEmails,600);
+    }
   });
 }
 </script>
