@@ -1148,20 +1148,17 @@ function setCustType(t){
   document.getElementById('company-fields').classList.toggle('visible',t==='foret');
 }
 
-/* ═══ GENERATE SVG FOR XTOOL STUDIO ═══
-   Produces an SVG at 85×54mm scale (at 96dpi: 85/25.4*96 ≈ 321px × 204px)
-   Xtool Studio prefers SVG with mm units.
-   Gravyr area: 83×52mm (1mm margin), centred.
-   Text is rendered black on white, positioned to match the screen preview.
+/* ═══ GENERATE SVG ═══
+   rowsArr : array of row objects for this side
+   zoneId  : id of the gravyr-zone element (to get pixel dimensions for scaling)
+   qrVal   : QR URL string or ''
+   barVal  : barcode string or ''
 */
-function makeDesignSVG(rowsArr){
-  /* Card dimensions in mm */
-  var CW=85, CH=54;
-  /* Gravyr margin 1mm each side */
-  var GM=1;
-  var GW=CW-2*GM, GH=CH-2*GM; /* 83×52mm */
+function makeDesignSVG(rowsArr, zoneId, qrVal, barVal){
+  var CW=85, CH=54, GM=1;
+  var GW=CW-2*GM, GH=CH-2*GM;
 
-  var zone=document.getElementById('vk-zone');
+  var zone=document.getElementById(zoneId||'vk-zone');
   var zW=zone?zone.offsetWidth:300;
   var zH=zone?zone.offsetHeight:190;
 
@@ -1180,7 +1177,7 @@ function makeDesignSVG(rowsArr){
   bg.setAttribute('stroke-width','0.2');
   svg.appendChild(bg);
 
-  /* Gravyr boundary (dashed, for reference — not engraved) */
+  /* Gravyr boundary */
   var gr=document.createElementNS(ns,'rect');
   gr.setAttribute('x',GM);gr.setAttribute('y',GM);
   gr.setAttribute('width',GW);gr.setAttribute('height',GH);
@@ -1188,101 +1185,130 @@ function makeDesignSVG(rowsArr){
   gr.setAttribute('stroke-width','0.15');gr.setAttribute('stroke-dasharray','0.8 0.5');
   svg.appendChild(gr);
 
-  /* Label for reference */
+  /* Reference label */
   var lbl=document.createElementNS(ns,'text');
   lbl.setAttribute('x','0.5');lbl.setAttribute('y','0.4');
   lbl.setAttribute('font-size','0.5');lbl.setAttribute('fill','#aaa');
   lbl.setAttribute('font-family','Arial,sans-serif');
-  lbl.textContent='Gravyryta 83\u00d752mm — ELEGANT-M';
+  lbl.textContent='Gravyryta 83\u00d752mm \u2014 ELEGANT-M';
   svg.appendChild(lbl);
 
-  /* Draw each row — convert zone-% positions to mm */
+  /* Text rows */
+  var pxPerMm = zW / GW;
   rowsArr.forEach(function(r,i){
     var t=r.text||''; if(!t)return;
-    /* position in mm within card */
-    var cx=GM+(r.px/100)*GW;
-    var cy=GM+(r.py/100)*GH;
-    /* font-size: screen pixels → mm. Zone width in mm = GW, zone width px = zW */
-    var pxPerMm=zW/GW;
-    var fsMm=r.size/pxPerMm;
-    var ang=r.angle||0;
-    var crv=r.curve||0;
-    var fontFam=FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
+    var cx = GM + (r.px/100)*GW;
+    var cy = GM + (r.py/100)*GH;
+    var fsMm = r.size / pxPerMm;
+    var ang = r.angle||0;
+    var crv = r.curve||0;
+    var fontFam = FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
 
     if(Math.abs(crv)>2){
-      /* Curved text via textPath on quadratic bezier */
       var approxWmm=Math.min(fsMm*0.62*t.length, GW*0.95);
       var sx=cx-approxWmm/2, ex=cx+approxWmm/2;
       var cpY=cy-(crv/100)*fsMm*1.5;
-      var pid='svgpath-'+i;
-
+      var pid='p'+i;
       var path=document.createElementNS(ns,'path');
       path.id=pid;
-      path.setAttribute('d','M '+sx.toFixed(3)+' '+cy.toFixed(3)+
-        ' Q '+cx.toFixed(3)+' '+cpY.toFixed(3)+' '+ex.toFixed(3)+' '+cy.toFixed(3));
+      path.setAttribute('d','M '+sx.toFixed(3)+' '+cy.toFixed(3)+' Q '+cx.toFixed(3)+' '+cpY.toFixed(3)+' '+ex.toFixed(3)+' '+cy.toFixed(3));
       path.setAttribute('fill','none');path.setAttribute('stroke','none');
       if(ang)path.setAttribute('transform','rotate('+ang+','+cx.toFixed(3)+','+cy.toFixed(3)+')');
       svg.appendChild(path);
-
       var te=document.createElementNS(ns,'text');
-      te.setAttribute('font-family',fontFam);
-      te.setAttribute('font-size',fsMm.toFixed(3));
-      te.setAttribute('fill','black');
+      te.setAttribute('font-family',fontFam);te.setAttribute('font-size',fsMm.toFixed(3));te.setAttribute('fill','black');
       var tp=document.createElementNS(ns,'textPath');
-      tp.setAttribute('href','#'+pid);
-      tp.setAttribute('startOffset','50%');
-      tp.setAttribute('text-anchor','middle');
-      tp.textContent=t;
-      te.appendChild(tp);
-      svg.appendChild(te);
+      tp.setAttribute('href','#'+pid);tp.setAttribute('startOffset','50%');tp.setAttribute('text-anchor','middle');
+      tp.textContent=t;te.appendChild(tp);svg.appendChild(te);
     } else {
       var te2=document.createElementNS(ns,'text');
-      te2.setAttribute('x',cx.toFixed(3));
-      te2.setAttribute('y',cy.toFixed(3));
-      te2.setAttribute('font-family',fontFam);
-      te2.setAttribute('font-size',fsMm.toFixed(3));
-      te2.setAttribute('text-anchor','middle');
-      te2.setAttribute('dominant-baseline','middle');
+      te2.setAttribute('x',cx.toFixed(3));te2.setAttribute('y',cy.toFixed(3));
+      te2.setAttribute('font-family',fontFam);te2.setAttribute('font-size',fsMm.toFixed(3));
+      te2.setAttribute('text-anchor','middle');te2.setAttribute('dominant-baseline','middle');
       te2.setAttribute('fill','black');
       if(ang)te2.setAttribute('transform','rotate('+ang+','+cx.toFixed(3)+','+cy.toFixed(3)+')');
-      te2.textContent=t;
-      svg.appendChild(te2);
+      te2.textContent=t;svg.appendChild(te2);
     }
   });
 
-  /* Serialise */
-  var ser=new XMLSerializer();
-  return ser.serializeToString(svg);
+  /* QR placeholder (SVG can't generate QR natively — add text note) */
+  if(qrVal&&qrVal.trim()){
+    var qNote=document.createElementNS(ns,'text');
+    qNote.setAttribute('x',(GM+4).toFixed(1));qNote.setAttribute('y',(GM+4).toFixed(1));
+    qNote.setAttribute('font-size','1.2');qNote.setAttribute('fill','#555');
+    qNote.setAttribute('font-family','Arial,sans-serif');
+    qNote.textContent='QR: '+qrVal.trim();
+    svg.appendChild(qNote);
+    var qBox=document.createElementNS(ns,'rect');
+    qBox.setAttribute('x',(GM+1).toFixed(1));qBox.setAttribute('y',(GM+6).toFixed(1));
+    qBox.setAttribute('width','10');qBox.setAttribute('height','10');
+    qBox.setAttribute('fill','none');qBox.setAttribute('stroke','#999');qBox.setAttribute('stroke-width','0.3');
+    qBox.setAttribute('stroke-dasharray','0.5 0.3');
+    svg.appendChild(qBox);
+    var qLbl=document.createElementNS(ns,'text');
+    qLbl.setAttribute('x',(GM+6).toFixed(1));qLbl.setAttribute('y',(GM+11.5).toFixed(1));
+    qLbl.setAttribute('font-size','1');qLbl.setAttribute('fill','#999');
+    qLbl.setAttribute('text-anchor','middle');qLbl.setAttribute('font-family','Arial,sans-serif');
+    qLbl.textContent='QR-kod';
+    svg.appendChild(qLbl);
+  }
+
+  /* Barcode placeholder */
+  if(barVal&&barVal.trim()){
+    var bNote=document.createElementNS(ns,'text');
+    bNote.setAttribute('x',(GM+4).toFixed(1));bNote.setAttribute('y',(GH-1).toFixed(1));
+    bNote.setAttribute('font-size','1.2');bNote.setAttribute('fill','#555');
+    bNote.setAttribute('font-family','Arial,sans-serif');
+    bNote.textContent='Streckkod: '+barVal.trim();
+    svg.appendChild(bNote);
+    var bBox=document.createElementNS(ns,'rect');
+    bBox.setAttribute('x',(GM+1).toFixed(1));bBox.setAttribute('y',(GH-8).toFixed(1));
+    bBox.setAttribute('width','20');bBox.setAttribute('height','6');
+    bBox.setAttribute('fill','none');bBox.setAttribute('stroke','#999');bBox.setAttribute('stroke-width','0.3');
+    bBox.setAttribute('stroke-dasharray','0.5 0.3');
+    svg.appendChild(bBox);
+    var bLbl=document.createElementNS(ns,'text');
+    bLbl.setAttribute('x',(GM+11).toFixed(1));bLbl.setAttribute('y',(GH-4).toFixed(1));
+    bLbl.setAttribute('font-size','1');bLbl.setAttribute('fill','#999');
+    bLbl.setAttribute('text-anchor','middle');bLbl.setAttribute('font-family','Arial,sans-serif');
+    bLbl.textContent=barVal.trim();
+    svg.appendChild(bLbl);
+  }
+
+  return new XMLSerializer().serializeToString(svg);
 }
 
-/* ═══ GENERATE PNG (B&W canvas, 850×540px) ═══ */
-function makeDesignPNG(cb){
-  /* 850×540 = 85×54mm at 10px/mm */
+/* ═══ GENERATE PNG ═══
+   rowsArr : array of row objects for this side
+   zoneId  : id of the zone element for px dimensions
+   qrVal, barVal : strings or ''
+   cb      : callback(dataUrl)
+*/
+function makeDesignPNG(rowsArr, zoneId, qrVal, barVal, cb){
   var W=850, H=540;
   var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   var ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='#999'; ctx.lineWidth=2; ctx.strokeRect(1,1,W-2,H-2);
-  var ml=Math.round(W/85), mt=Math.round(H/54); /* 1mm margin in px */
+  var ml=Math.round(W/85), mt=Math.round(H/54);
   ctx.setLineDash([6,4]); ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
   ctx.strokeRect(ml,mt,W-2*ml,H-2*mt); ctx.setLineDash([]);
-
-  /* Gravyr label */
   ctx.fillStyle='#aaa'; ctx.font='10px Arial';
   ctx.fillText('Gravyryta 83\u00d752mm \u2014 ELEGANT-M',ml+4,mt+12);
 
   var p=document.fonts?document.fonts.ready:Promise.resolve();
   p.then(function(){
-    var zone=document.getElementById('vk-zone');
+    var zone=document.getElementById(zoneId||'vk-zone');
     var zW=zone?zone.offsetWidth:300, zH=zone?zone.offsetHeight:190;
-    /* Scale: zone-px → canvas-px (within gravyr area) */
     var scX=(W-2*ml)/zW, scY=(H-2*mt)/zH;
+    var sc=Math.min(scX,scY);
 
-    rows.forEach(function(r){
+    /* Draw text rows */
+    rowsArr.forEach(function(r){
       var t=r.text; if(!t)return;
       var cx=ml+(r.px/100)*zW*scX;
       var cy=mt+(r.py/100)*zH*scY;
-      var fs=r.size*Math.min(scX,scY);
+      var fs=r.size*sc;
       var fk=FONTS[r.font].replace(/'/g,'').split(',')[0].trim();
       ctx.save();
       ctx.fillStyle='#000';
@@ -1307,7 +1333,61 @@ function makeDesignPNG(cb){
       }
       ctx.restore();
     });
-    cb(cv.toDataURL('image/png'));
+
+    /* Draw QR via QRCode library into offscreen canvas then blit */
+    function drawQRthenBar(){
+      if(qrVal&&qrVal.trim()){
+        var tmp=document.createElement('div');
+        tmp.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
+        document.body.appendChild(tmp);
+        try{
+          new QRCode(tmp,{text:qrVal.trim(),width:80,height:80,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+          setTimeout(function(){
+            var srcCV=tmp.querySelector('canvas');
+            if(srcCV){ctx.drawImage(srcCV,ml+8,mt+20,80,80);}
+            if(tmp.parentNode)document.body.removeChild(tmp);
+            drawBar();
+          },150);
+        }catch(e){if(tmp.parentNode)document.body.removeChild(tmp);drawBar();}
+      } else {
+        drawBar();
+      }
+    }
+
+    function drawBar(){
+      if(barVal&&barVal.trim()){
+        var bsvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        bsvg.style.cssText='position:absolute;visibility:hidden;left:-9999px;';
+        document.body.appendChild(bsvg);
+        try{
+          JsBarcode(bsvg,barVal.trim(),{format:'CODE128',width:2,height:50,displayValue:true,fontSize:12,background:'#fff',lineColor:'#000'});
+          /* Convert SVG to image via Blob */
+          var sData=new XMLSerializer().serializeToString(bsvg);
+          var sBlob=new Blob([sData],{type:'image/svg+xml;charset=utf-8'});
+          var sUrl=URL.createObjectURL(sBlob);
+          var img=new Image();
+          img.onload=function(){
+            ctx.drawImage(img, ml+8, H-mt-70, 200, 60);
+            URL.revokeObjectURL(sUrl);
+            if(bsvg.parentNode)document.body.removeChild(bsvg);
+            cb(cv.toDataURL('image/png'));
+          };
+          img.onerror=function(){
+            URL.revokeObjectURL(sUrl);
+            if(bsvg.parentNode)document.body.removeChild(bsvg);
+            cb(cv.toDataURL('image/png'));
+          };
+          img.src=sUrl;
+        }catch(e){
+          if(bsvg.parentNode)document.body.removeChild(bsvg);
+          cb(cv.toDataURL('image/png'));
+        }
+      } else {
+        cb(cv.toDataURL('image/png'));
+      }
+    }
+
+    drawQRthenBar();
   });
 }
 
@@ -1321,7 +1401,9 @@ function downloadFile(filename, dataUrl){
 
 /* ═══ PAYMENT ═══ */
 function buildSummaryHTML(){
-  var textLines=rows.filter(function(r){return r.text;}).map(function(r,i){
+  var isDouble=currentSide==='double';
+  var frontRows=isDouble?dRows[1]:rows;
+  var textLines=frontRows.filter(function(r){return r.text;}).map(function(r,i){
     var aNote=Math.abs(r.angle)>0.5?' ('+Math.round(r.angle)+'°)':'';
     var cNote=Math.abs(r.curve)>3?(r.curve>0?' (konvex '+Math.round(r.curve)+')'  :' (konkav '+Math.round(Math.abs(r.curve))+')'):'';
     return 'Rad '+(i+1)+' ['+FONT_LABELS[r.font]+' '+r.size+'px'+aNote+cNote+']: '+r.text;
@@ -1385,153 +1467,111 @@ function sendOrder(){
   /* Store on button so success screen can reference it */
   btn.dataset.orderNr=orderNr;
 
-  /* ── Step 1: Generate and auto-download PNG + SVG ── */
-  makeDesignPNG(function(pngDataUrl){
+  /* ── Step 1: Collect correct row data per side ── */
+  var frontRows, frontQR, frontBar, frontZoneId;
+  if(currentSide==='double'){
+    /* Dubbelsidig: framsida = dRows[1], baksida = dRows[2] */
+    frontRows  = dRows[1];
+    frontQR    = (document.getElementById('d-s1-qr')||{value:''}).value.trim();
+    frontBar   = (document.getElementById('d-s1-bar')||{value:''}).value.trim();
+    frontZoneId= 'd-zone-1';
+  } else {
+    /* Enkelsidig: använd main card rows */
+    frontRows  = rows;
+    frontQR    = document.getElementById('vk-qr').checked ? document.getElementById('vk-qr-input').value.trim() : '';
+    frontBar   = document.getElementById('vk-bar').checked ? document.getElementById('vk-bar-input').value.trim() : '';
+    frontZoneId= 'vk-zone';
+  }
+
+  /* ── Step 2: Generate PNG (framsida) and download, then SVG files ── */
+  makeDesignPNG(frontRows, frontZoneId, frontQR, frontBar, function(pngDataUrl){
     /* Download PNG */
     downloadFile('design-'+orderNr+'-framsida.png', pngDataUrl);
 
     /* Download SVG framsida */
-    var svgStr=makeDesignSVG(rows);
-    var svgBlob=new Blob([svgStr],{type:'image/svg+xml;charset=utf-8'});
-    var svgUrl=URL.createObjectURL(svgBlob);
+    var svgStr = makeDesignSVG(frontRows, frontZoneId, frontQR, frontBar);
+    var svgBlob = new Blob([svgStr],{type:'image/svg+xml;charset=utf-8'});
+    var svgUrl  = URL.createObjectURL(svgBlob);
     setTimeout(function(){
       downloadFile('design-'+orderNr+'-framsida.svg', svgUrl);
       URL.revokeObjectURL(svgUrl);
-    },400);
+    }, 400);
 
-    /* If double-sided: also download Sida 2 SVG */
+    /* If double-sided: download Sida 2 SVG as well */
     if(currentSide==='double'){
+      var s2qr  = (document.getElementById('d-s2-qr')||{value:''}).value.trim();
+      var s2bar = (document.getElementById('d-s2-bar')||{value:''}).value.trim();
       setTimeout(function(){
-        var svg2Str=makeDesignSVG(dRows[2]);
-        var svg2Blob=new Blob([svg2Str],{type:'image/svg+xml;charset=utf-8'});
-        var svg2Url=URL.createObjectURL(svg2Blob);
+        var svg2Str  = makeDesignSVG(dRows[2], 'd-zone-2', s2qr, s2bar);
+        var svg2Blob = new Blob([svg2Str],{type:'image/svg+xml;charset=utf-8'});
+        var svg2Url  = URL.createObjectURL(svg2Blob);
         downloadFile('design-'+orderNr+'-baksida.svg', svg2Url);
         URL.revokeObjectURL(svg2Url);
-      },800);
+      }, 800);
     }
 
-    /* ── Step 2: Build email texts ── */
-    btn.textContent='Skickar...';
-
+    /* ── Step 2: Build email + download baksida ── */
+    var isDouble=(currentSide==='double');
     var qty=isSample?1:(parseInt(document.getElementById('vk-qty').value)||1);
     var pp=getPrice(qty);
 
     var designTxt='';
-    rows.filter(function(r){return r.text;}).forEach(function(r,i){
-      var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
-      var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
-      designTxt+='Rad '+(i+1)+': "'+r.text+'" | Stil: '+FONT_LABELS[r.font]+' | Storlek: '+r.size+'px'+aNote+cNote+'\n';
-    });
-    if(currentSide==='double'){
-      designTxt+='\nSIDA 1 (Framsida):\n';
-      dRows[1].filter(function(r){return r.text;}).forEach(function(r,i){
-        var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
-        var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
-        designTxt+='  Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+aNote+cNote+'\n';
-      });
-      var s1qr=document.getElementById('d-s1-qr').value;
-      var s1bar=document.getElementById('d-s1-bar').value;
-      if(s1qr)designTxt+='  QR: '+s1qr+'\n';
-      if(s1bar)designTxt+='  Streckkod: '+s1bar+'\n';
-      designTxt+='\nSIDA 2 (Baksida):\n';
-      dRows[2].filter(function(r){return r.text;}).forEach(function(r,i){
-        var aNote=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';
-        var cNote=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';
-        designTxt+='  Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+aNote+cNote+'\n';
-      });
-      var s2qr=document.getElementById('d-s2-qr').value;
-      var s2bar=document.getElementById('d-s2-bar').value;
-      if(s2qr)designTxt+='  QR: '+s2qr+'\n';
-      if(s2bar)designTxt+='  Streckkod: '+s2bar+'\n';
+    function descRows(arr,ind){arr.filter(function(r){return r.text;}).forEach(function(r,i){var a=Math.abs(r.angle)>0.5?' | Vinkel: '+Math.round(r.angle)+'°':'';var c=Math.abs(r.curve)>3?' | '+(r.curve>0?'Konvex':'Konkav')+': '+Math.round(Math.abs(r.curve)):'';designTxt+=ind+'Rad '+(i+1)+': "'+r.text+'" | '+FONT_LABELS[r.font]+' '+r.size+'px'+a+c+'\n';});}
+    if(isDouble){
+      designTxt+='SIDA 1 (Framsida):\n'; descRows(dRows[1],'  ');
+      if(frontQR) designTxt+='  QR: '+frontQR+'\n';
+      if(frontBar)designTxt+='  Streckkod: '+frontBar+'\n';
+      var s2qrV=(document.getElementById('d-s2-qr')||{value:''}).value.trim();
+      var s2barV=(document.getElementById('d-s2-bar')||{value:''}).value.trim();
+      designTxt+='\nSIDA 2 (Baksida):\n'; descRows(dRows[2],'  ');
+      if(s2qrV) designTxt+='  QR: '+s2qrV+'\n';
+      if(s2barV)designTxt+='  Streckkod: '+s2barV+'\n';
+    } else {
+      descRows(rows,'');
+      if(frontQR) designTxt+='QR: '+frontQR+'\n';
+      if(frontBar)designTxt+='Streckkod: '+frontBar+'\n';
     }
 
     var compInfo='';
-    if(custType==='foret'){
-      compInfo='\nBeställartyp: Företag'
-        +'\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')
-        +'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')
-        +'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');
-    } else {
-      compInfo='\nBeställartyp: Privatperson';
+    if(custType==='foret'){compInfo='\nBeställartyp: Företag\nFöretagsnamn: '+(document.getElementById('pay-company').value||'—')+'\nOrganisationsnummer: '+(document.getElementById('pay-orgnr').value||'—')+'\nFöretagsadress: '+(document.getElementById('pay-corp-addr').value||'—');}
+    else{compInfo='\nBeställartyp: Privatperson';}
+
+    var filLista='  \u2022 design-'+orderNr+'-framsida.png\n  \u2022 design-'+orderNr+'-framsida.svg'+(isDouble?'\n  \u2022 design-'+orderNr+'-baksida.png\n  \u2022 design-'+orderNr+'-baksida.svg':'');
+
+    function sendEmails(){
+      btn.textContent='Skickar...';
+      var mo='\u2550\u2550 NY F\u00d6RFRÅGAN \u2014 Metall Visitkort \u2550\u2550\nBeställningsnummer: '+orderNr+'\n\nKund: '+name+'\nE-post: '+email+'\nTelefon: '+(phone||'Ej angiven')+'\n'+compInfo+'\n\n\u2500\u2500 PRODUKT \u2500\u2500\nMetall Visitkort'+(isSample?' \u2014 SAMPLE':'')+'\nKortfärg: '+(COLOR_NAMES[currentColor]||currentColor)+'\nGravyr: '+(isDouble?'Dubbelsidig':'Enkelsidig')+'\nAntal: '+qty+' st | Pris/st: '+pp+' kr\nTotalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)\n\n\u2500\u2500 DESIGN \u2500\u2500\n'+designTxt+'\nLeveransadress: '+(addr||'Ej angiven')+'\nBetalningsmetod: '+payM+'\n\n\u2500\u2500 FILER \u2500\u2500\n'+filLista+'\nKunden skickar filerna till elegant.m.se@gmail.com med '+orderNr+' i ämnesraden.';
+      var mc='Tack för din beställning, '+name+'!\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBeställningsnummer: '+orderNr+'\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nSpara ditt beställningsnummer \u2014 du behöver det i nästa steg.\n\n\u2500\u2500 VIKTIGT: SKICKA DINA DESIGNFILER \u2500\u2500\n\nDina designfiler har laddats ned till din dator:\n'+filLista+'\n\nFör att slutföra beställningen:\n  1. Öppna din e-postklient\n  2. Skapa ett nytt mejl till:  elegant.m.se@gmail.com\n  3. Skriv i ämnesraden:  '+orderNr+'\n  4. Bifoga alla nedladdade filer (PNG + SVG)\n  5. Skicka mejlet\n\n\u2500\u2500 VAD HÄNDER SEDAN \u2500\u2500\n\nNär vi mottagit filerna skickar vi faktura till '+email+'.\nBeställningen sätts igång så snart betalning är mottagen.\nVi återkommer inom 1\u20132 arbetsdagar.\n\nMed vänliga hälsningar\nELEGANT-M\nelegant.m.se@gmail.com';
+      emailjs.send('service_rqr0oai','template_kvc84w1',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mo,to_email:'elegant.m.se@gmail.com'})
+        .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',{from_name:name,from_email:email,phone:phone||'Ej angiven',message:mc,to_email:'elegant.m.se@gmail.com'});})
+        .then(function(){
+          document.getElementById('payment-status').textContent='\u2713 Förfrågan skickad!';
+          document.getElementById('payment-status').className='payment-status success';
+          btn.textContent='Skickat!';
+          var invNote=document.getElementById('invoice-note');
+          invNote.innerHTML='<div style="font-size:0.72rem;color:rgba(0,255,180,0.85);font-weight:600;letter-spacing:0.12em;margin-bottom:0.5rem;">Beställningsnummer: '+orderNr+'</div><div style="color:rgba(0,255,180,0.55);font-size:0.67rem;line-height:1.8;letter-spacing:0.06em;">Dina designfiler har laddats ned automatiskt.<br><strong style="color:rgba(0,255,180,0.8);">Skicka filerna (PNG + SVG) via mejl till:</strong><br><span style="font-size:0.78rem;color:rgba(0,255,180,0.95);">elegant.m.se@gmail.com</span><br>Skriv <strong style="color:rgba(0,255,180,0.9);">'+orderNr+'</strong> i ämnesraden.<br><br>Du har fått bekräftelse med instruktioner till din e-post.<br>Faktura skickas när vi mottagit dina filer.</div>';
+          invNote.style.display='block';
+        })
+        .catch(function(err){
+          console.error('EmailJS error:',err);
+          document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
+          document.getElementById('payment-status').className='payment-status error';
+          btn.disabled=false; btn.textContent='Skicka förfrågan';
+        });
     }
 
-    /* ── Email to Mustafa ── */
-    var msgToMustafa=
-       '══ NY FÖRFRÅGAN — Metall Visitkort ══\n'
-      +'Beställningsnummer: '+orderNr+'\n\n'
-      +'Kund: '+name+'\n'
-      +'E-post: '+email+'\n'
-      +'Telefon: '+(phone||'Ej angiven')+'\n'
-      +compInfo+'\n\n'
-      +'── PRODUKT ──\n'
-      +'Produkt: Metall Visitkort'+(isSample?' — SAMPLE':'')+'\n'
-      +'Kortfärg: '+(COLOR_NAMES[currentColor]||currentColor)+'\n'
-      +'Gravyr: '+(currentSide==='double'?'Dubbelsidig':'Enkelsidig')+'\n'
-      +'Antal: '+qty+' st\n'
-      +'Pris per st: '+pp+' kr\n'
-      +'Totalt: '+(qty*pp).toLocaleString('sv-SE')+' kr (inkl. 25% moms & frakt)\n\n'
-      +'── DESIGN ──\n'+designTxt+'\n'
-      +'Leveransadress: '+(addr||'Ej angiven')+'\n'
-      +'Betalningsmetod: '+payM+'\n\n'
-      +'── DESIGNFILER ──\n'
-      +'Kunden har fått nedladdningsbara filer:\n'
-      +'  • design-'+orderNr+'-framsida.png\n'
-      +'  • design-'+orderNr+'-framsida.svg\n'
-      +(currentSide==='double'?'  • design-'+orderNr+'-baksida.svg\n':'')+'\n'
-      +'Kunden är instruerad att skicka filerna (PNG + SVG) till:\n'
-      +'elegant.m.se@gmail.com  med beställningsnummer '+orderNr+' i ämnesraden.';
-
-    /* ── Confirmation email to customer ── */
-    var fileLista='  • design-'+orderNr+'-framsida.png\n'
-      +'  • design-'+orderNr+'-framsida.svg'
-      +(currentSide==='double'?'\n  • design-'+orderNr+'-baksida.svg':'');
-
-    var msgToCustomer=
-       'Tack för din beställning, '+name+'!\n\n'
-      +'━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
-      +'  Beställningsnummer: '+orderNr+'\n'
-      +'━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n'
-      +'Spara ditt beställningsnummer — du behöver det i nästa steg.\n\n'
-      +'── VIKTIGT: SKICKA DINA DESIGNFILER ──\n\n'
-      +'Dina designfiler laddades ned automatiskt till din dator:\n'
-      +fileLista+'\n\n'
-      +'För att slutföra beställningen behöver du skicka dessa filer till oss:\n\n'
-      +'  1. Öppna din e-postklient (t.ex. Gmail, Outlook)\n'
-      +'  2. Skapa ett nytt mejl till:  elegant.m.se@gmail.com\n'
-      +'  3. Skriv i ämnesraden:  '+orderNr+'\n'
-      +'  4. Bifoga båda filerna (PNG + SVG) från din dator\n'
-      +'  5. Skicka mejlet\n\n'
-      +'── VAD HÄNDER SEDAN ──\n\n'
-      +'När vi mottagit dina filer skickar vi en faktura till '+email+'.\n'
-      +'Beställningen sätts igång så snart betalning är mottagen.\n'
-      +'Vi återkommer inom 1–2 arbetsdagar.\n\n'
-      +'Med vänliga hälsningar\n'
-      +'ELEGANT-M\n'
-      +'elegant.m.se@gmail.com';
-
-    var paramsOwner ={from_name:name,from_email:email,phone:phone||'Ej angiven',message:msgToMustafa, to_email:'elegant.m.se@gmail.com'};
-    var paramsCustomer={from_name:name,from_email:email,phone:phone||'Ej angiven',message:msgToCustomer,to_email:'elegant.m.se@gmail.com'};
-
-    emailjs.send('service_rqr0oai','template_kvc84w1',paramsOwner)
-      .then(function(){return emailjs.send('service_rqr0oai','template_1qdf2dj',paramsCustomer);})
-      .then(function(){
-        document.getElementById('payment-status').textContent='✓ Förfrågan skickad!';
-        document.getElementById('payment-status').className='payment-status success';
-        btn.textContent='Skickat!';
-        /* Show order number + file instructions in the invoice note */
-        var invNote=document.getElementById('invoice-note');
-        invNote.innerHTML=
-          '<div style="font-size:0.72rem;color:rgba(0,255,180,0.85);font-weight:600;letter-spacing:0.12em;margin-bottom:0.5rem;">Beställningsnummer: '+orderNr+'</div>'
-          +'<div style="color:rgba(0,255,180,0.55);font-size:0.67rem;line-height:1.8;letter-spacing:0.06em;">'
-          +'Dina designfiler har laddats ned automatiskt.<br>'
-          +'<strong style="color:rgba(0,255,180,0.8);">Skicka filerna (PNG + SVG) via mejl till oss:</strong><br>'
-          +'<span style="font-size:0.75rem;color:rgba(0,255,180,0.9);letter-spacing:0.04em;">elegant.m.se@gmail.com</span><br>'
-          +'Skriv <strong style="color:rgba(0,255,180,0.9);">'+orderNr+'</strong> i ämnesraden.<br><br>'
-          +'Du har även fått en bekräftelse med instruktioner till din e-post.<br>'
-          +'Faktura skickas när vi mottagit dina filer.</div>';
-        invNote.style.display='block';
-      })
-      .catch(function(err){
+    if(isDouble){
+      var s2qrV2=(document.getElementById('d-s2-qr')||{value:''}).value.trim();
+      var s2barV2=(document.getElementById('d-s2-bar')||{value:''}).value.trim();
+      makeDesignPNG(dRows[2],'d-zone-2',s2qrV2,s2barV2,function(png2){
+        setTimeout(function(){downloadFile('design-'+orderNr+'-baksida.png',png2);},200);
+        var sv2=makeDesignSVG(dRows[2],'d-zone-2',s2qrV2,s2barV2);
+        var sb2=new Blob([sv2],{type:'image/svg+xml;charset=utf-8'});
+        var su2=URL.createObjectURL(sb2);
+        setTimeout(function(){downloadFile('design-'+orderNr+'-baksida.svg',su2);URL.revokeObjectURL(su2);},600);
+        setTimeout(sendEmails,900);
+      });
+    } else { sendEmails(); }
         console.error('EmailJS error:',err);
         document.getElementById('payment-status').textContent='Något gick fel. Maila oss: elegant.m.se@gmail.com';
         document.getElementById('payment-status').className='payment-status error';
