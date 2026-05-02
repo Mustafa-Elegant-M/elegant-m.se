@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — ELEGANT-M</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:linear-gradient(160deg,#0a1a10,#061009);min-height:100vh;font-family:'Josefin Sans',sans-serif;color:#ccc;}
+    ::-webkit-scrollbar{width:6px;}
+    ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
+    ::-webkit-scrollbar-thumb{background:rgba(0,255,180,0.3);border-radius:3px;}
+    .top-bar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(6,16,9,0.95);backdrop-filter:blur(10px);border-bottom:0.5px solid rgba(0,255,180,0.1);}
+    .logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:0.2em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .logo span{font-style:italic;}
+    .top-right{display:flex;align-items:center;gap:1rem;}
+    .admin-badge{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.6);border:0.5px solid rgba(0,255,180,0.3);padding:0.28rem 0.7rem;border-radius:20px;}
+    .logout-btn{background:none;border:0.5px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.7);font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:20px;cursor:pointer;transition:all 0.2s;}
+    .logout-btn:hover{border-color:rgba(255,100,100,0.9);color:rgba(255,100,100,1);}
+    .auth-section{display:none;width:min(96vw,460px);margin:5rem auto;background:rgba(0,0,0,0.45);border:0.5px solid rgba(0,255,180,0.15);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    .main-section{display:none;width:min(98vw,1200px);margin:2rem auto;padding:0 1rem 4rem;}
+    .section-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;}
+    .section-sub{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.45);margin-bottom:2rem;}
+    .tabs{display:flex;gap:0.5rem;margin-bottom:2rem;flex-wrap:wrap;}
+    .tab{padding:0.6rem 1.2rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#777;transition:all 0.2s;}
+    .tab:hover{border-color:rgba(0,255,180,0.3);color:#aaa;}
+    .tab.active{background:rgba(0,255,180,0.08);border-color:rgba(0,255,180,0.5);color:rgba(0,255,180,0.9);}
+    .panel{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
+    .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.8rem;}
+    .panel-title{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.65);}
+    .form-group{margin-bottom:1.1rem;}
+    .form-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.4rem;}
+    .form-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.88rem;color:#ddd;outline:none;transition:border-color 0.2s;}
+    .form-input:focus{border-color:rgba(0,255,180,0.4);}
+    .form-input::placeholder{color:rgba(255,255,255,0.18);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:0.5px solid rgba(255,255,255,0.05);}
+    .toggle-label{font-size:0.75rem;letter-spacing:0.08em;color:#bbb;}
+    .toggle-sub{font-size:0.62rem;color:#666;margin-top:0.2rem;}
+    .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;transition:0.3s;}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#666;border-radius:50%;transition:0.3s;}
+    .toggle input:checked + .toggle-slider{background:rgba(0,255,180,0.3);}
+    .toggle input:checked + .toggle-slider::before{transform:translateX(20px);background:rgba(0,255,180,0.9);}
+    .btn-primary{padding:0.7rem 1.4rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.9);transition:all 0.2s;white-space:nowrap;}
+    .btn-primary:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 15px rgba(0,255,180,0.1);}
+    .btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+    .btn-secondary{padding:0.55rem 1rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#888;transition:all 0.2s;white-space:nowrap;}
+    .btn-secondary:hover{border-color:rgba(255,255,255,0.3);color:#ccc;}
+    .btn-danger{padding:0.55rem 0.8rem;background:rgba(255,60,60,0.06);border:0.5px solid rgba(255,60,60,0.2);border-radius:12px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,80,80,0.7);transition:all 0.2s;}
+    .btn-danger:hover{background:rgba(255,60,60,0.14);border-color:rgba(255,80,80,0.6);}
+    .btn-wide{width:100%;padding:0.9rem;font-size:0.72rem;letter-spacing:0.25em;border-radius:25px;margin-top:0.5rem;}
+    .btn-text{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(0,255,180,0.45);padding:0.4rem;transition:color 0.2s;display:block;width:100%;text-align:center;margin-top:0.8rem;}
+    .btn-text:hover{color:rgba(0,255,180,0.9);}
+    .status{font-size:0.7rem;letter-spacing:0.08em;min-height:1.1rem;margin-top:0.7rem;text-align:center;}
+    .status.error{color:#ff7070;}.status.info{color:rgba(0,255,180,0.8);}.status.success{color:#4cff80;}
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
+    .card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.1rem 1.3rem;transition:border-color 0.2s;}
+    .card:hover{border-color:rgba(0,255,180,0.2);}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.4rem;}
+    .card-name{font-size:0.88rem;letter-spacing:0.08em;color:#ddd;}
+    .card-sub{font-size:0.6rem;letter-spacing:0.1em;color:#666;text-transform:uppercase;margin-top:0.2rem;}
+    .card-actions{display:flex;gap:0.4rem;flex-shrink:0;}
+    .add-card{border:0.5px dashed rgba(0,255,180,0.25);background:rgba(0,255,180,0.02);display:flex;align-items:center;justify-content:center;gap:0.6rem;cursor:pointer;min-height:80px;color:rgba(0,255,180,0.5);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.2s;}
+    .add-card:hover{border-color:rgba(0,255,180,0.5);background:rgba(0,255,180,0.05);color:rgba(0,255,180,0.9);}
+    .price-level-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;align-items:center;margin-bottom:0.6rem;}
+    .price-level-label{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#666;text-align:center;}
+    .campaign-box{background:rgba(255,180,0,0.04);border:0.5px solid rgba(255,180,0,0.15);border-radius:10px;padding:1rem;margin-top:0.8rem;}
+    .campaign-title{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,180,0,0.7);margin-bottom:0.8rem;}
+    .images-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.8rem;margin-top:0.8rem;}
+    .image-item{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+    .image-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+    .image-item-footer{padding:0.6rem;}
+    .alt-input{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.35rem 0.5rem;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;color:#aaa;outline:none;margin-bottom:0.4rem;}
+    .upload-zone{background:rgba(0,255,180,0.02);border:0.5px dashed rgba(0,255,180,0.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+    input[type="file"]{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.55rem;color:#888;font-size:0.75rem;margin-bottom:0.7rem;cursor:pointer;}
+    progress{width:100%;height:5px;border-radius:3px;margin-bottom:0.5rem;display:none;}
+    progress::-webkit-progress-bar{background:rgba(255,255,255,0.08);border-radius:3px;}
+    progress::-webkit-progress-value{background:rgba(0,255,180,0.7);border-radius:3px;}
+    .order-table,.customer-table{width:100%;border-collapse:collapse;font-size:0.72rem;}
+    .order-table th,.customer-table th{font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,255,180,0.55);padding:0.6rem 0.8rem;border-bottom:0.5px solid rgba(0,255,180,0.1);text-align:left;}
+    .order-table td,.customer-table td{padding:0.65rem 0.8rem;border-bottom:0.5px solid rgba(255,255,255,0.04);color:#999;vertical-align:top;}
+    .order-table tr:hover td,.customer-table tr:hover td{background:rgba(0,255,180,0.02);}
+    .badge{display:inline-block;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:10px;font-weight:600;}
+    .badge-new{background:rgba(150,150,150,0.15);color:#888;border:0.5px solid rgba(150,150,150,0.2);}
+    .badge-silver{background:rgba(180,180,220,0.12);color:#aab;border:0.5px solid rgba(180,180,220,0.25);}
+    .badge-gold{background:rgba(255,200,0,0.1);color:rgba(255,200,0,0.8);border:0.5px solid rgba(255,200,0,0.2);}
+    .badge-platinum{background:rgba(0,255,220,0.08);color:rgba(0,255,220,0.7);border:0.5px solid rgba(0,255,220,0.2);}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:12px;padding:1.2rem;text-align:center;}
+    .stat-number{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;background:linear-gradient(135deg,#888,#eee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+    .stat-label{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;margin-top:0.4rem;}
+    .loading-state{color:rgba(0,255,180,0.4);font-size:0.72rem;letter-spacing:0.15em;text-align:center;padding:2rem;}
+    .empty-state{color:#444;font-size:0.72rem;letter-spacing:0.1em;text-align:center;padding:2rem;font-style:italic;}
+    .error-state{color:#ff7070;font-size:0.72rem;text-align:center;padding:1.5rem;}
+    .breadcrumb{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .breadcrumb-item{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;cursor:pointer;transition:color 0.2s;}
+    .breadcrumb-item:hover{color:rgba(0,255,180,0.7);}
+    .breadcrumb-item.active{color:rgba(0,255,180,0.8);cursor:default;}
+    .breadcrumb-sep{color:#333;font-size:0.7rem;}
+    .modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem;}
+    .modal-overlay.active{display:flex;}
+    .modal{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:18px;width:min(96vw,560px);max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.6);}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.5rem;}
+    .modal-footer{display:flex;gap:0.8rem;margin-top:1.5rem;justify-content:flex-end;}
+    @media(max-width:600px){
+      .top-bar{padding:0.8rem 1rem;}
+      .main-section{padding:0 0.5rem 3rem;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .price-level-row{grid-template-columns:1fr 1fr;gap:0.5rem;}
+      .form-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="logo">ELEGANT<span>-M</span></div>
+  <div class="top-right">
+    <div class="admin-badge">Admin Panel</div>
+    <button class="logout-btn" id="logout-btn" style="display:none;" onclick="doLogout()">Logga ut</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="auth-section" id="login-section">
+  <div class="section-title">Admin</div>
+  <div class="section-sub">Tvåstegsverifiering aktiverad</div>
+  <div class="form-group">
+    <label class="form-label">E-postadress</label>
+    <input class="form-input" type="email" id="login-email" placeholder="din@email.com"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Lösenord</label>
+    <input class="form-input" type="password" id="login-pass" placeholder="••••••••••"/>
+  </div>
+  <button class="btn-primary btn-wide" id="login-btn" onclick="doLogin()">Logga in</button>
+  <div class="status" id="login-status"></div>
+</div>
+
+<!-- OTP -->
+<div class="auth-section" id="otp-section">
+  <div class="section-title">Verifiera</div>
+  <div class="section-sub">Engångskod skickad till din e-post</div>
+  <div class="form-group">
+    <label class="form-label">6-siffrig kod</label>
+    <input class="form-input" type="number" id="otp-input" placeholder="123456"/>
+  </div>
+  <button class="btn-primary btn-wide" onclick="doOTP()">Verifiera kod</button>
+  <button class="btn-text" onclick="resendOTP()">Skicka ny kod</button>
+  <div class="status" id="otp-status"></div>
+</div>
+
+<!-- ADMIN MAIN -->
+<div class="main-section" id="admin-section">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('products')">Produkter</div>
+    <div class="tab" onclick="switchTab('orders')">Ordrar</div>
+    <div class="tab" onclick="switchTab('customers')">Kunder</div>
+    <div class="tab" onclick="switchTab('report')">Rapport</div>
+  </div>
+
+  <!-- PRODUKTER -->
+  <div id="tab-products">
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="breadcrumb-item active" onclick="navTo('materials')">Material</span>
+    </div>
+    <div class="panel" id="panel-materials">
+      <div class="panel-header">
+        <div class="panel-title">Alla material</div>
+        <button class="btn-primary" onclick="openAddMaterial()">+ Lägg till</button>
+      </div>
+      <div class="card-grid" id="materials-grid"><div class="loading-state">Laddar...</div></div>
+    </div>
+    <div class="panel" id="panel-products" style="display:none;">
+      <div class="panel-header">
+        <div class="panel-title">Produkter</div>
+        <button class="btn-primary" onclick="openAddProduct()">+ Lägg till</button>
+      </div>
+      <div class="card-grid" id="products-grid"></div>
+    </div>
+    <div id="panel-product-detail" style="display:none;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Produktbilder</div></div>
+        <div class="upload-zone">
+          <label class="form-label">Ladda upp bild(er)</label>
+          <input type="file" id="image-upload" accept="image/*" multiple/>
+          <progress id="upload-progress" max="100"></progress>
+          <button class="btn-primary" id="upload-btn" onclick="uploadImages()">Ladda upp</button>
+        </div>
+        <div class="images-grid" id="images-grid"><div class="empty-state">Inga bilder.</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Prissattning</div>
+          <button class="btn-primary" onclick="savePricing()">Spara priser</button>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Offertläge</div><div class="toggle-sub">Inga priser visas — kunden skickar förfrågan</div></div>
+          <label class="toggle"><input type="checkbox" id="toggle-quote" onchange="toggleQuoteMode()"/><span class="toggle-slider"></span></label>
+        </div>
+        <div id="pricing-content" style="margin-top:1rem;">
+          <div class="panel-title" style="margin-bottom:0.8rem;">Kvantitetsnivåer</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;margin-bottom:0.4rem;">
+            <div class="price-level-label">Från (st)</div>
+            <div class="price-level-label">Till (st)</div>
+            <div class="price-level-label">Kr/st</div>
+            <div></div>
+          </div>
+          <div id="price-levels-container"></div>
+          <button class="btn-secondary" onclick="addPriceLevel()" style="margin-top:0.5rem;">+ Nivå</button>
+        </div>
+        <div style="margin-top:1.5rem;">
+          <div class="toggle-row">
+            <div><div class="toggle-label">Kampanjpris</div><div class="toggle-sub">Procentuellt avdrag på alla nivåer</div></div>
+            <label class="toggle"><input type="checkbox" id="toggle-campaign" onchange="toggleCampaign()"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="campaign-box" id="campaign-box" style="display:none;">
+            <div class="campaign-title">Kampanjinställningar</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Rabatt (%)</label><input class="form-input" type="number" id="campaign-pct" placeholder="T.ex. 20" min="1" max="99"/></div>
+              <div class="form-group"><label class="form-label">Kampanjnamn</label><input class="form-input" type="text" id="campaign-name" placeholder="T.ex. Vårkampanj"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Startdatum</label><input class="form-input" type="date" id="campaign-start"/></div>
+              <div class="form-group"><label class="form-label">Slutdatum</label><input class="form-input" type="date" id="campaign-end"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDRAR -->
+  <div id="tab-orders" style="display:none;">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Orderhistorik</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <input class="form-input" type="text" id="order-search" placeholder="Sök..." style="width:180px;padding:0.5rem 0.8rem;font-size:0.75rem;" oninput="filterOrders()"/>
+          <select class="form-input" id="order-filter" style="width:160px;padding:0.5rem;font-size:0.72rem;" onchange="filterOrders()">
+            <option value="">Alla</option>
+            <option value="new">Nya</option>
+            <option value="processing">Behandlas</option>
+            <option value="quoted">Offert skickad</option>
+            <option value="confirmed">Bekräftad</option>
+            <option value="completed">Klar</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="order-table">
+          <thead><tr><th>Datum</th><th>Kund</th><th>Produkt</th><th>Antal</th><th>Status</th><th>Lojalitet</th><th>Åtgärd</th></tr></thead>
+          <tbody id="orders-tbody"><tr><td colspan="7" class="loading-state">Laddar...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- KUNDER -->
+  <div id="tab-customers" style="display:none;">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="stat-total">—</div><div class="stat-label">Totalt kunder</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-active">—</div><div class="stat-label">Aktiva (12 mån)</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-loyal">—</div><div class="stat-label">Lojala kunder</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-new">—</div><div class="stat-label">Nya denna månad</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Kundregister</div>
+        <input class="form-input" type="text" id="customer-search" placeholder="Sök..." style="width:200px;padding:0.5rem 0.8rem;font-size:0.75rem;" oninput="filterCustomers()"/>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="customer-table">
+          <thead><tr><th>Namn</th><th>E-post</th><th>Ordrar</th><th>Senast aktiv</th><th>Lojalitet</th><th>Åtgärd</th></tr></thead>
+          <tbody id="customers-tbody"><tr><td colspan="6" class="loading-state">Laddar...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAPPORT -->
+  <div id="tab-report" style="display:none;">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Månadsrapport</div>
+        <button class="btn-primary" onclick="sendMonthlyReport(false)">Skicka rapport nu</button>
+      </div>
+      <div id="report-content" class="loading-state">Genererar...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Material -->
+<div class="modal-overlay" id="modal-add-material">
+  <div class="modal">
+    <div class="modal-title">Nytt material</div>
+    <div class="form-group"><label class="form-label">Namn</label><input class="form-input" type="text" id="new-material-name" placeholder="T.ex. Läder"/></div>
+    <div class="form-group"><label class="form-label">URL-id (auto)</label><input class="form-input" type="text" id="new-material-id" readonly style="opacity:0.5;"/></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-add-material')">Avbryt</button>
+      <button class="btn-primary" onclick="saveMaterial()">Spara</button>
+    </div>
+    <div class="status" id="modal-material-status"></div>
+  </div>
+</div>
+
+<!-- MODAL: Produkt -->
+<div class="modal-overlay" id="modal-add-product">
+  <div class="modal">
+    <div class="modal-title">Ny produkt</div>
+    <div class="form-group"><label class="form-label">Namn</label><input class="form-input" type="text" id="new-product-name" placeholder="T.ex. Visitkort"/></div>
+    <div class="form-group"><label class="form-label">Beskrivning</label><input class="form-input" type="text" id="new-product-desc" placeholder="Kort beskrivning till kunden"/></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-add-product')">Avbryt</button>
+      <button class="btn-primary" onclick="saveProduct()">Spara</button>
+    </div>
+    <div class="status" id="modal-product-status"></div>
+  </div>
+</div>
+
+<!-- MODAL: Order -->
+<div class="modal-overlay" id="modal-order-detail">
+  <div class="modal">
+    <div class="modal-title">Orderdetaljer</div>
+    <div id="order-detail-content"></div>
+    <div class="form-group" style="margin-top:1.2rem;">
+      <label class="form-label">Uppdatera status</label>
+      <select class="form-input" id="order-status-select">
+        <option value="new">Ny</option>
+        <option value="processing">Behandlas</option>
+        <option value="quoted">Offert skickad</option>
+        <option value="confirmed">Bekräftad</option>
+        <option value="completed">Klar</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-order-detail')">Stäng</button>
+      <button class="btn-primary" onclick="updateOrderStatus()">Uppdatera</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, addDoc, collection, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
+  const CLOUD="dqqirxxnz", UPLOAD_PRESET="elegant-m-admin";
+  const ADMIN_MAIL=["alkaisy",".ab@gmail",".com"].join("");
+  const EJS_PK="AOGvNUIneVA3XJNhk", EJS_SV="service_t7ra7wk", EJS_TP="template_8rljpya";
+  const MAX_ATT=3, LOCK_MS=3600000;
+
+  const app=initializeApp(FB), auth=getAuth(app), db=getFirestore(app);
+  emailjs.init(EJS_PK);
+
+  let otp=null,otpExp=null;
+  let att=parseInt(localStorage.getItem("em_att")||"0");
+  let lock=parseInt(localStorage.getItem("em_lock")||"0");
+  let curMat=null,curProd=null,curOrderId=null;
+  let allOrders=[],allCustomers=[],priceLevels=[];
+
+  const $=id=>document.getElementById(id);
+  const ts=()=>new Date().toLocaleString("sv-SE");
+
+  function setStatus(id,msg,type){const el=$(id);if(!el)return;el.textContent=msg;el.className="status "+(type||"");}
+
+  async function secMail(evt,det){
+    try{await emailjs.send(EJS_SV,EJS_TP,{event_type:evt,event_time:ts(),event_details:det,ip_info:"N/A"});}
+    catch(e){console.warn(e);}
+  }
+
+  function loyalty(n){
+    if(n>=10)return{level:"Platina",badge:"badge-platinum",icon:"💎"};
+    if(n>=5)return{level:"Guld",badge:"badge-gold",icon:"🥇"};
+    if(n>=2)return{level:"Silver",badge:"badge-silver",icon:"🥈"};
+    return{level:"Ny kund",badge:"badge-new",icon:"🥉"};
+  }
+
+  function slug(s){return s.toLowerCase().trim().replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o").replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"");}
+
+  // AUTH
+  window.doLogin=async function(){
+    if(Date.now()<lock){setStatus("login-status","Spärrat. Vänta "+Math.ceil((lock-Date.now())/60000)+" min.","error");return;}
+    const email=$("login-email").value.trim(),pass=$("login-pass").value,btn=$("login-btn");
+    btn.disabled=true;btn.textContent="Kontrollerar...";setStatus("login-status","","");
+    try{
+      await signInWithEmailAndPassword(auth,email,pass);
+      att=0;localStorage.setItem("em_att","0");
+      otp=Math.floor(100000+Math.random()*900000).toString();
+      otpExp=Date.now()+600000;
+      await secMail("Inloggningsförsök — OTP","OTP: "+otp+" (10 min)");
+      $("login-section").style.display="none";
+      $("otp-section").style.display="";
+      setStatus("otp-status","Kod skickad till din e-post.","info");
+    }catch(e){
+      att++;localStorage.setItem("em_att",att.toString());
+      await secMail("Misslyckat försök ("+att+"/"+MAX_ATT+")","E-post: "+email);
+      if(att>=MAX_ATT){
+        lock=Date.now()+LOCK_MS;localStorage.setItem("em_lock",lock.toString());
+        att=0;localStorage.setItem("em_att","0");
+        await secMail("KONTOT SPÄRRАТ 1 TIMME",MAX_ATT+" misslyckade försök.");
+        setStatus("login-status","3 misslyckade försök. Spärrat 1 timme.","error");
+      }else{
+        setStatus("login-status","Fel lösenord. "+(MAX_ATT-att)+" försök kvar.","error");
+      }
+      btn.disabled=false;btn.textContent="Logga in";
+    }
+  };
+
+  window.doOTP=function(){
+    const entered=$("otp-input").value.trim();
+    if(Date.now()>otpExp){setStatus("otp-status","Koden gick ut.","error");return;}
+    if(entered===otp){
+      $("otp-section").style.display="none";
+      $("admin-section").style.display="";
+      $("logout-btn").style.display="";
+      secMail("Lyckad inloggning","Admin loggade in "+ts());
+      onReady();
+    }else{setStatus("otp-status","Fel kod.","error");}
+  };
+
+  window.resendOTP=async function(){
+    otp=Math.floor(100000+Math.random()*900000).toString();
+    otpExp=Date.now()+600000;
+    await secMail("Ny OTP begärd","Kod: "+otp);
+    setStatus("otp-status","Ny kod skickad!","info");
+  };
+
+  window.doLogout=async function(){await signOut(auth);location.reload();};
+
+  async function onReady(){loadMaterials();loadOrders();loadCustomers();runMaintenance();}
+
+  // TABS
+  window.switchTab=function(tab){
+    ["products","orders","customers","report"].forEach(t=>{$("tab-"+t).style.display=t===tab?"":"none";});
+    document.querySelectorAll(".tab").forEach((el,i)=>{
+      el.classList.toggle("active",["products","orders","customers","report"][i]===tab);
+    });
+    if(tab==="report")generateReport();
+  };
+
+  // NAV
+  window.navTo=function(level){
+    if(level==="materials"){curMat=null;curProd=null;$("panel-materials").style.display="";$("panel-products").style.display="none";$("panel-product-detail").style.display="none";}
+    else if(level==="products"){curProd=null;$("panel-materials").style.display="none";$("panel-products").style.display="";$("panel-product-detail").style.display="none";}
+    updateBC();
+  };
+
+  function updateBC(){
+    const bc=$("breadcrumb");bc.innerHTML="";
+    const add=(label,level,active)=>{
+      if(bc.children.length){const s=document.createElement("span");s.className="breadcrumb-sep";s.textContent="›";bc.appendChild(s);}
+      const el=document.createElement("span");el.className="breadcrumb-item"+(active?" active":"");
+      el.textContent=label;if(!active)el.onclick=()=>navTo(level);bc.appendChild(el);
+    };
+    add("Material","materials",!curMat);
+    if(curMat)add(curMat.name,"products",!curProd);
+    if(curProd)add(curProd.name,"",true);
+  }
+
+  // MATERIALS
+  async function loadMaterials(){
+    const g=$("materials-grid");g.innerHTML='<div class="loading-state">Laddar...</div>';
+    try{
+      const snap=await getDocs(collection(db,"materials"));
+      const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
+      g.innerHTML="";
+      mats.forEach(m=>{
+        const c=document.createElement("div");c.className="card";
+        c.innerHTML='<div class="card-top"><div><div class="card-name">'+m.name+'</div></div><div class="card-actions"><button class="btn-secondary" onclick="openMaterial(\''+m.id+'\',\''+m.name+'\')">Öppna</button><button class="btn-danger" onclick="delMaterial(\''+m.id+'\')">🗑</button></div></div>';
+        g.appendChild(c);
+      });
+      const add=document.createElement("div");add.className="card add-card";
+      add.innerHTML='<span style="font-size:1.4rem">+</span> Nytt material';add.onclick=openAddMaterial;g.appendChild(add);
+    }catch(e){g.innerHTML='<div class="error-state">'+e.message+'</div>';}
+  }
+
+  window.openMaterial=function(id,name){
+    curMat={id,name};curProd=null;
+    $("panel-materials").style.display="none";$("panel-products").style.display="";$("panel-product-detail").style.display="none";
+    updateBC();loadProducts(id);
+  };
+
+  window.openAddMaterial=function(){
+    $("new-material-name").value="";$("new-material-id").value="";
+    $("new-material-name").oninput=function(){$("new-material-id").value=slug(this.value);};
+    openModal("modal-add-material");
+  };
+
+  window.saveMaterial=async function(){
+    const name=$("new-material-name").value.trim(),id=$("new-material-id").value.trim();
+    if(!name||!id){setStatus("modal-material-status","Fyll i alla fält.","error");return;}
+    try{await setDoc(doc(db,"materials",id),{name,createdAt:new Date().toISOString()});closeModal("modal-add-material");loadMaterials();}
+    catch(e){setStatus("modal-material-status",e.message,"error");}
+  };
+
+  window.delMaterial=async function(id){
+    if(!confirm("Ta bort material och ALLA produkter?"))return;
+    const ps=await getDocs(collection(db,"materials/"+id+"/products"));
+    for(const d of ps.docs)await deleteDoc(doc(db,"materials/"+id+"/products/"+d.id));
+    await deleteDoc(doc(db,"materials",id));loadMaterials();
+  };
+
+  // PRODUCTS
+  async function loadProducts(matId){
+    const g=$("products-grid");g.innerHTML='<div class="loading-state">Laddar...</div>';
+    const snap=await getDocs(collection(db,"materials/"+matId+"/products"));
+    const prods=[];snap.forEach(d=>prods.push({id:d.id,...d.data()}));
+    g.innerHTML="";
+    prods.forEach(p=>{
+      const c=document.createElement("div");c.className="card";
+      const imgN=p.images?p.images.length:0,hasP=p.priceLevels&&p.priceLevels.length>0;
+      c.innerHTML='<div class="card-top"><div><div class="card-name">'+p.name+'</div><div class="card-sub">'+imgN+' bilder · '+(hasP?"Priser inlagda":"Inget pris")+'</div></div><div class="card-actions"><button class="btn-secondary" onclick="openProduct(\''+p.id+'\',\''+p.name+'\')">Redigera</button><button class="btn-danger" onclick="delProduct(\''+matId+'\',\''+p.id+'\')">🗑</button></div></div>';
+      g.appendChild(c);
+    });
+    const add=document.createElement("div");add.className="card add-card";
+    add.innerHTML='<span style="font-size:1.4rem">+</span> Ny produkt';add.onclick=openAddProduct;g.appendChild(add);
+  }
+
+  window.openProduct=async function(id,name){
+    curProd={id,name};
+    $("panel-materials").style.display="none";$("panel-products").style.display="none";$("panel-product-detail").style.display="";
+    updateBC();await loadProductDetail(curMat.id,id);
+  };
+
+  window.openAddProduct=function(){$("new-product-name").value="";$("new-product-desc").value="";openModal("modal-add-product");};
+
+  window.saveProduct=async function(){
+    const name=$("new-product-name").value.trim(),desc=$("new-product-desc").value.trim();
+    if(!name){setStatus("modal-product-status","Fyll i namn.","error");return;}
+    const id=slug(name);
+    try{
+      await setDoc(doc(db,"materials/"+curMat.id+"/products",id),{name,desc,images:[],priceLevels:[],quoteMode:false,campaign:{active:false,pct:0,name:"",start:"",end:""},createdAt:new Date().toISOString()});
+      closeModal("modal-add-product");loadProducts(curMat.id);
+    }catch(e){setStatus("modal-product-status",e.message,"error");}
+  };
+
+  window.delProduct=async function(matId,prodId){
+    if(!confirm("Ta bort produkten?"))return;
+    await deleteDoc(doc(db,"materials/"+matId+"/products/"+prodId));loadProducts(matId);
+  };
+
+  // PRODUCT DETAIL
+  async function loadProductDetail(matId,prodId){
+    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
+    const snap=await getDoc(ref);if(!snap.exists())return;
+    const data=snap.data();
+    renderImages(data.images||[],matId,prodId);
+    priceLevels=(data.priceLevels||[]).map(l=>({...l}));
+    $("toggle-quote").checked=!!data.quoteMode;toggleQuoteMode();
+    renderPriceLevels();
+    const camp=data.campaign||{};
+    $("toggle-campaign").checked=!!camp.active;
+    $("campaign-pct").value=camp.pct||"";$("campaign-name").value=camp.name||"";
+    $("campaign-start").value=camp.start||"";$("campaign-end").value=camp.end||"";
+    $("campaign-box").style.display=camp.active?"":"none";
+  }
+
+  // IMAGES
+  function renderImages(images,matId,prodId){
+    const g=$("images-grid");g.innerHTML="";
+    if(!images.length){g.innerHTML='<div class="empty-state">Inga bilder.</div>';return;}
+    images.forEach((img,idx)=>{
+      const item=document.createElement("div");item.className="image-item";
+      item.innerHTML='<img src="'+img.url+'" alt="'+(img.alt||"")+'" loading="lazy"/><div class="image-item-footer"><input class="alt-input" type="text" value="'+(img.alt||"")+'" placeholder="Bildbeskrivning" onchange="updateAlt(\''+matId+'\',\''+prodId+'\','+idx+',this.value)"/><button class="btn-danger" style="width:100%;font-size:0.58rem;padding:0.3rem;" onclick="delImg(\''+matId+'\',\''+prodId+'\','+idx+')">🗑 Ta bort</button></div>';
+      g.appendChild(item);
+    });
+  }
+
+  window.uploadImages=async function(){
+    const files=$("image-upload").files;if(!files.length){alert("Välj bild.");return;}
+    const matId=curMat.id,prodId=curProd.id,btn=$("upload-btn"),prog=$("upload-progress");
+    btn.disabled=true;btn.textContent="Laddar...";prog.style.display="block";prog.value=0;
+    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
+    const snap=await getDoc(ref);const existing=snap.exists()?(snap.data().images||[]):[];
+    for(let i=0;i<files.length;i++){
+      const fd=new FormData();fd.append("file",files[i]);fd.append("upload_preset",UPLOAD_PRESET);fd.append("folder","elegant-m/"+matId+"/"+prodId);
+      const result=await new Promise((res,rej)=>{
+        const xhr=new XMLHttpRequest();
+        xhr.upload.onprogress=e=>{if(e.lengthComputable)prog.value=((i+e.loaded/e.total)/files.length)*100;};
+        xhr.onload=()=>xhr.status===200?res(JSON.parse(xhr.responseText)):rej();
+        xhr.onerror=()=>rej();
+        xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD+"/image/upload");xhr.send(fd);
+      });
+      existing.push({url:result.secure_url,publicId:result.public_id,alt:""});
+    }
+    await setDoc(ref,{images:existing},{merge:true});
+    $("image-upload").value="";btn.disabled=false;btn.textContent="Ladda upp";prog.style.display="none";
+    renderImages(existing,matId,prodId);
+  };
+
+  window.updateAlt=async function(matId,prodId,idx,alt){
+    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
+    const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs[idx].alt=alt;
+    await setDoc(ref,{images:imgs},{merge:true});
+  };
+
+  window.delImg=async function(matId,prodId,idx){
+    if(!confirm("Ta bort bild?"))return;
+    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
+    const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs.splice(idx,1);
+    await setDoc(ref,{images:imgs},{merge:true});renderImages(imgs,matId,prodId);
+  };
+
+  // PRICING
+  window.toggleQuoteMode=function(){const on=$("toggle-quote").checked;$("pricing-content").style.opacity=on?"0.3":"1";$("pricing-content").style.pointerEvents=on?"none":"auto";};
+  window.toggleCampaign=function(){$("campaign-box").style.display=$("toggle-campaign").checked?"":"none";};
+
+  function renderPriceLevels(){
+    const c=$("price-levels-container");c.innerHTML="";
+    priceLevels.forEach((lv,i)=>{
+      const row=document.createElement("div");row.className="price-level-row";
+      row.innerHTML='<input class="form-input" type="number" value="'+(lv.min||"")+'" placeholder="Från" min="1" oninput="priceLevels['+i+'].min=+this.value" style="padding:0.5rem;"/><input class="form-input" type="number" value="'+(lv.max||"")+'" placeholder="Till (tom=∞)" oninput="priceLevels['+i+'].max=this.value?+this.value:null" style="padding:0.5rem;"/><input class="form-input" type="number" value="'+(lv.price||"")+'" placeholder="Kr/st" min="0" step="0.01" oninput="priceLevels['+i+'].price=+this.value" style="padding:0.5rem;"/><button class="btn-danger" onclick="removePriceLevel('+i+')">✕</button>';
+      c.appendChild(row);
+    });
+  }
+
+  window.addPriceLevel=function(){priceLevels.push({min:1,max:null,price:0});renderPriceLevels();};
+  window.removePriceLevel=function(i){priceLevels.splice(i,1);renderPriceLevels();};
+
+  window.savePricing=async function(){
+    const matId=curMat.id,prodId=curProd.id;
+    const quoteMode=$("toggle-quote").checked;
+    const campaignActive=$("toggle-campaign").checked;
+    const campaign={active:campaignActive,pct:parseFloat($("campaign-pct").value)||0,name:$("campaign-name").value.trim(),start:$("campaign-start").value,end:$("campaign-end").value};
+    try{
+      await setDoc(doc(db,"materials/"+matId+"/products/"+prodId),{priceLevels,quoteMode,campaign},{merge:true});
+      alert("Priser sparade!");
+    }catch(e){alert("Fel: "+e.message);}
+  };
+
+  // ORDERS
+  async function loadOrders(){
+    const tbody=$("orders-tbody");tbody.innerHTML='<tr><td colspan="7" class="loading-state">Laddar...</td></tr>';
+    try{
+      const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+      allOrders=[];snap.forEach(d=>allOrders.push({id:d.id,...d.data()}));
+      renderOrders(allOrders);
+    }catch(e){tbody.innerHTML='<tr><td colspan="7" class="error-state">'+e.message+'</td></tr>';}
+  }
+
+  function renderOrders(orders){
+    const tbody=$("orders-tbody");
+    if(!orders.length){tbody.innerHTML='<tr><td colspan="7" class="empty-state">Inga ordrar.</td></tr>';return;}
+    const scol={new:"rgba(0,200,255,0.7)",processing:"rgba(255,200,0,0.7)",quoted:"rgba(150,100,255,0.7)",confirmed:"rgba(0,255,180,0.7)",completed:"rgba(100,255,100,0.7)"};
+    const slbl={new:"Ny",processing:"Behandlas",quoted:"Offert skickad",confirmed:"Bekräftad",completed:"Klar"};
+    tbody.innerHTML=orders.map(o=>{
+      const loy=loyalty(o.customerOrders||1);
+      const col=scol[o.status||"new"]||"#777",lbl=slbl[o.status||"new"]||"Ny";
+      return '<tr><td>'+(o.createdAt?new Date(o.createdAt).toLocaleDateString("sv-SE"):"-")+'</td><td>'+(o.customerName||"-")+'<br><span style="font-size:0.6rem;color:#666;">'+(o.customerEmail||"")+'</span></td><td>'+(o.product||"-")+'</td><td>'+(o.qty||"-")+'</td><td><span style="color:'+col+';font-size:0.68rem;">'+lbl+'</span></td><td><span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span></td><td><button class="btn-secondary" onclick="openOrderDetail(\''+o.id+'\')">Detaljer</button></td></tr>';
+    }).join("");
+  }
+
+  window.filterOrders=function(){
+    const q=$("order-search").value.toLowerCase(),f=$("order-filter").value;
+    renderOrders(allOrders.filter(o=>{
+      const mq=!q||(o.customerEmail||"").toLowerCase().includes(q)||(o.product||"").toLowerCase().includes(q);
+      return mq&&(!f||o.status===f);
+    }));
+  };
+
+  window.openOrderDetail=function(id){
+    const o=allOrders.find(x=>x.id===id);if(!o)return;
+    curOrderId=id;$("order-status-select").value=o.status||"new";
+    const loy=loyalty(o.customerOrders||1);
+    $("order-detail-content").innerHTML='<div style="background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:1rem;font-size:0.78rem;letter-spacing:0.06em;color:#999;line-height:2;"><strong style="color:rgba(0,255,180,0.7);">Kund:</strong> '+(o.customerName||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">E-post:</strong> '+(o.customerEmail||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Telefon:</strong> '+(o.phone||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Adress:</strong> '+(o.address||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Produkt:</strong> '+(o.product||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Antal:</strong> '+(o.qty||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Meddelande:</strong> '+(o.message||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Lojalitet:</strong> <span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span><br><strong style="color:rgba(0,255,180,0.7);">Ordrar totalt:</strong> '+(o.customerOrders||1)+'</div>';
+    openModal("modal-order-detail");
+  };
+
+  window.updateOrderStatus=async function(){
+    const status=$("order-status-select").value;
+    await updateDoc(doc(db,"orders",curOrderId),{status});
+    closeModal("modal-order-detail");loadOrders();
+  };
+
+  // CUSTOMERS
+  async function loadCustomers(){
+    try{
+      const snap=await getDocs(collection(db,"customers"));
+      allCustomers=[];snap.forEach(d=>allCustomers.push({id:d.id,...d.data()}));
+      renderCustomers(allCustomers);updateStats(allCustomers);
+    }catch(e){console.warn(e);}
+  }
+
+  function renderCustomers(customers){
+    const tbody=$("customers-tbody");
+    if(!customers.length){tbody.innerHTML='<tr><td colspan="6" class="empty-state">Inga kunder.</td></tr>';return;}
+    tbody.innerHTML=customers.map(c=>{
+      const loy=loyalty(c.totalOrders||1);
+      const last=c.lastOrder?new Date(c.lastOrder).toLocaleDateString("sv-SE"):"-";
+      return '<tr><td>'+(c.name||"-")+'</td><td style="font-size:0.65rem;">'+(c.email||"-")+'</td><td>'+(c.totalOrders||1)+'</td><td>'+last+'</td><td><span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span></td><td><button class="btn-danger" onclick="delCustomer(\''+c.id+'\')">🗑</button></td></tr>';
+    }).join("");
+  }
+
+  function updateStats(customers){
+    const now12=Date.now()-365*24*60*60*1000;
+    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+    $("stat-total").textContent=customers.length;
+    $("stat-active").textContent=customers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12).length;
+    $("stat-loyal").textContent=customers.filter(c=>(c.totalOrders||1)>=5).length;
+    $("stat-new").textContent=customers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm).length;
+  }
+
+  window.filterCustomers=function(){
+    const q=$("customer-search").value.toLowerCase();
+    renderCustomers(allCustomers.filter(c=>(c.name||"").toLowerCase().includes(q)||(c.email||"").toLowerCase().includes(q)));
+  };
+
+  window.delCustomer=async function(id){
+    if(!confirm("Ta bort kund?"))return;
+    await deleteDoc(doc(db,"customers",id));loadCustomers();
+  };
+
+  // MAINTENANCE
+  async function runMaintenance(){
+    const cutoff=new Date(Date.now()-365*24*60*60*1000).toISOString();
+    const snap=await getDocs(collection(db,"customers"));
+    const toDel=[],deleted=[];
+    snap.forEach(d=>{const data=d.data();if(data.lastOrder&&data.lastOrder<cutoff){toDel.push(d.id);deleted.push(data.email||d.id);}});
+    if(toDel.length){
+      for(const id of toDel)await deleteDoc(doc(db,"customers",id));
+      await secMail("Automatisk rensning",toDel.length+" inaktiva kunder raderade:\n"+deleted.join("\n"));
+      loadCustomers();
+    }
+    const lastRep=localStorage.getItem("em_last_rep");
+    const thisMonth=new Date().toISOString().slice(0,7);
+    if(lastRep!==thisMonth){localStorage.setItem("em_last_rep",thisMonth);setTimeout(()=>sendMonthlyReport(true),3000);}
+  }
+
+  // REPORT
+  async function generateReport(){
+    const el=$("report-content");el.className="loading-state";el.textContent="Genererar...";
+    const now12=Date.now()-365*24*60*60*1000;
+    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+    const active=allCustomers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12);
+    const loyal=allCustomers.filter(c=>(c.totalOrders||1)>=5);
+    const newC=allCustomers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm);
+    const monthOrders=allOrders.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
+    el.className="";
+    el.innerHTML='<div class="stats-grid" style="margin-bottom:1rem;"><div class="stat-card"><div class="stat-number">'+allCustomers.length+'</div><div class="stat-label">Totalt kunder</div></div><div class="stat-card"><div class="stat-number">'+active.length+'</div><div class="stat-label">Aktiva</div></div><div class="stat-card"><div class="stat-number">'+loyal.length+'</div><div class="stat-label">Lojala</div></div><div class="stat-card"><div class="stat-number">'+newC.length+'</div><div class="stat-label">Nya denna månad</div></div><div class="stat-card"><div class="stat-number">'+monthOrders.length+'</div><div class="stat-label">Ordrar denna månad</div></div><div class="stat-card"><div class="stat-number">'+allOrders.length+'</div><div class="stat-label">Totalt ordrar</div></div></div><div style="font-size:0.7rem;letter-spacing:0.08em;color:#666;text-align:center;font-style:italic;">Rapport genererad: '+ts()+'</div>';
+  }
+
+  window.sendMonthlyReport=async function(auto=false){
+    const now12=Date.now()-365*24*60*60*1000;
+    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+    const active=allCustomers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12);
+    const loyal=allCustomers.filter(c=>(c.totalOrders||1)>=5);
+    const newC=allCustomers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm);
+    const monthOrders=allOrders.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
+    const details="MÅNADSRAPPORT ELEGANT-M\nGenererad: "+ts()+"\n\nKUNDER:\nTotalt: "+allCustomers.length+"\nAktiva (12 mån): "+active.length+"\nLojala (5+ ordrar): "+loyal.length+"\nNya denna månad: "+newC.length+"\n\nORDRAR:\nDenna månad: "+monthOrders.length+"\nTotalt: "+allOrders.length+"\n\nLOJALITET:\nNy (1): "+allCustomers.filter(c=>(c.totalOrders||1)===1).length+"\nSilver (2-4): "+allCustomers.filter(c=>{const t=c.totalOrders||1;return t>=2&&t<5;}).length+"\nGuld (5-9): "+allCustomers.filter(c=>{const t=c.totalOrders||1;return t>=5&&t<10;}).length+"\nPlatina (10+): "+allCustomers.filter(c=>(c.totalOrders||1)>=10).length;
+    await secMail(auto?"Automatisk månadsrapport":"Månadsrapport på begäran",details);
+    if(!auto)alert("Rapport skickad till "+ADMIN_MAIL);
+  };
+
+  // MODALS
+  window.openModal=function(id){$(id).classList.add("active");};
+  window.closeModal=function(id){$(id).classList.remove("active");};
+  document.querySelectorAll(".modal-overlay").forEach(el=>{el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("active");});});
+
+  // KEYBOARD
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+      if($("login-section").style.display!=="none")doLogin();
+      if($("otp-section").style.display!=="none")doOTP();
+    }
+  });
+
+  // INIT
+  window.addEventListener("DOMContentLoaded",()=>{
+    $("login-section").style.display="";
+    if(Date.now()<lock){
+      setStatus("login-status","Spärrat. Vänta "+Math.ceil((lock-Date.now())/60000)+" min.","error");
+      $("login-btn").disabled=true;
+    }
+  });
+
+</script>
+</body>
+</html>
