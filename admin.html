@@ -717,8 +717,8 @@ document.querySelectorAll(".modal-bg").forEach(el=>el.addEventListener("click",e
 // KEYBOARD
 document.addEventListener("keydown",e=>{
   if(e.key==="Enter"){
-    if($("login-section").style.display!=="none"&&$("login-section").style.display!=="")doLogin();
-    if($("otp-section").style.display==="block")doOTP();
+    if(!$("login-section").classList.contains("hidden"))doLogin();
+    if(!$("otp-section").classList.contains("hidden"))doOTP();
   }
 });
 
