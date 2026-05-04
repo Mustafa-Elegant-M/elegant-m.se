@@ -15,8 +15,10 @@
     .admin-badge{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.6);border:0.5px solid rgba(0,255,180,0.3);padding:0.28rem 0.7rem;border-radius:20px;}
     .logout-btn{background:none;border:0.5px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.7);font-family:"Josefin Sans",sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:20px;cursor:pointer;}
     /* LOGIN BOX */
-    #login-section{display:block;width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
-    #otp-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    .auth-box{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    .hidden{display:none!important;}
+    #login-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    #otp-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);display:none;}
     #admin-section{width:min(98vw,1200px);margin:2rem auto;padding:0 1rem 4rem;}
     .sec-title{font-family:"Cormorant Garamond",serif;font-size:2rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;}
     .sec-sub{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.45);margin-bottom:2rem;}
@@ -150,7 +152,7 @@
 </div>
 
 <!-- ===== OTP ===== -->
-<div id="otp-section" hidden>
+<div id="otp-section" class="hidden">
   <div class="sec-title">Verifiera</div>
   <div class="sec-sub">Engångskod skickad till din e-post</div>
   <label class="lbl">6-siffrig kod</label>
@@ -161,7 +163,7 @@
 </div>
 
 <!-- ===== ADMIN ===== -->
-<div id="admin-section" hidden>
+<div id="admin-section" class="hidden">
   <div class="tabs">
     <div class="tab active" onclick="switchTab('products')">Produkter</div>
     <div class="tab" onclick="switchTab('orders')">Ordrar</div>
@@ -387,8 +389,8 @@ window.doLogin=async function(){
     OTP=Math.floor(100000+Math.random()*900000).toString();
     OTPexp=Date.now()+600000;
     await secMail("Inloggningsförsök - OTP","OTP: "+OTP+" (gäller 10 min)");
-    $("login-section").setAttribute("hidden","");
-    $("otp-section").removeAttribute("hidden");
+    $("login-section").classList.add("hidden");
+    $("otp-section").classList.remove("hidden");
     setSt("otp-status","Kod skickad till din e-post.","inf");
   }catch(e){
     att++;localStorage.setItem("em_a",att.toString());
@@ -409,8 +411,8 @@ window.doOTP=function(){
   const v=$("otp-input").value.trim();
   if(Date.now()>OTPexp){setSt("otp-status","Koden gick ut.","err");return;}
   if(v===OTP){
-    $("otp-section").setAttribute("hidden","");
-    $("admin-section").removeAttribute("hidden");
+    $("otp-section").classList.add("hidden");
+    $("admin-section").classList.remove("hidden");
     $("logout-btn").style.display="block";
     secMail("Lyckad inloggning","Admin inloggad "+ts());
     setTimeout(()=>onReady(),300);
