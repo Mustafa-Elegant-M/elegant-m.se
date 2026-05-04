@@ -4,158 +4,164 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — ELEGANT-M</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:linear-gradient(160deg,#0a1a10,#061009);min-height:100vh;font-family:'Josefin Sans',sans-serif;color:#ccc;}
-    ::-webkit-scrollbar{width:6px;}
-    ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
-    ::-webkit-scrollbar-thumb{background:rgba(0,255,180,0.3);border-radius:3px;}
-    .top-bar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(6,16,9,0.95);backdrop-filter:blur(10px);border-bottom:0.5px solid rgba(0,255,180,0.1);}
-    .logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:0.2em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    body{background:linear-gradient(160deg,#0a1a10,#061009);min-height:100vh;font-family:"Josefin Sans",sans-serif;color:#ccc;}
+    .top-bar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(6,16,9,0.95);border-bottom:0.5px solid rgba(0,255,180,0.1);}
+    .logo{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;letter-spacing:0.2em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
     .logo span{font-style:italic;}
-    .top-right{display:flex;align-items:center;gap:1rem;}
     .admin-badge{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.6);border:0.5px solid rgba(0,255,180,0.3);padding:0.28rem 0.7rem;border-radius:20px;}
-    .logout-btn{background:none;border:0.5px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.7);font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:20px;cursor:pointer;transition:all 0.2s;}
-    .logout-btn:hover{border-color:rgba(255,100,100,0.9);color:rgba(255,100,100,1);}
-    .auth-section{width:min(96vw,460px);margin:5rem auto;background:rgba(0,0,0,0.45);border:0.5px solid rgba(0,255,180,0.15);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
-    .main-section{display:none;width:min(98vw,1200px);margin:2rem auto;padding:0 1rem 4rem;}
-    .section-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;}
-    .section-sub{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.45);margin-bottom:2rem;}
+    .logout-btn{background:none;border:0.5px solid rgba(255,100,100,0.4);color:rgba(255,100,100,0.7);font-family:"Josefin Sans",sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:20px;cursor:pointer;}
+    /* LOGIN BOX */
+    #login-section{display:block;width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    #otp-section{display:none;width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    #admin-section{width:min(98vw,1200px);margin:2rem auto;padding:0 1rem 4rem;}
+    .sec-title{font-family:"Cormorant Garamond",serif;font-size:2rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;}
+    .sec-sub{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.45);margin-bottom:2rem;}
+    .lbl{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.4rem;margin-top:1rem;}
+    .inp{width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.8rem 1rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:#ddd;outline:none;transition:border-color 0.2s;margin-bottom:0.2rem;}
+    .inp:focus{border-color:rgba(0,255,180,0.4);}
+    .inp::placeholder{color:rgba(255,255,255,0.2);}
+    .btn-main{width:100%;margin-top:1.5rem;padding:0.9rem;background:linear-gradient(135deg,rgba(0,60,40,0.95),rgba(0,30,20,0.98));border:0.5px solid rgba(0,255,180,0.45);border-radius:25px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.95);transition:all 0.2s;}
+    .btn-main:hover{border-color:rgba(0,255,180,0.9);box-shadow:0 0 20px rgba(0,255,180,0.1);}
+    .btn-main:disabled{opacity:0.4;cursor:not-allowed;}
+    .btn-link{background:none;border:none;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(0,255,180,0.4);padding:0.5rem;display:block;width:100%;text-align:center;margin-top:0.8rem;}
+    .btn-link:hover{color:rgba(0,255,180,0.9);}
+    .status{font-size:0.7rem;letter-spacing:0.08em;min-height:1.2rem;margin-top:0.8rem;text-align:center;}
+    .err{color:#ff7070;} .inf{color:rgba(0,255,180,0.8);} .ok{color:#4cff80;}
+    /* TABS */
     .tabs{display:flex;gap:0.5rem;margin-bottom:2rem;flex-wrap:wrap;}
-    .tab{padding:0.6rem 1.2rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#777;transition:all 0.2s;}
-    .tab:hover{border-color:rgba(0,255,180,0.3);color:#aaa;}
+    .tab{padding:0.6rem 1.2rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#777;transition:all 0.2s;}
     .tab.active{background:rgba(0,255,180,0.08);border-color:rgba(0,255,180,0.5);color:rgba(0,255,180,0.9);}
+    /* PANEL */
     .panel{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
-    .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.8rem;}
-    .panel-title{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.65);}
-    .form-group{margin-bottom:1.1rem;}
-    .form-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.4rem;}
-    .form-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.88rem;color:#ddd;outline:none;transition:border-color 0.2s;}
-    .form-input:focus{border-color:rgba(0,255,180,0.4);}
-    .form-input::placeholder{color:rgba(255,255,255,0.18);}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
-    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:0.5px solid rgba(255,255,255,0.05);}
-    .toggle-label{font-size:0.75rem;letter-spacing:0.08em;color:#bbb;}
-    .toggle-sub{font-size:0.62rem;color:#666;margin-top:0.2rem;}
-    .toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
-    .toggle input{opacity:0;width:0;height:0;}
-    .toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;transition:0.3s;}
-    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#666;border-radius:50%;transition:0.3s;}
-    .toggle input:checked + .toggle-slider{background:rgba(0,255,180,0.3);}
-    .toggle input:checked + .toggle-slider::before{transform:translateX(20px);background:rgba(0,255,180,0.9);}
-    .btn-primary{padding:0.7rem 1.4rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.9);transition:all 0.2s;white-space:nowrap;}
-    .btn-primary:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 15px rgba(0,255,180,0.1);}
-    .btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
-    .btn-secondary{padding:0.55rem 1rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#888;transition:all 0.2s;white-space:nowrap;}
-    .btn-secondary:hover{border-color:rgba(255,255,255,0.3);color:#ccc;}
-    .btn-danger{padding:0.55rem 0.8rem;background:rgba(255,60,60,0.06);border:0.5px solid rgba(255,60,60,0.2);border-radius:12px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,80,80,0.7);transition:all 0.2s;}
-    .btn-danger:hover{background:rgba(255,60,60,0.14);border-color:rgba(255,80,80,0.6);}
-    .btn-wide{width:100%;padding:0.9rem;font-size:0.72rem;letter-spacing:0.25em;border-radius:25px;margin-top:0.5rem;}
-    .btn-text{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(0,255,180,0.45);padding:0.4rem;transition:color 0.2s;display:block;width:100%;text-align:center;margin-top:0.8rem;}
-    .btn-text:hover{color:rgba(0,255,180,0.9);}
-    .status{font-size:0.7rem;letter-spacing:0.08em;min-height:1.1rem;margin-top:0.7rem;text-align:center;}
-    .status.error{color:#ff7070;}.status.info{color:rgba(0,255,180,0.8);}.status.success{color:#4cff80;}
-    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
-    .card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.1rem 1.3rem;transition:border-color 0.2s;}
+    .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.8rem;}
+    .panel-ttl{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.65);}
+    .btn-p{padding:0.65rem 1.3rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:20px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.9);transition:all 0.2s;white-space:nowrap;}
+    .btn-p:hover{border-color:rgba(0,255,180,0.8);}
+    .btn-s{padding:0.5rem 0.9rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:#888;transition:all 0.2s;white-space:nowrap;}
+    .btn-s:hover{border-color:rgba(255,255,255,0.3);color:#ccc;}
+    .btn-d{padding:0.5rem 0.7rem;background:rgba(255,60,60,0.06);border:0.5px solid rgba(255,60,60,0.2);border-radius:10px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.58rem;color:rgba(255,80,80,0.7);transition:all 0.2s;}
+    .btn-d:hover{background:rgba(255,60,60,0.15);}
+    /* CARDS */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;}
+    .card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.2rem;transition:border-color 0.2s;}
     .card:hover{border-color:rgba(0,255,180,0.2);}
-    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;margin-bottom:0.4rem;}
-    .card-name{font-size:0.88rem;letter-spacing:0.08em;color:#ddd;}
-    .card-sub{font-size:0.6rem;letter-spacing:0.1em;color:#666;text-transform:uppercase;margin-top:0.2rem;}
-    .card-actions{display:flex;gap:0.4rem;flex-shrink:0;}
-    .add-card{border:0.5px dashed rgba(0,255,180,0.25);background:rgba(0,255,180,0.02);display:flex;align-items:center;justify-content:center;gap:0.6rem;cursor:pointer;min-height:80px;color:rgba(0,255,180,0.5);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.2s;}
-    .add-card:hover{border-color:rgba(0,255,180,0.5);background:rgba(0,255,180,0.05);color:rgba(0,255,180,0.9);}
-    .price-level-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;align-items:center;margin-bottom:0.6rem;}
-    .price-level-label{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#666;text-align:center;}
-    .campaign-box{background:rgba(255,180,0,0.04);border:0.5px solid rgba(255,180,0,0.15);border-radius:10px;padding:1rem;margin-top:0.8rem;}
-    .campaign-title{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,180,0,0.7);margin-bottom:0.8rem;}
-    .images-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.8rem;margin-top:0.8rem;}
-    .image-item{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
-    .image-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
-    .image-item-footer{padding:0.6rem;}
-    .alt-input{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.35rem 0.5rem;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;color:#aaa;outline:none;margin-bottom:0.4rem;}
-    .upload-zone{background:rgba(0,255,180,0.02);border:0.5px dashed rgba(0,255,180,0.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
-    input[type="file"]{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.55rem;color:#888;font-size:0.75rem;margin-bottom:0.7rem;cursor:pointer;}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;}
+    .card-name{font-size:0.85rem;letter-spacing:0.08em;color:#ddd;}
+    .card-sub{font-size:0.58rem;letter-spacing:0.1em;color:#555;text-transform:uppercase;margin-top:0.2rem;}
+    .card-acts{display:flex;gap:0.4rem;flex-shrink:0;}
+    .add-card{border:0.5px dashed rgba(0,255,180,0.25);background:rgba(0,255,180,0.02);display:flex;align-items:center;justify-content:center;gap:0.6rem;cursor:pointer;min-height:75px;color:rgba(0,255,180,0.5);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.2s;border-radius:12px;}
+    .add-card:hover{border-color:rgba(0,255,180,0.6);color:rgba(0,255,180,0.9);background:rgba(0,255,180,0.05);}
+    /* BREADCRUMB */
+    .bc{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .bc-item{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;cursor:pointer;transition:color 0.2s;}
+    .bc-item:hover{color:rgba(0,255,180,0.7);}
+    .bc-item.active{color:rgba(0,255,180,0.8);cursor:default;}
+    .bc-sep{color:#333;}
+    /* FORM */
+    .fgrp{margin-bottom:1rem;}
+    .flbl{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.35rem;}
+    .finp{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.7rem 0.9rem;font-family:"Josefin Sans",sans-serif;font-size:0.85rem;color:#ddd;outline:none;transition:border-color 0.2s;}
+    .finp:focus{border-color:rgba(0,255,180,0.4);}
+    .finp::placeholder{color:rgba(255,255,255,0.18);}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+    /* TOGGLE */
+    .tgl-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:0.5px solid rgba(255,255,255,0.05);}
+    .tgl-lbl{font-size:0.75rem;letter-spacing:0.08em;color:#bbb;}
+    .tgl-sub{font-size:0.6rem;color:#555;margin-top:0.15rem;}
+    .tgl{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .tgl input{opacity:0;width:0;height:0;}
+    .tgl-sl{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;transition:0.3s;}
+    .tgl-sl::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#555;border-radius:50%;transition:0.3s;}
+    .tgl input:checked+.tgl-sl{background:rgba(0,255,180,0.3);}
+    .tgl input:checked+.tgl-sl::before{transform:translateX(20px);background:rgba(0,255,180,0.9);}
+    /* PRICE LEVELS */
+    .plrow{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;align-items:center;margin-bottom:0.5rem;}
+    .pl-lbl{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:#555;text-align:center;}
+    /* CAMPAIGN */
+    .camp-box{background:rgba(255,180,0,0.04);border:0.5px solid rgba(255,180,0,0.15);border-radius:10px;padding:1rem;margin-top:0.8rem;}
+    .camp-ttl{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,180,0,0.7);margin-bottom:0.8rem;}
+    /* IMAGES */
+    .img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem;margin-top:0.8rem;}
+    .img-item{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+    .img-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+    .img-foot{padding:0.6rem;}
+    .alt-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.5rem;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;color:#aaa;outline:none;margin-bottom:0.4rem;}
+    .upzone{background:rgba(0,255,180,0.02);border:0.5px dashed rgba(0,255,180,0.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+    input[type="file"]{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.5rem;color:#777;font-size:0.72rem;margin-bottom:0.6rem;cursor:pointer;}
     progress{width:100%;height:5px;border-radius:3px;margin-bottom:0.5rem;display:none;}
     progress::-webkit-progress-bar{background:rgba(255,255,255,0.08);border-radius:3px;}
     progress::-webkit-progress-value{background:rgba(0,255,180,0.7);border-radius:3px;}
-    .order-table,.customer-table{width:100%;border-collapse:collapse;font-size:0.72rem;}
-    .order-table th,.customer-table th{font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,255,180,0.55);padding:0.6rem 0.8rem;border-bottom:0.5px solid rgba(0,255,180,0.1);text-align:left;}
-    .order-table td,.customer-table td{padding:0.65rem 0.8rem;border-bottom:0.5px solid rgba(255,255,255,0.04);color:#999;vertical-align:top;}
-    .order-table tr:hover td,.customer-table tr:hover td{background:rgba(0,255,180,0.02);}
-    .badge{display:inline-block;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:10px;font-weight:600;}
-    .badge-new{background:rgba(150,150,150,0.15);color:#888;border:0.5px solid rgba(150,150,150,0.2);}
-    .badge-silver{background:rgba(180,180,220,0.12);color:#aab;border:0.5px solid rgba(180,180,220,0.25);}
-    .badge-gold{background:rgba(255,200,0,0.1);color:rgba(255,200,0,0.8);border:0.5px solid rgba(255,200,0,0.2);}
-    .badge-platinum{background:rgba(0,255,220,0.08);color:rgba(0,255,220,0.7);border:0.5px solid rgba(0,255,220,0.2);}
-    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
-    .stat-card{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:12px;padding:1.2rem;text-align:center;}
-    .stat-number{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;background:linear-gradient(135deg,#888,#eee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
-    .stat-label{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;margin-top:0.4rem;}
-    .loading-state{color:rgba(0,255,180,0.4);font-size:0.72rem;letter-spacing:0.15em;text-align:center;padding:2rem;}
-    .empty-state{color:#444;font-size:0.72rem;letter-spacing:0.1em;text-align:center;padding:2rem;font-style:italic;}
-    .error-state{color:#ff7070;font-size:0.72rem;text-align:center;padding:1.5rem;}
-    .breadcrumb{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
-    .breadcrumb-item{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;cursor:pointer;transition:color 0.2s;}
-    .breadcrumb-item:hover{color:rgba(0,255,180,0.7);}
-    .breadcrumb-item.active{color:rgba(0,255,180,0.8);cursor:default;}
-    .breadcrumb-sep{color:#333;font-size:0.7rem;}
-    .modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem;}
-    .modal-overlay.active{display:flex;}
-    .modal{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:18px;width:min(96vw,560px);max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.6);}
-    .modal-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.5rem;}
-    .modal-footer{display:flex;gap:0.8rem;margin-top:1.5rem;justify-content:flex-end;}
+    /* TABLES */
+    .tbl{width:100%;border-collapse:collapse;font-size:0.7rem;}
+    .tbl th{font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,255,180,0.55);padding:0.6rem 0.7rem;border-bottom:0.5px solid rgba(0,255,180,0.1);text-align:left;}
+    .tbl td{padding:0.6rem 0.7rem;border-bottom:0.5px solid rgba(255,255,255,0.04);color:#999;vertical-align:top;}
+    .tbl tr:hover td{background:rgba(0,255,180,0.02);}
+    /* BADGES */
+    .badge{display:inline-block;font-size:0.53rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.18rem 0.5rem;border-radius:10px;font-weight:600;}
+    .b-new{background:rgba(150,150,150,0.15);color:#888;border:0.5px solid rgba(150,150,150,0.2);}
+    .b-sil{background:rgba(180,180,220,0.12);color:#aab;border:0.5px solid rgba(180,180,220,0.25);}
+    .b-gld{background:rgba(255,200,0,0.1);color:rgba(255,200,0,0.8);border:0.5px solid rgba(255,200,0,0.2);}
+    .b-plt{background:rgba(0,255,220,0.08);color:rgba(0,255,220,0.7);border:0.5px solid rgba(0,255,220,0.2);}
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:12px;padding:1.2rem;text-align:center;}
+    .stat-n{font-family:"Cormorant Garamond",serif;font-size:2.2rem;font-weight:300;background:linear-gradient(135deg,#888,#eee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+    .stat-l{font-size:0.56rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;margin-top:0.4rem;}
+    /* MODAL */
+    .modal-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.82);align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem;}
+    .modal-bg.open{display:flex;}
+    .modal-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:18px;width:min(96vw,540px);max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.7);}
+    .modal-ttl{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.5rem;}
+    .modal-foot{display:flex;gap:0.8rem;margin-top:1.5rem;justify-content:flex-end;}
+    /* MISC */
+    .loading{color:rgba(0,255,180,0.4);font-size:0.7rem;letter-spacing:0.15em;text-align:center;padding:2rem;}
+    .empty{color:#444;font-size:0.7rem;text-align:center;padding:2rem;font-style:italic;}
     @media(max-width:600px){
-      .top-bar{padding:0.8rem 1rem;}
-      .main-section{padding:0 0.5rem 3rem;}
-      .stats-grid{grid-template-columns:1fr 1fr;}
-      .price-level-row{grid-template-columns:1fr 1fr;gap:0.5rem;}
-      .form-row{grid-template-columns:1fr;}
+      .frow{grid-template-columns:1fr;}
+      .plrow{grid-template-columns:1fr 1fr;}
+      .stats{grid-template-columns:1fr 1fr;}
     }
   </style>
 </head>
 <body>
+
 <div class="top-bar">
   <div class="logo">ELEGANT<span>-M</span></div>
-  <div class="top-right">
+  <div style="display:flex;align-items:center;gap:1rem;">
     <div class="admin-badge">Admin Panel</div>
     <button class="logout-btn" id="logout-btn" style="display:none;" onclick="doLogout()">Logga ut</button>
   </div>
 </div>
 
-<!-- LOGIN -->
-<div class="auth-section" id="login-section">
-  <div class="section-title">Admin</div>
-  <div class="section-sub">Tvåstegsverifiering aktiverad</div>
-  <div class="form-group">
-    <label class="form-label">E-postadress</label>
-    <input class="form-input" type="email" id="login-email" placeholder="din@email.com"/>
-  </div>
-  <div class="form-group">
-    <label class="form-label">Lösenord</label>
-    <input class="form-input" type="password" id="login-pass" placeholder="••••••••••"/>
-  </div>
-  <button class="btn-primary btn-wide" id="login-btn" onclick="doLogin()">Logga in</button>
+<!-- ===== LOGIN ===== -->
+<div id="login-section">
+  <div class="sec-title">Admin</div>
+  <div class="sec-sub">Tvåstegsverifiering aktiverad</div>
+  <label class="lbl">E-postadress</label>
+  <input class="inp" type="email" id="login-email" placeholder="din@email.com"/>
+  <label class="lbl">Lösenord</label>
+  <input class="inp" type="password" id="login-pass" placeholder="••••••••••"/>
+  <button class="btn-main" id="login-btn" onclick="doLogin()">Logga in</button>
   <div class="status" id="login-status"></div>
 </div>
 
-<!-- OTP -->
-<div class="auth-section" id="otp-section" style="display:none;">
-  <div class="section-title">Verifiera</div>
-  <div class="section-sub">Engångskod skickad till din e-post</div>
-  <div class="form-group">
-    <label class="form-label">6-siffrig kod</label>
-    <input class="form-input" type="number" id="otp-input" placeholder="123456"/>
-  </div>
-  <button class="btn-primary btn-wide" onclick="doOTP()">Verifiera kod</button>
-  <button class="btn-text" onclick="resendOTP()">Skicka ny kod</button>
+<!-- ===== OTP ===== -->
+<div id="otp-section">
+  <div class="sec-title">Verifiera</div>
+  <div class="sec-sub">Engångskod skickad till din e-post</div>
+  <label class="lbl">6-siffrig kod</label>
+  <input class="inp" type="number" id="otp-input" placeholder="123456"/>
+  <button class="btn-main" onclick="doOTP()">Verifiera</button>
+  <button class="btn-link" onclick="resendOTP()">Skicka ny kod</button>
   <div class="status" id="otp-status"></div>
 </div>
 
-<!-- ADMIN MAIN -->
-<div class="main-section" id="admin-section" style="display:none;">
+<!-- ===== ADMIN ===== -->
+<div id="admin-section" hidden>
   <div class="tabs">
     <div class="tab active" onclick="switchTab('products')">Produkter</div>
     <div class="tab" onclick="switchTab('orders')">Ordrar</div>
@@ -165,68 +171,63 @@
 
   <!-- PRODUKTER -->
   <div id="tab-products">
-    <div class="breadcrumb" id="breadcrumb">
-      <span class="breadcrumb-item active" onclick="navTo('materials')">Material</span>
-    </div>
-    <div class="panel" id="panel-materials">
-      <div class="panel-header">
-        <div class="panel-title">Alla material</div>
-        <button class="btn-primary" onclick="openAddMaterial()">+ Lägg till</button>
+    <div class="bc" id="bc"></div>
+    <div class="panel" id="p-mats">
+      <div class="panel-hdr">
+        <div class="panel-ttl">Material</div>
+        <button class="btn-p" onclick="openAddMat()">+ Lägg till</button>
       </div>
-      <div class="card-grid" id="materials-grid"><div class="loading-state">Laddar...</div></div>
+      <div class="card-grid" id="mats-grid"><div class="loading">Laddar...</div></div>
     </div>
-    <div class="panel" id="panel-products" style="display:none;">
-      <div class="panel-header">
-        <div class="panel-title">Produkter</div>
-        <button class="btn-primary" onclick="openAddProduct()">+ Lägg till</button>
+    <div class="panel" id="p-prods" style="display:none;">
+      <div class="panel-hdr">
+        <div class="panel-ttl">Produkter</div>
+        <button class="btn-p" onclick="openAddProd()">+ Lägg till</button>
       </div>
-      <div class="card-grid" id="products-grid"></div>
+      <div class="card-grid" id="prods-grid"></div>
     </div>
-    <div id="panel-product-detail" style="display:none;">
+    <div id="p-detail" style="display:none;">
       <div class="panel">
-        <div class="panel-header"><div class="panel-title">Produktbilder</div></div>
-        <div class="upload-zone">
-          <label class="form-label">Ladda upp bild(er)</label>
-          <input type="file" id="image-upload" accept="image/*" multiple/>
-          <progress id="upload-progress" max="100"></progress>
-          <button class="btn-primary" id="upload-btn" onclick="uploadImages()">Ladda upp</button>
+        <div class="panel-hdr"><div class="panel-ttl">Bilder</div></div>
+        <div class="upzone">
+          <div class="flbl" style="color:rgba(0,255,180,0.55);margin-top:0;">Ladda upp bild(er)</div>
+          <input type="file" id="img-upload" accept="image/*" multiple/>
+          <progress id="up-prog" max="100"></progress>
+          <button class="btn-p" id="up-btn" onclick="uploadImgs()">Ladda upp</button>
         </div>
-        <div class="images-grid" id="images-grid"><div class="empty-state">Inga bilder.</div></div>
+        <div class="img-grid" id="imgs-grid"><div class="empty">Inga bilder.</div></div>
       </div>
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Prissattning</div>
-          <button class="btn-primary" onclick="savePricing()">Spara priser</button>
+        <div class="panel-hdr">
+          <div class="panel-ttl">Prissättning</div>
+          <button class="btn-p" onclick="savePricing()">Spara</button>
         </div>
-        <div class="toggle-row">
-          <div><div class="toggle-label">Offertläge</div><div class="toggle-sub">Inga priser visas — kunden skickar förfrågan</div></div>
-          <label class="toggle"><input type="checkbox" id="toggle-quote" onchange="toggleQuoteMode()"/><span class="toggle-slider"></span></label>
+        <div class="tgl-row">
+          <div><div class="tgl-lbl">Offertläge</div><div class="tgl-sub">Inga priser visas — kunden skickar förfrågan</div></div>
+          <label class="tgl"><input type="checkbox" id="tgl-quote" onchange="tglQuote()"/><span class="tgl-sl"></span></label>
         </div>
-        <div id="pricing-content" style="margin-top:1rem;">
-          <div class="panel-title" style="margin-bottom:0.8rem;">Kvantitetsnivåer</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;margin-bottom:0.4rem;">
-            <div class="price-level-label">Från (st)</div>
-            <div class="price-level-label">Till (st)</div>
-            <div class="price-level-label">Kr/st</div>
-            <div></div>
+        <div id="price-area" style="margin-top:1rem;">
+          <div class="panel-ttl" style="margin-bottom:0.7rem;">Kvantitetsnivåer</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.6rem;margin-bottom:0.3rem;">
+            <div class="pl-lbl">Från (st)</div><div class="pl-lbl">Till (st)</div><div class="pl-lbl">Kr/st</div><div></div>
           </div>
-          <div id="price-levels-container"></div>
-          <button class="btn-secondary" onclick="addPriceLevel()" style="margin-top:0.5rem;">+ Nivå</button>
+          <div id="pl-container"></div>
+          <button class="btn-s" onclick="addPL()" style="margin-top:0.5rem;">+ Nivå</button>
         </div>
         <div style="margin-top:1.5rem;">
-          <div class="toggle-row">
-            <div><div class="toggle-label">Kampanjpris</div><div class="toggle-sub">Procentuellt avdrag på alla nivåer</div></div>
-            <label class="toggle"><input type="checkbox" id="toggle-campaign" onchange="toggleCampaign()"/><span class="toggle-slider"></span></label>
+          <div class="tgl-row">
+            <div><div class="tgl-lbl">Kampanjpris</div><div class="tgl-sub">Procentuellt avdrag på alla nivåer automatiskt</div></div>
+            <label class="tgl"><input type="checkbox" id="tgl-camp" onchange="tglCamp()"/><span class="tgl-sl"></span></label>
           </div>
-          <div class="campaign-box" id="campaign-box" style="display:none;">
-            <div class="campaign-title">Kampanjinställningar</div>
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Rabatt (%)</label><input class="form-input" type="number" id="campaign-pct" placeholder="T.ex. 20" min="1" max="99"/></div>
-              <div class="form-group"><label class="form-label">Kampanjnamn</label><input class="form-input" type="text" id="campaign-name" placeholder="T.ex. Vårkampanj"/></div>
+          <div class="camp-box" id="camp-box" style="display:none;">
+            <div class="camp-ttl">Kampanjinställningar</div>
+            <div class="frow">
+              <div class="fgrp"><label class="flbl">Rabatt (%)</label><input class="finp" type="number" id="camp-pct" placeholder="T.ex. 20" min="1" max="99"/></div>
+              <div class="fgrp"><label class="flbl">Kampanjnamn</label><input class="finp" type="text" id="camp-name" placeholder="T.ex. Vårkampanj"/></div>
             </div>
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Startdatum</label><input class="form-input" type="date" id="campaign-start"/></div>
-              <div class="form-group"><label class="form-label">Slutdatum</label><input class="form-input" type="date" id="campaign-end"/></div>
+            <div class="frow">
+              <div class="fgrp"><label class="flbl">Startdatum</label><input class="finp" type="date" id="camp-start"/></div>
+              <div class="fgrp"><label class="flbl">Slutdatum</label><input class="finp" type="date" id="camp-end"/></div>
             </div>
           </div>
         </div>
@@ -237,24 +238,20 @@
   <!-- ORDRAR -->
   <div id="tab-orders" style="display:none;">
     <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Orderhistorik</div>
+      <div class="panel-hdr">
+        <div class="panel-ttl">Orderhistorik</div>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <input class="form-input" type="text" id="order-search" placeholder="Sök..." style="width:180px;padding:0.5rem 0.8rem;font-size:0.75rem;" oninput="filterOrders()"/>
-          <select class="form-input" id="order-filter" style="width:160px;padding:0.5rem;font-size:0.72rem;" onchange="filterOrders()">
-            <option value="">Alla</option>
-            <option value="new">Nya</option>
-            <option value="processing">Behandlas</option>
-            <option value="quoted">Offert skickad</option>
-            <option value="confirmed">Bekräftad</option>
-            <option value="completed">Klar</option>
+          <input class="finp" type="text" id="ord-search" placeholder="Sök..." style="width:160px;padding:0.45rem 0.7rem;font-size:0.72rem;" oninput="filterOrds()"/>
+          <select class="finp" id="ord-filter" style="width:150px;padding:0.45rem;font-size:0.68rem;" onchange="filterOrds()">
+            <option value="">Alla</option><option value="new">Nya</option><option value="processing">Behandlas</option>
+            <option value="quoted">Offert skickad</option><option value="confirmed">Bekräftad</option><option value="completed">Klar</option>
           </select>
         </div>
       </div>
       <div style="overflow-x:auto;">
-        <table class="order-table">
+        <table class="tbl">
           <thead><tr><th>Datum</th><th>Kund</th><th>Produkt</th><th>Antal</th><th>Status</th><th>Lojalitet</th><th>Åtgärd</th></tr></thead>
-          <tbody id="orders-tbody"><tr><td colspan="7" class="loading-state">Laddar...</td></tr></tbody>
+          <tbody id="ords-tbody"><tr><td colspan="7" class="loading">Laddar...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -262,21 +259,21 @@
 
   <!-- KUNDER -->
   <div id="tab-customers" style="display:none;">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="stat-total">—</div><div class="stat-label">Totalt kunder</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-active">—</div><div class="stat-label">Aktiva (12 mån)</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-loyal">—</div><div class="stat-label">Lojala kunder</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-new">—</div><div class="stat-label">Nya denna månad</div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="st-tot">—</div><div class="stat-l">Totalt kunder</div></div>
+      <div class="stat"><div class="stat-n" id="st-act">—</div><div class="stat-l">Aktiva (12 mån)</div></div>
+      <div class="stat"><div class="stat-n" id="st-loy">—</div><div class="stat-l">Lojala kunder</div></div>
+      <div class="stat"><div class="stat-n" id="st-new">—</div><div class="stat-l">Nya denna månad</div></div>
     </div>
     <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Kundregister</div>
-        <input class="form-input" type="text" id="customer-search" placeholder="Sök..." style="width:200px;padding:0.5rem 0.8rem;font-size:0.75rem;" oninput="filterCustomers()"/>
+      <div class="panel-hdr">
+        <div class="panel-ttl">Kundregister</div>
+        <input class="finp" type="text" id="cust-search" placeholder="Sök..." style="width:180px;padding:0.45rem 0.7rem;font-size:0.72rem;" oninput="filterCusts()"/>
       </div>
       <div style="overflow-x:auto;">
-        <table class="customer-table">
+        <table class="tbl">
           <thead><tr><th>Namn</th><th>E-post</th><th>Ordrar</th><th>Senast aktiv</th><th>Lojalitet</th><th>Åtgärd</th></tr></thead>
-          <tbody id="customers-tbody"><tr><td colspan="6" class="loading-state">Laddar...</td></tr></tbody>
+          <tbody id="custs-tbody"><tr><td colspan="6" class="loading">Laddar...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -285,501 +282,443 @@
   <!-- RAPPORT -->
   <div id="tab-report" style="display:none;">
     <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Månadsrapport</div>
-        <button class="btn-primary" onclick="sendMonthlyReport(false)">Skicka rapport nu</button>
+      <div class="panel-hdr">
+        <div class="panel-ttl">Månadsrapport</div>
+        <button class="btn-p" onclick="sendReport(false)">Skicka rapport nu</button>
       </div>
-      <div id="report-content" class="loading-state">Genererar...</div>
+      <div id="rep-content" class="loading">Genererar...</div>
     </div>
   </div>
 </div>
 
 <!-- MODAL: Material -->
-<div class="modal-overlay" id="modal-add-material">
-  <div class="modal">
-    <div class="modal-title">Nytt material</div>
-    <div class="form-group"><label class="form-label">Namn</label><input class="form-input" type="text" id="new-material-name" placeholder="T.ex. Läder"/></div>
-    <div class="form-group"><label class="form-label">URL-id (auto)</label><input class="form-input" type="text" id="new-material-id" readonly style="opacity:0.5;"/></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-add-material')">Avbryt</button>
-      <button class="btn-primary" onclick="saveMaterial()">Spara</button>
+<div class="modal-bg" id="m-mat">
+  <div class="modal-box">
+    <div class="modal-ttl">Nytt material</div>
+    <div class="fgrp"><label class="flbl">Materialnamn</label><input class="finp" type="text" id="m-mat-name" placeholder="T.ex. Läder, Trä, Akryl"/></div>
+    <div class="fgrp"><label class="flbl">URL-id (auto)</label><input class="finp" type="text" id="m-mat-id" readonly style="opacity:0.5;"/></div>
+    <div class="modal-foot">
+      <button class="btn-s" onclick="closeM('m-mat')">Avbryt</button>
+      <button class="btn-p" onclick="saveMat()">Spara</button>
     </div>
-    <div class="status" id="modal-material-status"></div>
+    <div class="status" id="m-mat-st"></div>
   </div>
 </div>
 
 <!-- MODAL: Produkt -->
-<div class="modal-overlay" id="modal-add-product">
-  <div class="modal">
-    <div class="modal-title">Ny produkt</div>
-    <div class="form-group"><label class="form-label">Namn</label><input class="form-input" type="text" id="new-product-name" placeholder="T.ex. Visitkort"/></div>
-    <div class="form-group"><label class="form-label">Beskrivning</label><input class="form-input" type="text" id="new-product-desc" placeholder="Kort beskrivning till kunden"/></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-add-product')">Avbryt</button>
-      <button class="btn-primary" onclick="saveProduct()">Spara</button>
+<div class="modal-bg" id="m-prod">
+  <div class="modal-box">
+    <div class="modal-ttl">Ny produkt</div>
+    <div class="fgrp"><label class="flbl">Produktnamn</label><input class="finp" type="text" id="m-prod-name" placeholder="T.ex. Visitkort"/></div>
+    <div class="fgrp"><label class="flbl">Beskrivning</label><input class="finp" type="text" id="m-prod-desc" placeholder="Kort beskrivning till kunden"/></div>
+    <div class="modal-foot">
+      <button class="btn-s" onclick="closeM('m-prod')">Avbryt</button>
+      <button class="btn-p" onclick="saveProd()">Spara</button>
     </div>
-    <div class="status" id="modal-product-status"></div>
+    <div class="status" id="m-prod-st"></div>
   </div>
 </div>
 
 <!-- MODAL: Order -->
-<div class="modal-overlay" id="modal-order-detail">
-  <div class="modal">
-    <div class="modal-title">Orderdetaljer</div>
-    <div id="order-detail-content"></div>
-    <div class="form-group" style="margin-top:1.2rem;">
-      <label class="form-label">Uppdatera status</label>
-      <select class="form-input" id="order-status-select">
-        <option value="new">Ny</option>
-        <option value="processing">Behandlas</option>
-        <option value="quoted">Offert skickad</option>
-        <option value="confirmed">Bekräftad</option>
-        <option value="completed">Klar</option>
+<div class="modal-bg" id="m-ord">
+  <div class="modal-box">
+    <div class="modal-ttl">Orderdetaljer</div>
+    <div id="m-ord-content"></div>
+    <div class="fgrp" style="margin-top:1.2rem;">
+      <label class="flbl">Uppdatera status</label>
+      <select class="finp" id="m-ord-status">
+        <option value="new">Ny</option><option value="processing">Behandlas</option>
+        <option value="quoted">Offert skickad</option><option value="confirmed">Bekräftad</option><option value="completed">Klar</option>
       </select>
     </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-order-detail')">Stäng</button>
-      <button class="btn-primary" onclick="updateOrderStatus()">Uppdatera</button>
+    <div class="modal-foot">
+      <button class="btn-s" onclick="closeM('m-ord')">Stäng</button>
+      <button class="btn-p" onclick="updOrdStatus()">Uppdatera</button>
     </div>
   </div>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, addDoc, collection, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,collection,getDocs,deleteDoc,updateDoc,addDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
-  const CLOUD="dqqirxxnz", UPLOAD_PRESET="elegant-m-admin";
-  const ADMIN_MAIL=["alkaisy",".ab@gmail",".com"].join("");
-  const EJS_PK="AOGvNUIneVA3XJNhk", EJS_SV="service_t7ra7wk", EJS_TP="template_8rljpya";
-  const MAX_ATT=3, LOCK_MS=3600000;
+const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
+const CLOUD="dqqirxxnz",UP="elegant-m-admin";
+const AM=["alkaisy",".ab@gmail",".com"].join("");
+const EPK="AOGvNUIneVA3XJNhk",ESV="service_t7ra7wk",ETP="template_8rljpya";
 
-  const app=initializeApp(FB), auth=getAuth(app), db=getFirestore(app);
-  emailjs.init(EJS_PK);
+const app=initializeApp(FB),auth=getAuth(app),db=getFirestore(app);
+emailjs.init(EPK);
 
-  let otp=null,otpExp=null;
-  let att=parseInt(localStorage.getItem("em_att")||"0");
-  let lock=parseInt(localStorage.getItem("em_lock")||"0");
-  let curMat=null,curProd=null,curOrderId=null;
-  let allOrders=[],allCustomers=[],priceLevels=[];
+let OTP=null,OTPexp=null;
+let att=parseInt(localStorage.getItem("em_a")||"0");
+let lck=parseInt(localStorage.getItem("em_l")||"0");
+let cMat=null,cProd=null,cOrdId=null;
+let allOrds=[],allCusts=[],PLs=[];
 
-  const $=id=>document.getElementById(id);
-  const ts=()=>new Date().toLocaleString("sv-SE");
+const $=id=>document.getElementById(id);
+const ts=()=>new Date().toLocaleString("sv-SE");
+const slug=s=>s.toLowerCase().trim().replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o").replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"");
 
-  function setStatus(id,msg,type){const el=$(id);if(!el)return;el.textContent=msg;el.className="status "+(type||"");}
+function setSt(id,msg,cls){const el=$(id);if(!el)return;el.textContent=msg;el.className="status"+(cls?" "+cls:"");}
 
-  async function secMail(evt,det){
-    try{await emailjs.send(EJS_SV,EJS_TP,{event_type:evt,event_time:ts(),event_details:det,ip_info:"N/A"});}
-    catch(e){console.warn(e);}
-  }
+async function secMail(evt,det){
+  try{await emailjs.send(ESV,ETP,{event_type:evt,event_time:ts(),event_details:det,ip_info:"N/A"});}
+  catch(e){console.warn("mail err",e);}
+}
 
-  function loyalty(n){
-    if(n>=10)return{level:"Platina",badge:"badge-platinum",icon:"💎"};
-    if(n>=5)return{level:"Guld",badge:"badge-gold",icon:"🥇"};
-    if(n>=2)return{level:"Silver",badge:"badge-silver",icon:"🥈"};
-    return{level:"Ny kund",badge:"badge-new",icon:"🥉"};
-  }
+function loy(n){
+  if(n>=10)return{l:"Platina",b:"b-plt",i:"💎"};
+  if(n>=5)return{l:"Guld",b:"b-gld",i:"🥇"};
+  if(n>=2)return{l:"Silver",b:"b-sil",i:"🥈"};
+  return{l:"Ny kund",b:"b-new",i:"🥉"};
+}
 
-  function slug(s){return s.toLowerCase().trim().replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o").replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"");}
-
-  // AUTH
-  window.doLogin=async function(){
-    if(Date.now()<lock){setStatus("login-status","Spärrat. Vänta "+Math.ceil((lock-Date.now())/60000)+" min.","error");return;}
-    const email=$("login-email").value.trim(),pass=$("login-pass").value,btn=$("login-btn");
-    btn.disabled=true;btn.textContent="Kontrollerar...";setStatus("login-status","","");
-    try{
-      await signInWithEmailAndPassword(auth,email,pass);
-      att=0;localStorage.setItem("em_att","0");
-      otp=Math.floor(100000+Math.random()*900000).toString();
-      otpExp=Date.now()+600000;
-      await secMail("Inloggningsförsök — OTP","OTP: "+otp+" (10 min)");
-      $("login-section").style.display="none";
-      $("otp-section").style.display="";
-      setStatus("otp-status","Kod skickad till din e-post.","info");
-    }catch(e){
-      att++;localStorage.setItem("em_att",att.toString());
-      await secMail("Misslyckat försök ("+att+"/"+MAX_ATT+")","E-post: "+email);
-      if(att>=MAX_ATT){
-        lock=Date.now()+LOCK_MS;localStorage.setItem("em_lock",lock.toString());
-        att=0;localStorage.setItem("em_att","0");
-        await secMail("KONTOT SPÄRRАТ 1 TIMME",MAX_ATT+" misslyckade försök.");
-        setStatus("login-status","3 misslyckade försök. Spärrat 1 timme.","error");
-      }else{
-        setStatus("login-status","Fel lösenord. "+(MAX_ATT-att)+" försök kvar.","error");
-      }
-      btn.disabled=false;btn.textContent="Logga in";
+// AUTH
+window.doLogin=async function(){
+  const now=Date.now();
+  if(now<lck){setSt("login-status","Spärrat. Vänta "+Math.ceil((lck-now)/60000)+" min.","err");return;}
+  const email=$("login-email").value.trim(),pass=$("login-pass").value,btn=$("login-btn");
+  btn.disabled=true;btn.textContent="Kontrollerar...";setSt("login-status","","");
+  try{
+    await signInWithEmailAndPassword(auth,email,pass);
+    att=0;localStorage.setItem("em_a","0");
+    OTP=Math.floor(100000+Math.random()*900000).toString();
+    OTPexp=Date.now()+600000;
+    await secMail("Inloggningsförsök - OTP","OTP: "+OTP+" (gäller 10 min)");
+    $("login-section").style.display="none";
+    $("otp-section").style.display="block";
+    setSt("otp-status","Kod skickad till din e-post.","inf");
+  }catch(e){
+    att++;localStorage.setItem("em_a",att.toString());
+    await secMail("Misslyckat försök ("+att+"/3)","E-post: "+email);
+    if(att>=3){
+      lck=Date.now()+3600000;localStorage.setItem("em_l",lck.toString());
+      att=0;localStorage.setItem("em_a","0");
+      await secMail("KONTOT SPÄRRAT 1 TIMME","3 misslyckade försök.");
+      setSt("login-status","3 misslyckade försök. Spärrat 1 timme.","err");
+    }else{
+      setSt("login-status","Fel lösenord. "+(3-att)+" försök kvar.","err");
     }
-  };
-
-  window.doOTP=function(){
-    const entered=$("otp-input").value.trim();
-    if(Date.now()>otpExp){setStatus("otp-status","Koden gick ut.","error");return;}
-    if(entered===otp){
-      $("otp-section").style.display="none";
-      $("admin-section").style.display="";
-      $("logout-btn").style.display="";
-      secMail("Lyckad inloggning","Admin loggade in "+ts());
-      onReady();
-    }else{setStatus("otp-status","Fel kod.","error");}
-  };
-
-  window.resendOTP=async function(){
-    otp=Math.floor(100000+Math.random()*900000).toString();
-    otpExp=Date.now()+600000;
-    await secMail("Ny OTP begärd","Kod: "+otp);
-    setStatus("otp-status","Ny kod skickad!","info");
-  };
-
-  window.doLogout=async function(){await signOut(auth);location.reload();};
-
-  async function onReady(){loadMaterials();loadOrders();loadCustomers();runMaintenance();}
-
-  // TABS
-  window.switchTab=function(tab){
-    ["products","orders","customers","report"].forEach(t=>{$("tab-"+t).style.display=t===tab?"":"none";});
-    document.querySelectorAll(".tab").forEach((el,i)=>{
-      el.classList.toggle("active",["products","orders","customers","report"][i]===tab);
-    });
-    if(tab==="report")generateReport();
-  };
-
-  // NAV
-  window.navTo=function(level){
-    if(level==="materials"){curMat=null;curProd=null;$("panel-materials").style.display="";$("panel-products").style.display="none";$("panel-product-detail").style.display="none";}
-    else if(level==="products"){curProd=null;$("panel-materials").style.display="none";$("panel-products").style.display="";$("panel-product-detail").style.display="none";}
-    updateBC();
-  };
-
-  function updateBC(){
-    const bc=$("breadcrumb");bc.innerHTML="";
-    const add=(label,level,active)=>{
-      if(bc.children.length){const s=document.createElement("span");s.className="breadcrumb-sep";s.textContent="›";bc.appendChild(s);}
-      const el=document.createElement("span");el.className="breadcrumb-item"+(active?" active":"");
-      el.textContent=label;if(!active)el.onclick=()=>navTo(level);bc.appendChild(el);
-    };
-    add("Material","materials",!curMat);
-    if(curMat)add(curMat.name,"products",!curProd);
-    if(curProd)add(curProd.name,"",true);
+    btn.disabled=false;btn.textContent="Logga in";
   }
+};
 
-  // MATERIALS
-  async function loadMaterials(){
-    const g=$("materials-grid");g.innerHTML='<div class="loading-state">Laddar...</div>';
-    try{
-      const snap=await getDocs(collection(db,"materials"));
-      const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
-      g.innerHTML="";
-      mats.forEach(m=>{
-        const c=document.createElement("div");c.className="card";
-        c.innerHTML='<div class="card-top"><div><div class="card-name">'+m.name+'</div></div><div class="card-actions"><button class="btn-secondary" onclick="openMaterial(\''+m.id+'\',\''+m.name+'\')">Öppna</button><button class="btn-danger" onclick="delMaterial(\''+m.id+'\')">🗑</button></div></div>';
-        g.appendChild(c);
-      });
-      const add=document.createElement("div");add.className="card add-card";
-      add.innerHTML='<span style="font-size:1.4rem">+</span> Nytt material';add.onclick=openAddMaterial;g.appendChild(add);
-    }catch(e){g.innerHTML='<div class="error-state">'+e.message+'</div>';}
-  }
+window.doOTP=function(){
+  const v=$("otp-input").value.trim();
+  if(Date.now()>OTPexp){setSt("otp-status","Koden gick ut.","err");return;}
+  if(v===OTP){
+    $("otp-section").setAttribute("hidden","");
+    $("admin-section").removeAttribute("hidden");
+    $("logout-btn").style.display="block";
+    secMail("Lyckad inloggning","Admin inloggad "+ts());
+    setTimeout(()=>onReady(),300);
+  }else{setSt("otp-status","Fel kod.","err");}
+};
 
-  window.openMaterial=function(id,name){
-    curMat={id,name};curProd=null;
-    $("panel-materials").style.display="none";$("panel-products").style.display="";$("panel-product-detail").style.display="none";
-    updateBC();loadProducts(id);
+window.resendOTP=async function(){
+  OTP=Math.floor(100000+Math.random()*900000).toString();
+  OTPexp=Date.now()+600000;
+  await secMail("Ny OTP","Kod: "+OTP);
+  setSt("otp-status","Ny kod skickad!","inf");
+};
+
+window.doLogout=async function(){await signOut(auth);location.reload();};
+
+async function onReady(){loadMats();loadOrds();loadCusts();runMaint();}
+
+// TABS
+window.switchTab=function(t){
+  ["products","orders","customers","report"].forEach(x=>{$("tab-"+x).style.display=x===t?"block":"none";});
+  document.querySelectorAll(".tab").forEach((el,i)=>{el.classList.toggle("active",["products","orders","customers","report"][i]===t);});
+  if(t==="report")genReport();
+};
+
+// BREADCRUMB
+function updateBC(){
+  const bc=$("bc");bc.innerHTML="";
+  const add=(lbl,lvl,active)=>{
+    if(bc.children.length){const s=document.createElement("span");s.className="bc-sep";s.textContent=" › ";bc.appendChild(s);}
+    const el=document.createElement("span");el.className="bc-item"+(active?" active":"");
+    el.textContent=lbl;if(!active)el.onclick=()=>navTo(lvl);bc.appendChild(el);
   };
+  add("Material","mats",!cMat);
+  if(cMat)add(cMat.name,"prods",!cProd);
+  if(cProd)add(cProd.name,"",true);
+}
 
-  window.openAddMaterial=function(){
-    $("new-material-name").value="";$("new-material-id").value="";
-    $("new-material-name").oninput=function(){$("new-material-id").value=slug(this.value);};
-    openModal("modal-add-material");
-  };
+window.navTo=function(lvl){
+  if(lvl==="mats"){cMat=null;cProd=null;$("p-mats").style.display="";$("p-prods").style.display="none";$("p-detail").style.display="none";}
+  else if(lvl==="prods"){cProd=null;$("p-mats").style.display="none";$("p-prods").style.display="";$("p-detail").style.display="none";}
+  updateBC();
+};
 
-  window.saveMaterial=async function(){
-    const name=$("new-material-name").value.trim(),id=$("new-material-id").value.trim();
-    if(!name||!id){setStatus("modal-material-status","Fyll i alla fält.","error");return;}
-    try{await setDoc(doc(db,"materials",id),{name,createdAt:new Date().toISOString()});closeModal("modal-add-material");loadMaterials();}
-    catch(e){setStatus("modal-material-status",e.message,"error");}
-  };
-
-  window.delMaterial=async function(id){
-    if(!confirm("Ta bort material och ALLA produkter?"))return;
-    const ps=await getDocs(collection(db,"materials/"+id+"/products"));
-    for(const d of ps.docs)await deleteDoc(doc(db,"materials/"+id+"/products/"+d.id));
-    await deleteDoc(doc(db,"materials",id));loadMaterials();
-  };
-
-  // PRODUCTS
-  async function loadProducts(matId){
-    const g=$("products-grid");g.innerHTML='<div class="loading-state">Laddar...</div>';
-    const snap=await getDocs(collection(db,"materials/"+matId+"/products"));
-    const prods=[];snap.forEach(d=>prods.push({id:d.id,...d.data()}));
+// MATERIALS
+async function loadMats(){
+  const g=$("mats-grid");g.innerHTML='<div class="loading">Laddar...</div>';
+  try{
+    const snap=await getDocs(collection(db,"materials"));
+    const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
     g.innerHTML="";
-    prods.forEach(p=>{
+    mats.sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{
       const c=document.createElement("div");c.className="card";
-      const imgN=p.images?p.images.length:0,hasP=p.priceLevels&&p.priceLevels.length>0;
-      c.innerHTML='<div class="card-top"><div><div class="card-name">'+p.name+'</div><div class="card-sub">'+imgN+' bilder · '+(hasP?"Priser inlagda":"Inget pris")+'</div></div><div class="card-actions"><button class="btn-secondary" onclick="openProduct(\''+p.id+'\',\''+p.name+'\')">Redigera</button><button class="btn-danger" onclick="delProduct(\''+matId+'\',\''+p.id+'\')">🗑</button></div></div>';
+      c.innerHTML='<div class="card-top"><div><div class="card-name">'+m.name+'</div></div><div class="card-acts"><button class="btn-s" onclick="openMat(\''+m.id+'\',\''+m.name+'\')">Öppna</button><button class="btn-d" onclick="delMat(\''+m.id+'\')">🗑</button></div></div>';
       g.appendChild(c);
     });
-    const add=document.createElement("div");add.className="card add-card";
-    add.innerHTML='<span style="font-size:1.4rem">+</span> Ny produkt';add.onclick=openAddProduct;g.appendChild(add);
-  }
+    const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Nytt material';ac.onclick=openAddMat;g.appendChild(ac);
+  }catch(e){g.innerHTML='<div class="empty">Fel: '+e.message+'</div>';}
+}
 
-  window.openProduct=async function(id,name){
-    curProd={id,name};
-    $("panel-materials").style.display="none";$("panel-products").style.display="none";$("panel-product-detail").style.display="";
-    updateBC();await loadProductDetail(curMat.id,id);
-  };
+window.openMat=function(id,name){cMat={id,name};cProd=null;$("p-mats").style.display="none";$("p-prods").style.display="";$("p-detail").style.display="none";updateBC();loadProds(id);};
+window.openAddMat=function(){$("m-mat-name").value="";$("m-mat-id").value="";$("m-mat-name").oninput=function(){$("m-mat-id").value=slug(this.value);};openM("m-mat");};
+window.saveMat=async function(){
+  const name=$("m-mat-name").value.trim(),id=$("m-mat-id").value.trim();
+  if(!name||!id){setSt("m-mat-st","Fyll i fälten.","err");return;}
+  try{await setDoc(doc(db,"materials",id),{name,createdAt:new Date().toISOString()});closeM("m-mat");loadMats();}
+  catch(e){setSt("m-mat-st",e.message,"err");}
+};
+window.delMat=async function(id){
+  if(!confirm("Ta bort material och ALLA produkter?"))return;
+  const ps=await getDocs(collection(db,"materials/"+id+"/products"));
+  for(const d of ps.docs)await deleteDoc(doc(db,"materials/"+id+"/products/"+d.id));
+  await deleteDoc(doc(db,"materials",id));loadMats();
+};
 
-  window.openAddProduct=function(){$("new-product-name").value="";$("new-product-desc").value="";openModal("modal-add-product");};
-
-  window.saveProduct=async function(){
-    const name=$("new-product-name").value.trim(),desc=$("new-product-desc").value.trim();
-    if(!name){setStatus("modal-product-status","Fyll i namn.","error");return;}
-    const id=slug(name);
-    try{
-      await setDoc(doc(db,"materials/"+curMat.id+"/products",id),{name,desc,images:[],priceLevels:[],quoteMode:false,campaign:{active:false,pct:0,name:"",start:"",end:""},createdAt:new Date().toISOString()});
-      closeModal("modal-add-product");loadProducts(curMat.id);
-    }catch(e){setStatus("modal-product-status",e.message,"error");}
-  };
-
-  window.delProduct=async function(matId,prodId){
-    if(!confirm("Ta bort produkten?"))return;
-    await deleteDoc(doc(db,"materials/"+matId+"/products/"+prodId));loadProducts(matId);
-  };
-
-  // PRODUCT DETAIL
-  async function loadProductDetail(matId,prodId){
-    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
-    const snap=await getDoc(ref);if(!snap.exists())return;
-    const data=snap.data();
-    renderImages(data.images||[],matId,prodId);
-    priceLevels=(data.priceLevels||[]).map(l=>({...l}));
-    $("toggle-quote").checked=!!data.quoteMode;toggleQuoteMode();
-    renderPriceLevels();
-    const camp=data.campaign||{};
-    $("toggle-campaign").checked=!!camp.active;
-    $("campaign-pct").value=camp.pct||"";$("campaign-name").value=camp.name||"";
-    $("campaign-start").value=camp.start||"";$("campaign-end").value=camp.end||"";
-    $("campaign-box").style.display=camp.active?"":"none";
-  }
-
-  // IMAGES
-  function renderImages(images,matId,prodId){
-    const g=$("images-grid");g.innerHTML="";
-    if(!images.length){g.innerHTML='<div class="empty-state">Inga bilder.</div>';return;}
-    images.forEach((img,idx)=>{
-      const item=document.createElement("div");item.className="image-item";
-      item.innerHTML='<img src="'+img.url+'" alt="'+(img.alt||"")+'" loading="lazy"/><div class="image-item-footer"><input class="alt-input" type="text" value="'+(img.alt||"")+'" placeholder="Bildbeskrivning" onchange="updateAlt(\''+matId+'\',\''+prodId+'\','+idx+',this.value)"/><button class="btn-danger" style="width:100%;font-size:0.58rem;padding:0.3rem;" onclick="delImg(\''+matId+'\',\''+prodId+'\','+idx+')">🗑 Ta bort</button></div>';
-      g.appendChild(item);
-    });
-  }
-
-  window.uploadImages=async function(){
-    const files=$("image-upload").files;if(!files.length){alert("Välj bild.");return;}
-    const matId=curMat.id,prodId=curProd.id,btn=$("upload-btn"),prog=$("upload-progress");
-    btn.disabled=true;btn.textContent="Laddar...";prog.style.display="block";prog.value=0;
-    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
-    const snap=await getDoc(ref);const existing=snap.exists()?(snap.data().images||[]):[];
-    for(let i=0;i<files.length;i++){
-      const fd=new FormData();fd.append("file",files[i]);fd.append("upload_preset",UPLOAD_PRESET);fd.append("folder","elegant-m/"+matId+"/"+prodId);
-      const result=await new Promise((res,rej)=>{
-        const xhr=new XMLHttpRequest();
-        xhr.upload.onprogress=e=>{if(e.lengthComputable)prog.value=((i+e.loaded/e.total)/files.length)*100;};
-        xhr.onload=()=>xhr.status===200?res(JSON.parse(xhr.responseText)):rej();
-        xhr.onerror=()=>rej();
-        xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD+"/image/upload");xhr.send(fd);
-      });
-      existing.push({url:result.secure_url,publicId:result.public_id,alt:""});
-    }
-    await setDoc(ref,{images:existing},{merge:true});
-    $("image-upload").value="";btn.disabled=false;btn.textContent="Ladda upp";prog.style.display="none";
-    renderImages(existing,matId,prodId);
-  };
-
-  window.updateAlt=async function(matId,prodId,idx,alt){
-    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
-    const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs[idx].alt=alt;
-    await setDoc(ref,{images:imgs},{merge:true});
-  };
-
-  window.delImg=async function(matId,prodId,idx){
-    if(!confirm("Ta bort bild?"))return;
-    const ref=doc(db,"materials/"+matId+"/products/"+prodId);
-    const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs.splice(idx,1);
-    await setDoc(ref,{images:imgs},{merge:true});renderImages(imgs,matId,prodId);
-  };
-
-  // PRICING
-  window.toggleQuoteMode=function(){const on=$("toggle-quote").checked;$("pricing-content").style.opacity=on?"0.3":"1";$("pricing-content").style.pointerEvents=on?"none":"auto";};
-  window.toggleCampaign=function(){$("campaign-box").style.display=$("toggle-campaign").checked?"":"none";};
-
-  function renderPriceLevels(){
-    const c=$("price-levels-container");c.innerHTML="";
-    priceLevels.forEach((lv,i)=>{
-      const row=document.createElement("div");row.className="price-level-row";
-      row.innerHTML='<input class="form-input" type="number" value="'+(lv.min||"")+'" placeholder="Från" min="1" oninput="priceLevels['+i+'].min=+this.value" style="padding:0.5rem;"/><input class="form-input" type="number" value="'+(lv.max||"")+'" placeholder="Till (tom=∞)" oninput="priceLevels['+i+'].max=this.value?+this.value:null" style="padding:0.5rem;"/><input class="form-input" type="number" value="'+(lv.price||"")+'" placeholder="Kr/st" min="0" step="0.01" oninput="priceLevels['+i+'].price=+this.value" style="padding:0.5rem;"/><button class="btn-danger" onclick="removePriceLevel('+i+')">✕</button>';
-      c.appendChild(row);
-    });
-  }
-
-  window.addPriceLevel=function(){priceLevels.push({min:1,max:null,price:0});renderPriceLevels();};
-  window.removePriceLevel=function(i){priceLevels.splice(i,1);renderPriceLevels();};
-
-  window.savePricing=async function(){
-    const matId=curMat.id,prodId=curProd.id;
-    const quoteMode=$("toggle-quote").checked;
-    const campaignActive=$("toggle-campaign").checked;
-    const campaign={active:campaignActive,pct:parseFloat($("campaign-pct").value)||0,name:$("campaign-name").value.trim(),start:$("campaign-start").value,end:$("campaign-end").value};
-    try{
-      await setDoc(doc(db,"materials/"+matId+"/products/"+prodId),{priceLevels,quoteMode,campaign},{merge:true});
-      alert("Priser sparade!");
-    }catch(e){alert("Fel: "+e.message);}
-  };
-
-  // ORDERS
-  async function loadOrders(){
-    const tbody=$("orders-tbody");tbody.innerHTML='<tr><td colspan="7" class="loading-state">Laddar...</td></tr>';
-    try{
-      const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
-      allOrders=[];snap.forEach(d=>allOrders.push({id:d.id,...d.data()}));
-      renderOrders(allOrders);
-    }catch(e){tbody.innerHTML='<tr><td colspan="7" class="error-state">'+e.message+'</td></tr>';}
-  }
-
-  function renderOrders(orders){
-    const tbody=$("orders-tbody");
-    if(!orders.length){tbody.innerHTML='<tr><td colspan="7" class="empty-state">Inga ordrar.</td></tr>';return;}
-    const scol={new:"rgba(0,200,255,0.7)",processing:"rgba(255,200,0,0.7)",quoted:"rgba(150,100,255,0.7)",confirmed:"rgba(0,255,180,0.7)",completed:"rgba(100,255,100,0.7)"};
-    const slbl={new:"Ny",processing:"Behandlas",quoted:"Offert skickad",confirmed:"Bekräftad",completed:"Klar"};
-    tbody.innerHTML=orders.map(o=>{
-      const loy=loyalty(o.customerOrders||1);
-      const col=scol[o.status||"new"]||"#777",lbl=slbl[o.status||"new"]||"Ny";
-      return '<tr><td>'+(o.createdAt?new Date(o.createdAt).toLocaleDateString("sv-SE"):"-")+'</td><td>'+(o.customerName||"-")+'<br><span style="font-size:0.6rem;color:#666;">'+(o.customerEmail||"")+'</span></td><td>'+(o.product||"-")+'</td><td>'+(o.qty||"-")+'</td><td><span style="color:'+col+';font-size:0.68rem;">'+lbl+'</span></td><td><span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span></td><td><button class="btn-secondary" onclick="openOrderDetail(\''+o.id+'\')">Detaljer</button></td></tr>';
-    }).join("");
-  }
-
-  window.filterOrders=function(){
-    const q=$("order-search").value.toLowerCase(),f=$("order-filter").value;
-    renderOrders(allOrders.filter(o=>{
-      const mq=!q||(o.customerEmail||"").toLowerCase().includes(q)||(o.product||"").toLowerCase().includes(q);
-      return mq&&(!f||o.status===f);
-    }));
-  };
-
-  window.openOrderDetail=function(id){
-    const o=allOrders.find(x=>x.id===id);if(!o)return;
-    curOrderId=id;$("order-status-select").value=o.status||"new";
-    const loy=loyalty(o.customerOrders||1);
-    $("order-detail-content").innerHTML='<div style="background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:1rem;font-size:0.78rem;letter-spacing:0.06em;color:#999;line-height:2;"><strong style="color:rgba(0,255,180,0.7);">Kund:</strong> '+(o.customerName||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">E-post:</strong> '+(o.customerEmail||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Telefon:</strong> '+(o.phone||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Adress:</strong> '+(o.address||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Produkt:</strong> '+(o.product||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Antal:</strong> '+(o.qty||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Meddelande:</strong> '+(o.message||"-")+'<br><strong style="color:rgba(0,255,180,0.7);">Lojalitet:</strong> <span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span><br><strong style="color:rgba(0,255,180,0.7);">Ordrar totalt:</strong> '+(o.customerOrders||1)+'</div>';
-    openModal("modal-order-detail");
-  };
-
-  window.updateOrderStatus=async function(){
-    const status=$("order-status-select").value;
-    await updateDoc(doc(db,"orders",curOrderId),{status});
-    closeModal("modal-order-detail");loadOrders();
-  };
-
-  // CUSTOMERS
-  async function loadCustomers(){
-    try{
-      const snap=await getDocs(collection(db,"customers"));
-      allCustomers=[];snap.forEach(d=>allCustomers.push({id:d.id,...d.data()}));
-      renderCustomers(allCustomers);updateStats(allCustomers);
-    }catch(e){console.warn(e);}
-  }
-
-  function renderCustomers(customers){
-    const tbody=$("customers-tbody");
-    if(!customers.length){tbody.innerHTML='<tr><td colspan="6" class="empty-state">Inga kunder.</td></tr>';return;}
-    tbody.innerHTML=customers.map(c=>{
-      const loy=loyalty(c.totalOrders||1);
-      const last=c.lastOrder?new Date(c.lastOrder).toLocaleDateString("sv-SE"):"-";
-      return '<tr><td>'+(c.name||"-")+'</td><td style="font-size:0.65rem;">'+(c.email||"-")+'</td><td>'+(c.totalOrders||1)+'</td><td>'+last+'</td><td><span class="badge '+loy.badge+'">'+loy.icon+' '+loy.level+'</span></td><td><button class="btn-danger" onclick="delCustomer(\''+c.id+'\')">🗑</button></td></tr>';
-    }).join("");
-  }
-
-  function updateStats(customers){
-    const now12=Date.now()-365*24*60*60*1000;
-    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
-    $("stat-total").textContent=customers.length;
-    $("stat-active").textContent=customers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12).length;
-    $("stat-loyal").textContent=customers.filter(c=>(c.totalOrders||1)>=5).length;
-    $("stat-new").textContent=customers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm).length;
-  }
-
-  window.filterCustomers=function(){
-    const q=$("customer-search").value.toLowerCase();
-    renderCustomers(allCustomers.filter(c=>(c.name||"").toLowerCase().includes(q)||(c.email||"").toLowerCase().includes(q)));
-  };
-
-  window.delCustomer=async function(id){
-    if(!confirm("Ta bort kund?"))return;
-    await deleteDoc(doc(db,"customers",id));loadCustomers();
-  };
-
-  // MAINTENANCE
-  async function runMaintenance(){
-    const cutoff=new Date(Date.now()-365*24*60*60*1000).toISOString();
-    const snap=await getDocs(collection(db,"customers"));
-    const toDel=[],deleted=[];
-    snap.forEach(d=>{const data=d.data();if(data.lastOrder&&data.lastOrder<cutoff){toDel.push(d.id);deleted.push(data.email||d.id);}});
-    if(toDel.length){
-      for(const id of toDel)await deleteDoc(doc(db,"customers",id));
-      await secMail("Automatisk rensning",toDel.length+" inaktiva kunder raderade:\n"+deleted.join("\n"));
-      loadCustomers();
-    }
-    const lastRep=localStorage.getItem("em_last_rep");
-    const thisMonth=new Date().toISOString().slice(0,7);
-    if(lastRep!==thisMonth){localStorage.setItem("em_last_rep",thisMonth);setTimeout(()=>sendMonthlyReport(true),3000);}
-  }
-
-  // REPORT
-  async function generateReport(){
-    const el=$("report-content");el.className="loading-state";el.textContent="Genererar...";
-    const now12=Date.now()-365*24*60*60*1000;
-    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
-    const active=allCustomers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12);
-    const loyal=allCustomers.filter(c=>(c.totalOrders||1)>=5);
-    const newC=allCustomers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm);
-    const monthOrders=allOrders.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
-    el.className="";
-    el.innerHTML='<div class="stats-grid" style="margin-bottom:1rem;"><div class="stat-card"><div class="stat-number">'+allCustomers.length+'</div><div class="stat-label">Totalt kunder</div></div><div class="stat-card"><div class="stat-number">'+active.length+'</div><div class="stat-label">Aktiva</div></div><div class="stat-card"><div class="stat-number">'+loyal.length+'</div><div class="stat-label">Lojala</div></div><div class="stat-card"><div class="stat-number">'+newC.length+'</div><div class="stat-label">Nya denna månad</div></div><div class="stat-card"><div class="stat-number">'+monthOrders.length+'</div><div class="stat-label">Ordrar denna månad</div></div><div class="stat-card"><div class="stat-number">'+allOrders.length+'</div><div class="stat-label">Totalt ordrar</div></div></div><div style="font-size:0.7rem;letter-spacing:0.08em;color:#666;text-align:center;font-style:italic;">Rapport genererad: '+ts()+'</div>';
-  }
-
-  window.sendMonthlyReport=async function(auto=false){
-    const now12=Date.now()-365*24*60*60*1000;
-    const tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
-    const active=allCustomers.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>now12);
-    const loyal=allCustomers.filter(c=>(c.totalOrders||1)>=5);
-    const newC=allCustomers.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm);
-    const monthOrders=allOrders.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
-    const details="MÅNADSRAPPORT ELEGANT-M\nGenererad: "+ts()+"\n\nKUNDER:\nTotalt: "+allCustomers.length+"\nAktiva (12 mån): "+active.length+"\nLojala (5+ ordrar): "+loyal.length+"\nNya denna månad: "+newC.length+"\n\nORDRAR:\nDenna månad: "+monthOrders.length+"\nTotalt: "+allOrders.length+"\n\nLOJALITET:\nNy (1): "+allCustomers.filter(c=>(c.totalOrders||1)===1).length+"\nSilver (2-4): "+allCustomers.filter(c=>{const t=c.totalOrders||1;return t>=2&&t<5;}).length+"\nGuld (5-9): "+allCustomers.filter(c=>{const t=c.totalOrders||1;return t>=5&&t<10;}).length+"\nPlatina (10+): "+allCustomers.filter(c=>(c.totalOrders||1)>=10).length;
-    await secMail(auto?"Automatisk månadsrapport":"Månadsrapport på begäran",details);
-    if(!auto)alert("Rapport skickad till "+ADMIN_MAIL);
-  };
-
-  // MODALS
-  window.openModal=function(id){$(id).classList.add("active");};
-  window.closeModal=function(id){$(id).classList.remove("active");};
-  document.querySelectorAll(".modal-overlay").forEach(el=>{el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("active");});});
-
-  // KEYBOARD
-  document.addEventListener("keydown",e=>{
-    if(e.key==="Enter"){
-      if($("login-section").style.display!=="none")doLogin();
-      if($("otp-section").style.display!=="none")doOTP();
-    }
+// PRODUCTS
+async function loadProds(matId){
+  const g=$("prods-grid");g.innerHTML='<div class="loading">Laddar...</div>';
+  const snap=await getDocs(collection(db,"materials/"+matId+"/products"));
+  const prods=[];snap.forEach(d=>prods.push({id:d.id,...d.data()}));
+  g.innerHTML="";
+  prods.forEach(p=>{
+    const c=document.createElement("div");c.className="card";
+    const n=p.images?p.images.length:0;
+    c.innerHTML='<div class="card-top"><div><div class="card-name">'+p.name+'</div><div class="card-sub">'+n+' bilder · '+(p.priceLevels&&p.priceLevels.length?"Priser inlagda":"Inget pris")+'</div></div><div class="card-acts"><button class="btn-s" onclick="openProd(\''+p.id+'\',\''+p.name+'\')">Redigera</button><button class="btn-d" onclick="delProd(\''+matId+'\',\''+p.id+'\')">🗑</button></div></div>';
+    g.appendChild(c);
   });
+  const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Ny produkt';ac.onclick=openAddProd;g.appendChild(ac);
+}
 
-  // INIT
-  // Check lockout on load
-  (function(){
-    if(Date.now()<lock){
-      const el=document.getElementById("login-status");
-      if(el){el.textContent="Spärrat. Vänta "+Math.ceil((lock-Date.now())/60000)+" min.";el.className="status error";}
-      const btn=document.getElementById("login-btn");
-      if(btn)btn.disabled=true;
-    }
-  })();
+window.openProd=async function(id,name){cProd={id,name};$("p-mats").style.display="none";$("p-prods").style.display="none";$("p-detail").style.display="block";updateBC();await loadDetail(cMat.id,id);};
+window.openAddProd=function(){$("m-prod-name").value="";$("m-prod-desc").value="";openM("m-prod");};
+window.saveProd=async function(){
+  const name=$("m-prod-name").value.trim(),desc=$("m-prod-desc").value.trim();
+  if(!name){setSt("m-prod-st","Fyll i namn.","err");return;}
+  try{
+    await setDoc(doc(db,"materials/"+cMat.id+"/products",slug(name)),{name,desc,images:[],priceLevels:[],quoteMode:false,campaign:{active:false,pct:0,name:"",start:"",end:""},createdAt:new Date().toISOString()});
+    closeM("m-prod");loadProds(cMat.id);
+  }catch(e){setSt("m-prod-st",e.message,"err");}
+};
+window.delProd=async function(mId,pId){if(!confirm("Ta bort?"))return;await deleteDoc(doc(db,"materials/"+mId+"/products/"+pId));loadProds(mId);};
+
+// DETAIL
+async function loadDetail(mId,pId){
+  const ref=doc(db,"materials/"+mId+"/products/"+pId);
+  const snap=await getDoc(ref);if(!snap.exists())return;
+  const d=snap.data();
+  renderImgs(d.images||[],mId,pId);
+  PLs=(d.priceLevels||[]).map(l=>({...l}));
+  $("tgl-quote").checked=!!d.quoteMode;tglQuote();renderPLs();
+  const cp=d.campaign||{};
+  $("tgl-camp").checked=!!cp.active;
+  $("camp-pct").value=cp.pct||"";$("camp-name").value=cp.name||"";
+  $("camp-start").value=cp.start||"";$("camp-end").value=cp.end||"";
+  $("camp-box").style.display=cp.active?"block":"none";
+}
+
+// IMAGES
+function renderImgs(imgs,mId,pId){
+  const g=$("imgs-grid");g.innerHTML="";
+  if(!imgs.length){g.innerHTML='<div class="empty">Inga bilder.</div>';return;}
+  imgs.forEach((img,i)=>{
+    const el=document.createElement("div");el.className="img-item";
+    el.innerHTML='<img src="'+img.url+'" alt="'+(img.alt||"")+'" loading="lazy"/><div class="img-foot"><input class="alt-inp" type="text" value="'+(img.alt||"")+'" placeholder="Bildbeskrivning" onchange="updAlt(\''+mId+'\',\''+pId+'\','+i+',this.value)"/><button class="btn-d" style="width:100%;font-size:0.55rem;padding:0.28rem;" onclick="delImg(\''+mId+'\',\''+pId+'\','+i+')">🗑 Ta bort</button></div>';
+    g.appendChild(el);
+  });
+}
+
+window.uploadImgs=async function(){
+  const files=$("img-upload").files;if(!files.length){alert("Välj bild.");return;}
+  const mId=cMat.id,pId=cProd.id,btn=$("up-btn"),prog=$("up-prog");
+  btn.disabled=true;btn.textContent="Laddar...";prog.style.display="block";
+  const ref=doc(db,"materials/"+mId+"/products/"+pId);
+  const snap=await getDoc(ref);const ex=snap.exists()?(snap.data().images||[]):[];
+  for(let i=0;i<files.length;i++){
+    const fd=new FormData();fd.append("file",files[i]);fd.append("upload_preset",UP);fd.append("folder","elegant-m/"+mId+"/"+pId);
+    const r=await new Promise((res,rej)=>{
+      const x=new XMLHttpRequest();
+      x.upload.onprogress=e=>{if(e.lengthComputable)prog.value=((i+e.loaded/e.total)/files.length)*100;};
+      x.onload=()=>x.status===200?res(JSON.parse(x.responseText)):rej(new Error("Upload failed"));
+      x.onerror=()=>rej(new Error("Network error"));
+      x.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD+"/image/upload");x.send(fd);
+    });
+    ex.push({url:r.secure_url,publicId:r.public_id,alt:""});
+  }
+  await setDoc(ref,{images:ex},{merge:true});
+  $("img-upload").value="";btn.disabled=false;btn.textContent="Ladda upp";prog.style.display="none";
+  renderImgs(ex,mId,pId);
+};
+
+window.updAlt=async function(mId,pId,i,alt){
+  const ref=doc(db,"materials/"+mId+"/products/"+pId);
+  const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs[i].alt=alt;
+  await setDoc(ref,{images:imgs},{merge:true});
+};
+
+window.delImg=async function(mId,pId,i){
+  if(!confirm("Ta bort bild?"))return;
+  const ref=doc(db,"materials/"+mId+"/products/"+pId);
+  const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs.splice(i,1);
+  await setDoc(ref,{images:imgs},{merge:true});renderImgs(imgs,mId,pId);
+};
+
+// PRICING
+window.tglQuote=function(){const on=$("tgl-quote").checked;$("price-area").style.opacity=on?"0.3":"1";$("price-area").style.pointerEvents=on?"none":"auto";};
+window.tglCamp=function(){$("camp-box").style.display=$("tgl-camp").checked?"block":"none";};
+
+function renderPLs(){
+  const c=$("pl-container");c.innerHTML="";
+  PLs.forEach((lv,i)=>{
+    const row=document.createElement("div");row.className="plrow";
+    row.innerHTML='<input class="finp" type="number" value="'+(lv.min||"")+'" placeholder="Från" min="1" oninput="PLs['+i+'].min=+this.value" style="padding:0.45rem;"/><input class="finp" type="number" value="'+(lv.max||"")+'" placeholder="Till (tom=∞)" oninput="PLs['+i+'].max=this.value?+this.value:null" style="padding:0.45rem;"/><input class="finp" type="number" value="'+(lv.price||"")+'" placeholder="Kr/st" min="0" step="0.01" oninput="PLs['+i+'].price=+this.value" style="padding:0.45rem;"/><button class="btn-d" onclick="delPL('+i+')">✕</button>';
+    c.appendChild(row);
+  });
+}
+
+window.addPL=function(){PLs.push({min:1,max:null,price:0});renderPLs();};
+window.delPL=function(i){PLs.splice(i,1);renderPLs();};
+
+window.savePricing=async function(){
+  const mId=cMat.id,pId=cProd.id;
+  const qm=$("tgl-quote").checked;
+  const ca={active:$("tgl-camp").checked,pct:parseFloat($("camp-pct").value)||0,name:$("camp-name").value.trim(),start:$("camp-start").value,end:$("camp-end").value};
+  try{await setDoc(doc(db,"materials/"+mId+"/products/"+pId),{priceLevels:PLs,quoteMode:qm,campaign:ca},{merge:true});alert("Sparat!");}
+  catch(e){alert("Fel: "+e.message);}
+};
+
+// ORDERS
+async function loadOrds(){
+  const tb=$("ords-tbody");
+  try{
+    const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+    allOrds=[];snap.forEach(d=>allOrds.push({id:d.id,...d.data()}));renderOrds(allOrds);
+  }catch(e){tb.innerHTML='<tr><td colspan="7" class="empty">Inga ordrar ännu.</td></tr>';}
+}
+
+function renderOrds(ords){
+  const tb=$("ords-tbody");
+  if(!ords.length){tb.innerHTML='<tr><td colspan="7" class="empty">Inga ordrar.</td></tr>';return;}
+  const sc={new:"rgba(0,200,255,0.7)",processing:"rgba(255,200,0,0.7)",quoted:"rgba(150,100,255,0.7)",confirmed:"rgba(0,255,180,0.7)",completed:"rgba(100,255,100,0.7)"};
+  const sl={new:"Ny",processing:"Behandlas",quoted:"Offert skickad",confirmed:"Bekräftad",completed:"Klar"};
+  tb.innerHTML=ords.map(o=>{
+    const ly=loy(o.customerOrders||1),col=sc[o.status||"new"]||"#777",lbl=sl[o.status||"new"]||"Ny";
+    return '<tr><td>'+(o.createdAt?new Date(o.createdAt).toLocaleDateString("sv-SE"):"-")+'</td><td>'+(o.customerName||"-")+'<br><span style="font-size:0.58rem;color:#555;">'+(o.customerEmail||"")+'</span></td><td>'+(o.product||"-")+'</td><td>'+(o.qty||"-")+'</td><td><span style="color:'+col+';font-size:0.65rem;">'+lbl+'</span></td><td><span class="badge '+ly.b+'">'+ly.i+" "+ly.l+'</span></td><td><button class="btn-s" onclick="openOrd(\''+o.id+'\')">Detaljer</button></td></tr>';
+  }).join("");
+}
+
+window.filterOrds=function(){
+  const q=$("ord-search").value.toLowerCase(),f=$("ord-filter").value;
+  renderOrds(allOrds.filter(o=>(!q||(o.customerEmail||"").toLowerCase().includes(q)||(o.product||"").toLowerCase().includes(q))&&(!f||o.status===f)));
+};
+
+window.openOrd=function(id){
+  const o=allOrds.find(x=>x.id===id);if(!o)return;
+  cOrdId=id;$("m-ord-status").value=o.status||"new";
+  const ly=loy(o.customerOrders||1);
+  $("m-ord-content").innerHTML='<div style="background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:1rem;font-size:0.76rem;line-height:2;color:#999;"><b style="color:rgba(0,255,180,0.7)">Kund:</b> '+(o.customerName||"-")+'<br><b style="color:rgba(0,255,180,0.7)">E-post:</b> '+(o.customerEmail||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Telefon:</b> '+(o.phone||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Adress:</b> '+(o.address||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Produkt:</b> '+(o.product||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Antal:</b> '+(o.qty||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Meddelande:</b> '+(o.message||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Lojalitet:</b> <span class="badge '+ly.b+'">'+ly.i+" "+ly.l+'</span></div>';
+  openM("m-ord");
+};
+
+window.updOrdStatus=async function(){
+  await updateDoc(doc(db,"orders",cOrdId),{status:$("m-ord-status").value});
+  closeM("m-ord");loadOrds();
+};
+
+// CUSTOMERS
+async function loadCusts(){
+  try{
+    const snap=await getDocs(collection(db,"customers"));
+    allCusts=[];snap.forEach(d=>allCusts.push({id:d.id,...d.data()}));
+    renderCusts(allCusts);updStats(allCusts);
+  }catch(e){console.warn(e);}
+}
+
+function renderCusts(cs){
+  const tb=$("custs-tbody");
+  if(!cs.length){tb.innerHTML='<tr><td colspan="6" class="empty">Inga kunder.</td></tr>';return;}
+  tb.innerHTML=cs.map(c=>{
+    const ly=loy(c.totalOrders||1),last=c.lastOrder?new Date(c.lastOrder).toLocaleDateString("sv-SE"):"-";
+    return '<tr><td>'+(c.name||"-")+'</td><td style="font-size:0.62rem;">'+(c.email||"-")+'</td><td>'+(c.totalOrders||1)+'</td><td>'+last+'</td><td><span class="badge '+ly.b+'">'+ly.i+" "+ly.l+'</span></td><td><button class="btn-d" onclick="delCust(\''+c.id+'\')">🗑</button></td></tr>';
+  }).join("");
+}
+
+function updStats(cs){
+  const n12=Date.now()-365*24*60*60*1000,tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+  $("st-tot").textContent=cs.length;
+  $("st-act").textContent=cs.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>n12).length;
+  $("st-loy").textContent=cs.filter(c=>(c.totalOrders||1)>=5).length;
+  $("st-new").textContent=cs.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm).length;
+}
+
+window.filterCusts=function(){
+  const q=$("cust-search").value.toLowerCase();
+  renderCusts(allCusts.filter(c=>(c.name||"").toLowerCase().includes(q)||(c.email||"").toLowerCase().includes(q)));
+};
+
+window.delCust=async function(id){
+  if(!confirm("Ta bort kund?"))return;
+  await deleteDoc(doc(db,"customers",id));loadCusts();
+};
+
+// MAINTENANCE
+async function runMaint(){
+  const cutoff=new Date(Date.now()-365*24*60*60*1000).toISOString();
+  const snap=await getDocs(collection(db,"customers"));
+  const toDel=[],deleted=[];
+  snap.forEach(d=>{const data=d.data();if(data.lastOrder&&data.lastOrder<cutoff){toDel.push(d.id);deleted.push(data.email||d.id);}});
+  if(toDel.length){
+    for(const id of toDel)await deleteDoc(doc(db,"customers",id));
+    await secMail("Automatisk rensning",toDel.length+" inaktiva kunder raderade:\n"+deleted.join("\n"));
+    loadCusts();
+  }
+  const lr=localStorage.getItem("em_lr"),tm=new Date().toISOString().slice(0,7);
+  if(lr!==tm){localStorage.setItem("em_lr",tm);setTimeout(()=>sendReport(true),3000);}
+}
+
+// REPORT
+async function genReport(){
+  const el=$("rep-content");el.className="loading";el.textContent="Genererar...";
+  const n12=Date.now()-365*24*60*60*1000,tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+  const act=allCusts.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>n12);
+  const loy5=allCusts.filter(c=>(c.totalOrders||1)>=5);
+  const newC=allCusts.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm);
+  const mOrds=allOrds.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
+  el.className="";
+  el.innerHTML='<div class="stats" style="margin-bottom:1rem;"><div class="stat"><div class="stat-n">'+allCusts.length+'</div><div class="stat-l">Totalt kunder</div></div><div class="stat"><div class="stat-n">'+act.length+'</div><div class="stat-l">Aktiva</div></div><div class="stat"><div class="stat-n">'+loy5.length+'</div><div class="stat-l">Lojala</div></div><div class="stat"><div class="stat-n">'+newC.length+'</div><div class="stat-l">Nya denna månad</div></div><div class="stat"><div class="stat-n">'+mOrds.length+'</div><div class="stat-l">Ordrar denna månad</div></div><div class="stat"><div class="stat-n">'+allOrds.length+'</div><div class="stat-l">Totalt ordrar</div></div></div><div style="font-size:0.68rem;color:#555;text-align:center;font-style:italic;">Genererad: '+ts()+'</div>';
+}
+
+window.sendReport=async function(auto=false){
+  const n12=Date.now()-365*24*60*60*1000,tm=new Date();tm.setDate(1);tm.setHours(0,0,0,0);
+  const act=allCusts.filter(c=>c.lastOrder&&new Date(c.lastOrder).getTime()>n12);
+  const mOrds=allOrds.filter(o=>o.createdAt&&new Date(o.createdAt)>=tm);
+  const det="MÅNADSRAPPORT ELEGANT-M\nGenererad: "+ts()+"\n\nKUNDER: "+allCusts.length+"\nAktiva: "+act.length+"\nLojala (5+): "+allCusts.filter(c=>(c.totalOrders||1)>=5).length+"\nNya denna månad: "+allCusts.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm).length+"\n\nORDRAR:\nDenna månad: "+mOrds.length+"\nTotalt: "+allOrds.length;
+  await secMail(auto?"Automatisk månadsrapport":"Månadsrapport på begäran",det);
+  if(!auto)alert("Rapport skickad!");
+};
+
+// MODALS
+window.openM=function(id){$(id).classList.add("open");};
+window.closeM=function(id){$(id).classList.remove("open");};
+document.querySelectorAll(".modal-bg").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
+
+// KEYBOARD
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    if($("login-section").style.display!=="none"&&$("login-section").style.display!=="")doLogin();
+    if($("otp-section").style.display==="block")doOTP();
+  }
+});
 
 </script>
 </body>
