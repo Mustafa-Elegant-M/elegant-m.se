@@ -6,6 +6,9 @@
   <title>Admin — ELEGANT-M</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:linear-gradient(160deg,#0a1a10,#061009);min-height:100vh;font-family:"Josefin Sans",sans-serif;color:#ccc;}
@@ -340,17 +343,15 @@
   </div>
 </div>
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import{getFirestore,doc,setDoc,getDoc,collection,getDocs,deleteDoc,updateDoc,addDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script>
+
 
 const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
 const CLOUD="dqqirxxnz",UP="elegant-m-admin";
 const AM=["alkaisy",".ab@gmail",".com"].join("");
 const EPK="AOGvNUIneVA3XJNhk",ESV="service_t7ra7wk",ETP="template_8rljpya";
 
-const app=initializeApp(FB),auth=getAuth(app),db=getFirestore(app);
+const app=firebase.initializeApp(FB),auth=firebase.auth(),db=firebase.firestore();
 emailjs.init(EPK);
 
 let OTP=null,OTPexp=null;
@@ -384,7 +385,7 @@ window.doLogin=async function(){
   const email=$("login-email").value.trim(),pass=$("login-pass").value,btn=$("login-btn");
   btn.disabled=true;btn.textContent="Kontrollerar...";setSt("login-status","","");
   try{
-    await signInWithEmailAndPassword(auth,email,pass);
+    await auth.signInWithEmailAndPassword(email,pass);
     att=0;localStorage.setItem("em_a","0");
     OTP=Math.floor(100000+Math.random()*900000).toString();
     OTPexp=Date.now()+600000;
@@ -426,7 +427,7 @@ window.resendOTP=async function(){
   setSt("otp-status","Ny kod skickad!","inf");
 };
 
-window.doLogout=async function(){await signOut(auth);location.reload();};
+window.doLogout=async function(){await auth.signOut();location.reload();};
 
 async function onReady(){loadMats();loadOrds();loadCusts();runMaint();}
 
@@ -460,7 +461,7 @@ window.navTo=function(lvl){
 async function loadMats(){
   const g=$("mats-grid");g.innerHTML='<div class="loading">Laddar...</div>';
   try{
-    const snap=await getDocs(collection(db,"materials"));
+    const snap=await db.collection("materials").get();
     const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
     g.innerHTML="";
     mats.sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{
@@ -477,20 +478,20 @@ window.openAddMat=function(){$("m-mat-name").value="";$("m-mat-id").value="";$("
 window.saveMat=async function(){
   const name=$("m-mat-name").value.trim(),id=$("m-mat-id").value.trim();
   if(!name||!id){setSt("m-mat-st","Fyll i fälten.","err");return;}
-  try{await setDoc(doc(db,"materials",id),{name,createdAt:new Date().toISOString()});closeM("m-mat");loadMats();}
+  try{await db.collection("materials").doc(id).set({name,createdAt:new Date().toISOString()});closeM("m-mat");loadMats();}
   catch(e){setSt("m-mat-st",e.message,"err");}
 };
 window.delMat=async function(id){
   if(!confirm("Ta bort material och ALLA produkter?"))return;
-  const ps=await getDocs(collection(db,"materials/"+id+"/products"));
-  for(const d of ps.docs)await deleteDoc(doc(db,"materials/"+id+"/products/"+d.id));
-  await deleteDoc(doc(db,"materials",id));loadMats();
+  const ps=await db.collection("materials").doc(id).collection("products").get();
+  for(const d of ps.docs)await db.collection("materials/"+id+"/products").doc(d.id).delete();
+  await db.collection("materials").doc(id).delete();loadMats();
 };
 
 // PRODUCTS
 async function loadProds(matId){
   const g=$("prods-grid");g.innerHTML='<div class="loading">Laddar...</div>';
-  const snap=await getDocs(collection(db,"materials/"+matId+"/products"));
+  const snap=await db.collection("materials/"+matId+"/products").get();
   const prods=[];snap.forEach(d=>prods.push({id:d.id,...d.data()}));
   g.innerHTML="";
   prods.forEach(p=>{
@@ -508,16 +509,16 @@ window.saveProd=async function(){
   const name=$("m-prod-name").value.trim(),desc=$("m-prod-desc").value.trim();
   if(!name){setSt("m-prod-st","Fyll i namn.","err");return;}
   try{
-    await setDoc(doc(db,"materials/"+cMat.id+"/products",slug(name)),{name,desc,images:[],priceLevels:[],quoteMode:false,campaign:{active:false,pct:0,name:"",start:"",end:""},createdAt:new Date().toISOString()});
+    await db.collection("materials/"+cMat.id+"/products").doc(slug(name)).set({name,desc,images:[],priceLevels:[],quoteMode:false,campaign:{active:false,pct:0,name:"",start:"",end:""},createdAt:new Date().toISOString()});
     closeM("m-prod");loadProds(cMat.id);
   }catch(e){setSt("m-prod-st",e.message,"err");}
 };
-window.delProd=async function(mId,pId){if(!confirm("Ta bort?"))return;await deleteDoc(doc(db,"materials/"+mId+"/products/"+pId));loadProds(mId);};
+window.delProd=async function(mId,pId){if(!confirm("Ta bort?"))return;await db.collection("materials/"+mId+"/products").doc(pId).delete();loadProds(mId);};
 
 // DETAIL
 async function loadDetail(mId,pId){
-  const ref=doc(db,"materials/"+mId+"/products/"+pId);
-  const snap=await getDoc(ref);if(!snap.exists())return;
+  const ref=db.collection("materials").doc(mId).collection("products").doc(pId);
+  const snap=await ref.get();if(!snap.exists)return;
   const d=snap.data();
   renderImgs(d.images||[],mId,pId);
   PLs=(d.priceLevels||[]).map(l=>({...l}));
@@ -544,8 +545,8 @@ window.uploadImgs=async function(){
   const files=$("img-upload").files;if(!files.length){alert("Välj bild.");return;}
   const mId=cMat.id,pId=cProd.id,btn=$("up-btn"),prog=$("up-prog");
   btn.disabled=true;btn.textContent="Laddar...";prog.style.display="block";
-  const ref=doc(db,"materials/"+mId+"/products/"+pId);
-  const snap=await getDoc(ref);const ex=snap.exists()?(snap.data().images||[]):[];
+  const ref=db.collection("materials").doc(mId).collection("products").doc(pId);
+  const snap=await ref.get();const ex=snap.exists?(snap.data().images||[]):[];
   for(let i=0;i<files.length;i++){
     const fd=new FormData();fd.append("file",files[i]);fd.append("upload_preset",UP);fd.append("folder","elegant-m/"+mId+"/"+pId);
     const r=await new Promise((res,rej)=>{
@@ -557,22 +558,22 @@ window.uploadImgs=async function(){
     });
     ex.push({url:r.secure_url,publicId:r.public_id,alt:""});
   }
-  await setDoc(ref,{images:ex},{merge:true});
+  await ref.set({images:ex},{merge:true});
   $("img-upload").value="";btn.disabled=false;btn.textContent="Ladda upp";prog.style.display="none";
   renderImgs(ex,mId,pId);
 };
 
 window.updAlt=async function(mId,pId,i,alt){
-  const ref=doc(db,"materials/"+mId+"/products/"+pId);
-  const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs[i].alt=alt;
-  await setDoc(ref,{images:imgs},{merge:true});
+  const ref=db.collection("materials/"+mId+"/products/"+pId).doc(pId);
+  const snap=await ref.get();const imgs=snap.data().images||[];imgs[i].alt=alt;
+  await ref.set({images:imgs},{merge:true});
 };
 
 window.delImg=async function(mId,pId,i){
   if(!confirm("Ta bort bild?"))return;
-  const ref=doc(db,"materials/"+mId+"/products/"+pId);
-  const snap=await getDoc(ref);const imgs=snap.data().images||[];imgs.splice(i,1);
-  await setDoc(ref,{images:imgs},{merge:true});renderImgs(imgs,mId,pId);
+  const ref=db.collection("materials/"+mId+"/products/"+pId).doc(pId);
+  const snap=await ref.get();const imgs=snap.data().images||[];imgs.splice(i,1);
+  await ref.set({images:imgs},{merge:true});renderImgs(imgs,mId,pId);
 };
 
 // PRICING
@@ -595,7 +596,7 @@ window.savePricing=async function(){
   const mId=cMat.id,pId=cProd.id;
   const qm=$("tgl-quote").checked;
   const ca={active:$("tgl-camp").checked,pct:parseFloat($("camp-pct").value)||0,name:$("camp-name").value.trim(),start:$("camp-start").value,end:$("camp-end").value};
-  try{await setDoc(doc(db,"materials/"+mId+"/products/"+pId),{priceLevels:PLs,quoteMode:qm,campaign:ca},{merge:true});alert("Sparat!");}
+  try{await db.collection("materials").doc(mId).collection("products").doc(pId).set({priceLevels:PLs,quoteMode:qm,campaign:ca},{merge:true});alert("Sparat!");}
   catch(e){alert("Fel: "+e.message);}
 };
 
@@ -603,7 +604,7 @@ window.savePricing=async function(){
 async function loadOrds(){
   const tb=$("ords-tbody");
   try{
-    const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+    const snap=await db.collection("orders").orderBy("createdAt","desc").get();
     allOrds=[];snap.forEach(d=>allOrds.push({id:d.id,...d.data()}));renderOrds(allOrds);
   }catch(e){tb.innerHTML='<tr><td colspan="7" class="empty">Inga ordrar ännu.</td></tr>';}
 }
@@ -633,14 +634,14 @@ window.openOrd=function(id){
 };
 
 window.updOrdStatus=async function(){
-  await updateDoc(doc(db,"orders",cOrdId),{status:$("m-ord-status").value});
+  await db.collection("orders").doc(cOrdId).update({status:$("m-ord-status").value});
   closeM("m-ord");loadOrds();
 };
 
 // CUSTOMERS
 async function loadCusts(){
   try{
-    const snap=await getDocs(collection(db,"customers"));
+    const snap=await db.collection("customers").get();
     allCusts=[];snap.forEach(d=>allCusts.push({id:d.id,...d.data()}));
     renderCusts(allCusts);updStats(allCusts);
   }catch(e){console.warn(e);}
@@ -670,17 +671,17 @@ window.filterCusts=function(){
 
 window.delCust=async function(id){
   if(!confirm("Ta bort kund?"))return;
-  await deleteDoc(doc(db,"customers",id));loadCusts();
+  await db.collection("customers").doc(id).delete();loadCusts();
 };
 
 // MAINTENANCE
 async function runMaint(){
   const cutoff=new Date(Date.now()-365*24*60*60*1000).toISOString();
-  const snap=await getDocs(collection(db,"customers"));
+  const snap=await db.collection("customers").get();
   const toDel=[],deleted=[];
   snap.forEach(d=>{const data=d.data();if(data.lastOrder&&data.lastOrder<cutoff){toDel.push(d.id);deleted.push(data.email||d.id);}});
   if(toDel.length){
-    for(const id of toDel)await deleteDoc(doc(db,"customers",id));
+    for(const id of toDel)await db.collection("customers").doc(id).delete();
     await secMail("Automatisk rensning",toDel.length+" inaktiva kunder raderade:\n"+deleted.join("\n"));
     loadCusts();
   }
