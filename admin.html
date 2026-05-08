@@ -237,6 +237,50 @@
           </div>
         </div>
       </div>
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-ttl">Gravyrinställningar</div>
+          <button class="btn-p" onclick="saveEngrave()">Spara</button>
+        </div>
+        <div style="font-size:0.62rem;color:#666;letter-spacing:0.08em;margin-bottom:1rem;">Styr gravyrytans storlek, färg och max textstorlek för kunden.</div>
+        <div class="frow">
+          <div class="fgrp"><label class="flbl">Gravyrfärg</label>
+            <select class="finp" id="eng-color">
+              <option value="#c0c0c0">Silver</option>
+              <option value="#1a1a1a">Svart</option>
+              <option value="#b87333">Koppar</option>
+              <option value="#d4af37">Guld</option>
+              <option value="#e8e8e8">Ljussilver</option>
+              <option value="#555555">Mörkgrå</option>
+            </select>
+          </div>
+          <div class="fgrp"><label class="flbl">Max textstorlek (px)</label>
+            <input class="finp" type="number" id="eng-maxfont" placeholder="T.ex. 24" min="8" max="72"/>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgrp"><label class="flbl">Gravyryta bredd (mm)</label>
+            <input class="finp" type="number" id="eng-w-mm" placeholder="T.ex. 80" min="1"/>
+          </div>
+          <div class="fgrp"><label class="flbl">Gravyryta höjd (mm)</label>
+            <input class="finp" type="number" id="eng-h-mm" placeholder="T.ex. 8" min="1"/>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgrp"><label class="flbl">Förhandsvisning bredd (%)</label>
+            <input class="finp" type="number" id="eng-w-pct" placeholder="T.ex. 70" min="10" max="100"/>
+            <div style="font-size:0.55rem;color:#555;margin-top:0.3rem;">Hur stor del av produktbilden gravyrzonen täcker</div>
+          </div>
+          <div class="fgrp"><label class="flbl">Förhandsvisning höjd (%)</label>
+            <input class="finp" type="number" id="eng-h-pct" placeholder="T.ex. 70" min="10" max="100"/>
+          </div>
+        </div>
+        <div class="fgrp" style="margin-top:0.5rem;">
+          <label class="flbl">Gravyrbeskrivning till kund</label>
+          <input class="finp" type="text" id="eng-desc" placeholder="T.ex. Gravyren syns längs pennans kropp i silverfärg"/>
+        </div>
+        <div class="status" id="eng-status"></div>
+      </div>
     </div>
   </div>
 
@@ -528,7 +572,34 @@ async function loadDetail(mId,pId){
   $("camp-pct").value=cp.pct||"";$("camp-name").value=cp.name||"";
   $("camp-start").value=cp.start||"";$("camp-end").value=cp.end||"";
   $("camp-box").style.display=cp.active?"block":"none";
+  // Gravyrinstellningar
+  if(d.engraveColor)$("eng-color").value=d.engraveColor;
+  $("eng-maxfont").value=d.maxFontSize||"";
+  $("eng-w-mm").value=d.engraveWidthMM||"";
+  $("eng-h-mm").value=d.engraveHeightMM||"";
+  $("eng-w-pct").value=d.engraveWidth||"";
+  $("eng-h-pct").value=d.engraveHeight||"";
+  $("eng-desc").value=d.engraveDesc||"";
+  setSt("eng-status","","");
 }
+
+window.saveEngrave=async function(){
+  const mId=cMat.id,pId=cProd.id;
+  const eng={
+    engraveColor:$("eng-color").value,
+    maxFontSize:parseInt($("eng-maxfont").value)||24,
+    engraveWidthMM:parseFloat($("eng-w-mm").value)||0,
+    engraveHeightMM:parseFloat($("eng-h-mm").value)||0,
+    engraveWidth:parseFloat($("eng-w-pct").value)||70,
+    engraveHeight:parseFloat($("eng-h-pct").value)||70,
+    engraveDesc:$("eng-desc").value.trim()
+  };
+  try{
+    await db.collection("materials").doc(mId).collection("products").doc(pId).set(eng,{merge:true});
+    setSt("eng-status","Gravyrinstellningar sparade!","ok");
+    setTimeout(()=>setSt("eng-status","",""),3000);
+  }catch(e){setSt("eng-status","Fel: "+e.message,"err");}
+};
 
 // IMAGES
 function renderImgs(imgs,mId,pId){
