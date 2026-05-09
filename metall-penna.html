@@ -4,7 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Elegant Penna — ELEGANT-M</title>
-  <meta name="description" content="Lasergraverad elegant metallpenna med personlig text. ELEGANT-M."/>
   <link rel="icon" type="image/x-icon" href="favicon.ico"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&family=Alegreya:ital,wght@0,400;0,700;1,400&family=Allura&family=Allerta+Stencil&display=swap" rel="stylesheet"/>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -12,760 +11,913 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:linear-gradient(160deg,#2bb8c0 0%,#1e9aa2 30%,#178590 60%,#127880 100%);min-height:100vh;font-family:'Josefin Sans',sans-serif;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px);background-size:28px 28px,18px 22px;background-position:0 0,7px 9px;animation:glitter 6s ease-in-out infinite alternate;}
+    :root{
+      --teal1:#2bb8c0;--teal2:#1e9aa2;--teal3:#178590;--teal4:#127880;
+      --dark1:rgba(0,0,0,0.55);--dark2:rgba(0,0,0,0.35);
+      --glass:rgba(255,255,255,0.18);--glass2:rgba(255,255,255,0.28);
+      --border:rgba(0,0,0,0.12);--text:#111;--text2:#333;--text3:#555;
+    }
+    body{
+      background:linear-gradient(160deg,var(--teal1) 0%,var(--teal2) 30%,var(--teal3) 60%,var(--teal4) 100%);
+      min-height:100vh;font-family:"Josefin Sans",sans-serif;overflow-x:hidden;
+    }
+    body::before{
+      content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),
+                       radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px);
+      background-size:28px 28px,18px 22px;background-position:0 0,7px 9px;
+      animation:glitter 6s ease-in-out infinite alternate;
+    }
     @keyframes glitter{0%{opacity:0.4}50%{opacity:0.9}100%{opacity:0.45}}
 
-    .top-bar{position:relative;z-index:10;width:100%;max-width:1200px;margin:0 auto;padding:1.8rem 2.5rem 0;display:flex;align-items:center;justify-content:space-between;}
-    .back-link{font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.65;display:flex;align-items:center;gap:0.5rem;transition:opacity 0.2s;}
-    .back-link:hover{opacity:1;}
-    .back-link::before{content:'←';font-size:1rem;}
-    .site-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.3rem,2.5vw,1.9rem);font-weight:300;letter-spacing:0.18em;background:linear-gradient(135deg,#111 0%,#2a2a2a 50%,#111 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
-    .site-name span{font-style:italic;}
-
-    .page-title{position:relative;z-index:10;text-align:center;padding:2rem 1rem 1.5rem;}
-    .page-title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,4.5rem);font-weight:300;letter-spacing:0.15em;background:linear-gradient(135deg,#111 0%,#333 50%,#111 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .page-title p{font-size:clamp(0.65rem,1.2vw,0.8rem);letter-spacing:0.28em;text-transform:uppercase;color:#111;opacity:0.55;margin-top:0.5rem;}
-    .title-line{width:120px;height:0.5px;margin:1.2rem auto 0;background:linear-gradient(90deg,transparent,#111a,transparent);}
-
-    .content{position:relative;z-index:10;width:min(96vw,1100px);margin:0 auto;padding:0 1rem 3rem;}
-
     /* LOADING */
-    .loading-overlay{position:fixed;inset:0;z-index:500;background:linear-gradient(160deg,#2bb8c0,#127880);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
-    .loading-overlay.hidden{display:none;}
-    .loading-spinner{width:40px;height:40px;border:2px solid rgba(0,0,0,0.1);border-top-color:#111;border-radius:50%;animation:spin 0.8s linear infinite;}
+    #page-loader{
+      position:fixed;inset:0;z-index:999;
+      background:linear-gradient(160deg,var(--teal1),var(--teal4));
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+      transition:opacity 0.4s;
+    }
+    #page-loader.fade{opacity:0;pointer-events:none;}
+    .spinner{width:36px;height:36px;border:2px solid rgba(0,0,0,0.12);border-top-color:#111;border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .loading-text{font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:#111;opacity:0.6;}
+    .loader-txt{font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:#111;opacity:0.6;}
 
-    /* PRODUCT DESCRIPTION */
-    .product-desc{text-align:center;margin-bottom:2rem;font-size:0.85rem;letter-spacing:0.08em;color:#111;opacity:0.7;line-height:1.7;max-width:600px;margin-left:auto;margin-right:auto;}
+    /* TOP BAR */
+    .top-bar{
+      position:relative;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.5rem 2rem 0;max-width:1200px;margin:0 auto;
+    }
+    .back-link{
+      font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;
+      text-decoration:none;color:var(--text);opacity:0.6;
+      display:flex;align-items:center;gap:0.4rem;transition:opacity 0.2s;
+    }
+    .back-link:hover{opacity:1;}
+    .back-link::before{content:"←";font-size:0.9rem;}
+    .site-name{
+      font-family:"Cormorant Garamond",serif;font-size:clamp(1.2rem,2.5vw,1.8rem);
+      font-weight:300;letter-spacing:0.18em;text-decoration:none;
+      background:linear-gradient(135deg,#111,#2a2a2a,#111);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .site-name span{font-style:italic;}
+    .top-spacer{width:80px;}
 
-    /* IMAGES SECTION */
-    .images-section{margin-bottom:2.5rem;}
-    .images-row{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;}
-    .image-card{flex:1;min-width:240px;max-width:340px;background:rgba(255,255,255,0.15);border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;overflow:hidden;backdrop-filter:blur(4px);}
-    .image-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-    .image-card-body{padding:1rem;}
-    .image-desc{font-size:0.75rem;letter-spacing:0.08em;color:#111;opacity:0.7;line-height:1.6;margin-bottom:0.8rem;}
+    /* HERO */
+    .hero{
+      position:relative;z-index:10;
+      max-width:1200px;margin:0 auto;
+      padding:2rem 2rem 0;
+      display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;
+    }
+    @media(max-width:768px){.hero{grid-template-columns:1fr;gap:1.5rem;padding:1.5rem 1rem 0;}}
 
-    /* ENGRAVING CONTROLS PER IMAGE */
-    .engrave-controls{background:rgba(255,255,255,0.2);border-radius:10px;padding:0.8rem;}
-    .ec-title{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#111;opacity:0.6;margin-bottom:0.6rem;}
-    .ec-row{display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;}
-    .ec-label{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#333;min-width:70px;}
-    .ec-input{flex:1;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.12);border-radius:6px;padding:0.35rem 0.5rem;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;color:#111;outline:none;}
-    .ec-input::placeholder{color:rgba(0,0,0,0.3);}
-    input[type="range"].ec-range{flex:1;accent-color:#007a5e;cursor:pointer;}
-    .style-pills{display:flex;gap:0.4rem;flex-wrap:wrap;}
-    .style-pill{padding:0.3rem 0.6rem;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:20px;cursor:pointer;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#333;transition:all 0.2s;}
-    .style-pill.active{background:rgba(0,0,0,0.12);border-color:rgba(0,0,0,0.3);color:#111;}
-    .curve-pills{display:flex;gap:0.4rem;}
-    .curve-pill{flex:1;padding:0.3rem;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:6px;cursor:pointer;font-size:0.65rem;text-align:center;color:#333;transition:all 0.2s;}
-    .curve-pill.active{background:rgba(0,0,0,0.12);border-color:rgba(0,0,0,0.3);}
+    /* LEFT: GALLERY */
+    .gallery{position:relative;}
+    .main-img-wrap{
+      border-radius:16px;overflow:hidden;
+      background:var(--glass);
+      box-shadow:0 8px 32px rgba(0,0,0,0.25);
+      aspect-ratio:4/3;position:relative;
+    }
+    .main-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s;}
+    .no-img-placeholder{
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:0.5rem;color:var(--text);opacity:0.4;
+      font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
+    }
+    .thumbs{display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;}
+    .thumb{
+      width:72px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;
+      border:2px solid transparent;transition:border-color 0.2s;flex-shrink:0;
+      background:var(--glass);
+    }
+    .thumb.active{border-color:rgba(0,0,0,0.5);}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-desc{
+      margin-top:0.8rem;font-size:0.72rem;letter-spacing:0.07em;
+      color:var(--text);opacity:0.65;line-height:1.7;min-height:1.4rem;
+    }
 
-    /* PEN PREVIEW */
-    .pen-preview-wrap{margin:0.8rem 0;position:relative;}
-    .pen-canvas{width:100%;height:70px;position:relative;background:linear-gradient(90deg,#b0b0b0,#e8e8e8 20%,#a8a8a8 50%,#e0e0e0 80%,#b8b8b8);border-radius:4px 28px 28px 4px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.4);}
-    .pen-canvas::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.25) 0%,transparent 50%,rgba(0,0,0,0.15) 100%);pointer-events:none;}
-    .pen-text-el{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;font-size:16px;pointer-events:none;z-index:2;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.3));}
-    .gravyr-zone{position:absolute;border:1px dashed rgba(0,100,60,0.35);border-radius:2px;pointer-events:none;z-index:1;}
-    .gravyr-label{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:0.45rem;letter-spacing:0.08em;color:rgba(0,80,50,0.6);text-transform:uppercase;}
+    /* RIGHT: CONFIGURATOR */
+    .config{display:flex;flex-direction:column;gap:1.2rem;}
 
-    /* MAIN ENGRAVING SECTION */
-    .main-section{background:rgba(255,255,255,0.15);border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;backdrop-filter:blur(4px);}
-    .main-section-title{font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:#111;opacity:0.65;margin-bottom:1.2rem;}
+    .product-title{
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(2rem,4vw,3rem);font-weight:300;letter-spacing:0.12em;
+      background:linear-gradient(135deg,#111,#333,#111);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .product-subtitle{
+      font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;
+      color:var(--text);opacity:0.5;margin-top:0.2rem;
+    }
 
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-    @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
-    .form-group{margin-bottom:1rem;}
-    .form-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#111;opacity:0.65;display:block;margin-bottom:0.4rem;}
-    .form-input{width:100%;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:10px;padding:0.7rem 0.9rem;font-family:'Josefin Sans',sans-serif;font-size:0.88rem;color:#111;outline:none;transition:border-color 0.2s;}
-    .form-input:focus{border-color:rgba(0,80,60,0.4);}
-    .form-input::placeholder{color:rgba(0,0,0,0.3);}
+    /* STEP */
+    .step{
+      background:var(--glass);border:0.5px solid var(--border);
+      border-radius:14px;padding:1.1rem 1.3rem;
+    }
+    .step-hdr{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.9rem;}
+    .step-num{
+      width:22px;height:22px;border-radius:50%;
+      background:rgba(0,0,0,0.12);
+      font-size:0.6rem;letter-spacing:0.05em;font-weight:600;
+      display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;
+    }
+    .step-title{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--text);opacity:0.65;}
 
-    /* PRICE SECTION */
-    .price-section{background:rgba(255,255,255,0.15);border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
-    .price-table{width:100%;border-collapse:collapse;margin-top:0.6rem;}
-    .price-table th{font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,80,60,0.8);padding:0.3rem 0.6rem;border-bottom:0.5px solid rgba(0,80,60,0.2);text-align:left;}
-    .price-table th:not(:first-child){text-align:right;}
-    .price-table td{font-size:0.68rem;letter-spacing:0.06em;color:#333;padding:0.28rem 0.6rem;border-bottom:0.5px solid rgba(0,0,0,0.06);}
-    .price-table td:not(:first-child){text-align:right;}
-    .price-table tr.active-row td{color:rgba(0,100,60,1);font-weight:600;}
-    .campaign-badge{display:inline-block;background:rgba(255,150,0,0.15);border:0.5px solid rgba(255,150,0,0.4);color:rgba(180,90,0,0.9);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:10px;margin-left:0.5rem;}
-    .price-strike{text-decoration:line-through;opacity:0.45;}
-    .price-campaign{color:rgba(180,90,0,0.9);font-weight:600;}
+    /* PREVIEW BOX */
+    .preview-box{
+      width:100%;border-radius:10px;overflow:hidden;
+      background:var(--glass2);border:0.5px dashed rgba(0,80,50,0.3);
+      position:relative;margin-bottom:0.9rem;
+    }
+    .preview-inner{
+      position:relative;width:100%;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .preview-svg{width:100%;display:block;overflow:visible;}
+    .zone-label{
+      position:absolute;bottom:4px;right:6px;
+      font-size:0.48rem;letter-spacing:0.08em;text-transform:uppercase;
+      color:rgba(0,80,50,0.55);background:rgba(255,255,255,0.5);
+      padding:1px 5px;border-radius:3px;
+    }
 
-    /* QTY */
-    .qty-wrap{display:flex;align-items:center;gap:0.8rem;margin-top:0.8rem;}
-    .qty-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.15);color:#111;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;}
-    .qty-btn:hover{border-color:rgba(0,80,60,0.5);}
-    .qty-input{width:65px;text-align:center;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;padding:0.45rem;font-family:'Josefin Sans',sans-serif;font-size:0.95rem;color:#111;outline:none;}
-    .price-display{margin-left:auto;text-align:right;}
-    .price-per{font-size:0.62rem;letter-spacing:0.1em;color:#333;text-transform:uppercase;}
-    .price-total{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#111;}
+    /* TEXT INPUT */
+    .text-inp{
+      width:100%;background:var(--glass2);border:0.5px solid var(--border);
+      border-radius:10px;padding:0.75rem 1rem;
+      font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:var(--text);
+      outline:none;transition:border-color 0.2s;
+    }
+    .text-inp:focus{border-color:rgba(0,80,60,0.45);}
+    .text-inp::placeholder{color:rgba(0,0,0,0.28);}
+
+    /* PILLS */
+    .pills{display:flex;gap:0.5rem;flex-wrap:wrap;}
+    .pill{
+      padding:0.4rem 0.85rem;background:var(--glass);
+      border:0.5px solid var(--border);border-radius:20px;cursor:pointer;
+      font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+      color:var(--text2);transition:all 0.2s;
+    }
+    .pill:hover{border-color:rgba(0,80,60,0.35);}
+    .pill.active{background:rgba(0,0,0,0.12);border-color:rgba(0,80,60,0.5);color:var(--text);}
+    .pill-font-alegreya{font-family:"Alegreya",serif;font-size:0.85rem;letter-spacing:0.03em;}
+    .pill-font-allura{font-family:"Allura",cursive;font-size:1rem;letter-spacing:0.03em;}
+    .pill-font-stencil{font-family:"Allerta Stencil",sans-serif;font-size:0.58rem;letter-spacing:0.05em;}
+
+    /* SLIDER */
+    .slider-wrap{display:flex;align-items:center;gap:0.8rem;}
+    .slider-wrap input[type=range]{flex:1;accent-color:#007a5e;cursor:pointer;height:4px;}
+    .slider-val{
+      font-size:0.68rem;letter-spacing:0.08em;color:var(--text2);
+      min-width:38px;text-align:right;
+    }
+    .slider-note{font-size:0.58rem;color:rgba(0,80,50,0.7);letter-spacing:0.06em;margin-top:0.3rem;}
+
+    /* QTY & PRICE */
+    .qty-price{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;}
+    .qty-ctrl{display:flex;align-items:center;gap:0.5rem;}
+    .qty-btn{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--glass2);border:0.5px solid var(--border);
+      color:var(--text);font-size:1rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;
+    }
+    .qty-btn:hover{border-color:rgba(0,80,60,0.4);}
+    .qty-inp{
+      width:56px;text-align:center;background:var(--glass2);
+      border:0.5px solid var(--border);border-radius:8px;
+      padding:0.4rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;
+      color:var(--text);outline:none;
+    }
+    .price-block{margin-left:auto;text-align:right;}
+    .price-per{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);}
+    .price-total{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:300;color:var(--text);}
+    .price-strike{text-decoration:line-through;opacity:0.4;font-size:1rem;}
+    .price-campaign{color:rgba(160,80,0,0.9);}
+    .campaign-tag{
+      display:inline-block;background:rgba(255,150,0,0.15);
+      border:0.5px solid rgba(255,150,0,0.35);color:rgba(160,80,0,0.9);
+      font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;
+      padding:0.18rem 0.5rem;border-radius:8px;margin-top:0.3rem;
+    }
+
+    /* PRICE TABLE */
+    .price-tbl{width:100%;border-collapse:collapse;margin-top:0.6rem;font-size:0.68rem;}
+    .price-tbl th{
+      font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;
+      color:rgba(0,80,60,0.75);padding:0.3rem 0.5rem;
+      border-bottom:0.5px solid rgba(0,80,60,0.18);text-align:left;
+    }
+    .price-tbl th:not(:first-child){text-align:right;}
+    .price-tbl td{padding:0.26rem 0.5rem;border-bottom:0.5px solid rgba(0,0,0,0.05);color:var(--text3);}
+    .price-tbl td:not(:first-child){text-align:right;}
+    .price-tbl tr.active-row td{color:rgba(0,100,60,0.95);font-weight:600;}
 
     /* LOYALTY */
-    .loyalty-badge{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.1);border-radius:20px;padding:0.4rem 0.8rem;font-size:0.65rem;letter-spacing:0.1em;color:#111;margin-top:0.5rem;}
+    .loyalty-msg{
+      display:none;align-items:center;gap:0.5rem;
+      background:rgba(255,255,255,0.2);border:0.5px solid rgba(0,0,0,0.1);
+      border-radius:10px;padding:0.6rem 0.9rem;
+      font-size:0.65rem;letter-spacing:0.07em;color:var(--text);
+    }
+    .loyalty-msg.visible{display:flex;}
 
     /* ORDER BTN */
-    .order-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,180,120,0.5);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1rem;transition:all 0.25s;}
-    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,180,120,0.2);transform:scale(1.02);}
+    .order-btn{
+      width:100%;padding:1rem;
+      background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));
+      border:0.5px solid rgba(0,180,120,0.5);border-radius:30px;cursor:pointer;
+      font-family:"Josefin Sans",sans-serif;font-size:0.78rem;
+      letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.92);
+      transition:all 0.25s;
+    }
+    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,180,120,0.18);transform:scale(1.01);}
 
-    /* QUOTE INFO */
-    .quote-info{background:rgba(255,255,255,0.15);border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:1rem 1.2rem;margin-top:1rem;font-size:0.72rem;letter-spacing:0.06em;color:#222;line-height:1.8;}
-    .quote-info strong{color:rgba(0,80,50,0.9);}
+    /* QUOTE NOTE */
+    .quote-note{
+      font-size:0.65rem;letter-spacing:0.06em;color:var(--text);
+      opacity:0.55;line-height:1.8;text-align:center;margin-top:0.4rem;
+    }
 
-    /* PAYMENT OVERLAY */
-    .overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
-    .overlay.active{display:flex;}
-    .overlay-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,540px);max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 0 40px rgba(0,200,150,0.15);animation:popIn 0.3s ease both;scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;}
-    @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .overlay-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;}
-    .pay-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#aaa;display:block;margin-bottom:0.4rem;margin-top:1rem;}
-    .pay-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.75rem 1rem;font-family:'Josefin Sans',sans-serif;font-size:0.88rem;color:#ddd;outline:none;transition:border-color 0.2s;margin-bottom:0.2rem;}
-    .pay-input:focus{border-color:rgba(0,255,180,0.4);}
-    .pay-input::placeholder{color:rgba(255,255,255,0.2);}
-    .order-summary-box{background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:0.8rem 1rem;margin:1rem 0;font-size:0.72rem;letter-spacing:0.06em;color:#999;line-height:1.9;}
-    .order-summary-box strong{color:rgba(0,255,180,0.7);}
-    .send-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.9),rgba(0,30,20,0.95));border:0.5px solid rgba(0,255,180,0.4);border-radius:30px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.9);margin-top:1rem;transition:all 0.25s;}
-    .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,255,180,0.15);}
+    /* OVERLAY */
+    .overlay{
+      display:none;position:fixed;inset:0;z-index:500;
+      background:rgba(0,0,0,0.75);align-items:center;justify-content:center;
+      backdrop-filter:blur(8px);padding:1rem;
+    }
+    .overlay.open{display:flex;}
+    .overlay-box{
+      background:linear-gradient(160deg,#071a12,#040f0a);
+      border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;
+      width:min(96vw,520px);max-height:92vh;overflow-y:auto;
+      padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.6);
+      scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;
+      animation:popIn 0.3s ease both;
+    }
+    @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .overlay-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+    .overlay-title{
+      font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;
+      letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .close-btn{background:none;border:none;cursor:pointer;color:#666;font-size:1.4rem;line-height:1;padding:0.2rem 0.4rem;transition:color 0.2s;}
+    .close-btn:hover{color:#ccc;}
+    .summary-box{
+      background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);
+      border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.2rem;
+      font-size:0.7rem;letter-spacing:0.06em;color:#999;line-height:1.9;
+    }
+    .summary-box strong{color:rgba(0,255,180,0.7);}
+    .o-label{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#888;display:block;margin-top:0.9rem;margin-bottom:0.35rem;}
+    .o-input{
+      width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);
+      border-radius:10px;padding:0.7rem 0.9rem;
+      font-family:"Josefin Sans",sans-serif;font-size:0.88rem;color:#ddd;
+      outline:none;transition:border-color 0.2s;
+    }
+    .o-input:focus{border-color:rgba(0,255,180,0.4);}
+    .o-input::placeholder{color:rgba(255,255,255,0.2);}
+    .loyalty-overlay{
+      display:none;align-items:center;gap:0.5rem;
+      background:rgba(0,255,180,0.06);border:0.5px solid rgba(0,255,180,0.15);
+      border-radius:8px;padding:0.5rem 0.8rem;margin-top:0.4rem;
+      font-size:0.65rem;letter-spacing:0.07em;color:#aaa;
+    }
+    .loyalty-overlay.visible{display:flex;}
+    .dl-btn{
+      width:100%;padding:0.7rem;background:rgba(255,255,255,0.05);
+      border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;cursor:pointer;
+      font-family:"Josefin Sans",sans-serif;font-size:0.65rem;letter-spacing:0.2em;
+      text-transform:uppercase;color:#888;margin-top:0.7rem;transition:all 0.2s;
+    }
+    .dl-btn:hover{border-color:rgba(255,255,255,0.35);color:#ccc;}
+    .send-btn{
+      width:100%;padding:0.95rem;margin-top:0.8rem;
+      background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));
+      border:0.5px solid rgba(0,255,180,0.4);border-radius:25px;cursor:pointer;
+      font-family:"Josefin Sans",sans-serif;font-size:0.75rem;letter-spacing:0.28em;
+      text-transform:uppercase;color:rgba(0,255,180,0.92);transition:all 0.25s;
+    }
+    .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 18px rgba(0,255,180,0.12);}
     .send-btn:disabled{opacity:0.4;cursor:not-allowed;}
-    .pay-status{text-align:center;margin-top:0.8rem;font-size:0.75rem;letter-spacing:0.08em;min-height:1.2rem;}
-    .pay-status.ok{color:#4cff80;} .pay-status.err{color:#ff7070;}
-    .back-btn-link{background:none;border:none;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;margin-top:0.8rem;display:block;width:100%;text-align:center;}
-    .back-btn-link:hover{color:#aaa;}
-
-    /* DOWNLOAD BTN */
-    .download-btn{width:100%;padding:0.75rem;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:#aaa;margin-top:0.6rem;transition:all 0.2s;}
-    .download-btn:hover{border-color:rgba(255,255,255,0.35);color:#ddd;}
+    .back-lnk{
+      background:none;border:none;cursor:pointer;
+      font-family:"Josefin Sans",sans-serif;font-size:0.62rem;
+      letter-spacing:0.15em;text-transform:uppercase;color:#555;
+      display:block;width:100%;text-align:center;margin-top:0.7rem;
+    }
+    .back-lnk:hover{color:#aaa;}
+    .o-status{text-align:center;margin-top:0.7rem;font-size:0.72rem;letter-spacing:0.08em;min-height:1.1rem;}
+    .o-status.ok{color:#4cff80;}.o-status.err{color:#ff7070;}
 
     /* MINI FOOTER */
-    .mini-footer{position:relative;z-index:10;width:100%;border-top:0.5px solid rgba(0,0,0,0.2);padding:1rem 0;margin-top:2rem;}
-    .mini-footer-inner{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;width:100%;max-width:1200px;margin:0 auto;padding:0 2rem;gap:0.8rem;}
-    .mini-footer-links a{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.6;padding:0 0.7rem;border-right:1px solid rgba(0,0,0,0.2);line-height:1;transition:opacity 0.2s;}
-    .mini-footer-links a:first-child{padding-left:0;}
-    .mini-footer-links a:last-child{border-right:none;}
-    .mini-footer-links a:hover{opacity:1;}
-    .mini-footer-mid,.mini-footer-copy{font-size:0.62rem;letter-spacing:0.08em;color:#111;opacity:0.6;}
-    .kopvillkor-note{font-size:0.58rem;letter-spacing:0.06em;color:#111;opacity:0.5;margin-top:0.3rem;line-height:1.5;}
+    .mini-footer{
+      position:relative;z-index:10;
+      border-top:0.5px solid rgba(0,0,0,0.18);
+      padding:1rem 0;margin-top:3rem;
+    }
+    .mini-footer-inner{
+      display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+      max-width:1200px;margin:0 auto;padding:0 2rem;gap:0.8rem;
+    }
+    .footer-links a{
+      font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
+      text-decoration:none;color:var(--text);opacity:0.55;
+      padding:0 0.6rem;border-right:1px solid rgba(0,0,0,0.18);line-height:1;
+    }
+    .footer-links a:first-child{padding-left:0;}
+    .footer-links a:last-child{border-right:none;}
+    .footer-links a:hover{opacity:0.9;}
+    .footer-copy{font-size:0.6rem;letter-spacing:0.07em;color:var(--text);opacity:0.5;}
+    .footer-note{
+      text-align:center;padding:0.4rem 2rem;
+      font-size:0.56rem;letter-spacing:0.05em;color:var(--text);opacity:0.42;line-height:1.6;
+    }
 
-    @media(max-width:680px){
-      .top-bar{padding:1.2rem 1rem 0;}
-      .images-row{flex-direction:column;align-items:center;}
-      .image-card{max-width:100%;}
+    @media(max-width:600px){
+      .top-bar{padding:1rem 1rem 0;}
       .mini-footer-inner{flex-direction:column;align-items:center;text-align:center;}
+      .thumbs{justify-content:center;}
     }
   </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loading-overlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">Laddar produkt...</div>
-</div>
+<div id="page-loader"><div class="spinner"></div><div class="loader-txt">Laddar produkt...</div></div>
 
 <div class="top-bar">
   <a class="back-link" href="metall.html">Metall</a>
   <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
-  <div style="width:80px;"></div>
+  <div class="top-spacer"></div>
 </div>
 
-<div class="page-title">
-  <h1 id="page-heading">Elegant Penna</h1>
-  <p id="page-desc-top">Lasergraverad metallpenna — ett exklusivt signum</p>
-  <div class="title-line"></div>
-</div>
+<div class="hero">
 
-<div class="content">
-
-  <!-- BILDER -->
-  <div class="images-section">
-    <div class="images-row" id="images-row">
-      <!-- Fylls dynamiskt -->
+  <!-- VÄNSTER: GALLERI -->
+  <div class="gallery">
+    <div class="main-img-wrap" id="main-img-wrap">
+      <div class="no-img-placeholder" id="no-img">
+        <span style="font-size:2rem;">📷</span>
+        <span>Bilder laddas snart</span>
+      </div>
+      <img id="main-img" src="" alt="" style="display:none;"/>
     </div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="img-desc" id="img-desc"></div>
   </div>
 
-  <!-- GRAVYR INSTÄLLNINGAR -->
-  <div class="main-section" id="main-engrave-section" style="display:none;">
-    <div class="main-section-title">Din gravyr — penna</div>
+  <!-- HÖGER: KONFIGURATOR -->
+  <div class="config">
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Din text</label>
-        <input class="form-input" type="text" id="engrave-text" placeholder="T.ex. ditt namn eller företag" oninput="updateAllPreviews()"/>
+    <div>
+      <div class="product-title" id="prod-title">Elegant Penna</div>
+      <div class="product-subtitle" id="prod-sub">Lasergravyr — personlig & bestående</div>
+    </div>
+
+    <!-- STEG 1: TEXT & FÖRHANDSVISNING -->
+    <div class="step">
+      <div class="step-hdr">
+        <div class="step-num">1</div>
+        <div class="step-title">Skriv din text</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Textstil</label>
-        <div class="style-pills" id="global-style-pills">
-          <div class="style-pill active" onclick="setGlobalStyle('alegreya',this)" style="font-family:'Alegreya',serif;">Alegreya</div>
-          <div class="style-pill" onclick="setGlobalStyle('allura',this)" style="font-family:'Allura',cursive;">Allura</div>
-          <div class="style-pill" onclick="setGlobalStyle('stencil',this)" style="font-family:'Allerta Stencil',sans-serif;font-size:0.55rem;">Stencil</div>
+      <div class="preview-box">
+        <div class="preview-inner" id="preview-inner">
+          <svg width="100%" height="60" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <defs>
+            <linearGradient id="pbg0" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#a8a8a8"/>
+              <stop offset="15%" stop-color="#e0e0e0"/>
+              <stop offset="50%" stop-color="#b0b0b0"/>
+              <stop offset="100%" stop-color="#b8b8b8"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="300" height="60" rx="4" ry="30" fill="url(#pbg0)"/>
+          <text x="150" y="35" text-anchor="middle" font-family="Alegreya,serif" font-size="16" fill="#b0b0b0" opacity="0.6">Din text</text>
+        </svg>
+        </div>
+        <div class="zone-label" id="zone-label"></div>
+      </div>
+      <input class="text-inp" type="text" id="eng-text"
+        placeholder="T.ex. ditt namn, datum eller citat..."
+        oninput="updatePreview()" maxlength="60"/>
+    </div>
+
+    <!-- STEG 2: TEXTSTIL -->
+    <div class="step">
+      <div class="step-hdr">
+        <div class="step-num">2</div>
+        <div class="step-title">Välj textstil</div>
+      </div>
+      <div class="pills" id="style-pills">
+        <div class="pill pill-font-alegreya active" onclick="setStyle('alegreya',this)">Alegreya</div>
+        <div class="pill pill-font-allura" onclick="setStyle('allura',this)">Allura</div>
+        <div class="pill pill-font-stencil" onclick="setStyle('stencil',this)">Stencil</div>
+      </div>
+    </div>
+
+    <!-- STEG 3: BÖJNING & STORLEK -->
+    <div class="step">
+      <div class="step-hdr">
+        <div class="step-num">3</div>
+        <div class="step-title">Anpassa texten</div>
+      </div>
+      <div style="margin-bottom:0.7rem;">
+        <div class="step-title" style="margin-bottom:0.5rem;">Textböjning</div>
+        <div class="pills">
+          <div class="pill active" onclick="setCurve('straight',this)">— Rak</div>
+          <div class="pill" onclick="setCurve('convex',this)">⌢ Konvex</div>
+          <div class="pill" onclick="setCurve('concave',this)">⌣ Konkav</div>
         </div>
       </div>
+      <div>
+        <div class="step-title" style="margin-bottom:0.5rem;">Textstorlek</div>
+        <div class="slider-wrap">
+          <input type="range" id="font-slider" min="8" max="32" value="16" oninput="updatePreview()"/>
+          <div class="slider-val" id="font-val">16px</div>
+        </div>
+        <div class="slider-note" id="size-note"></div>
+      </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Textstorlek: <span id="size-val">16px</span></label>
-        <input type="range" id="global-size" min="8" max="32" value="16" oninput="updateSizeVal(this.value);updateAllPreviews();" style="width:100%;accent-color:#007a5e;cursor:pointer;margin-top:0.4rem;"/>
-        <div style="font-size:0.58rem;color:rgba(0,80,50,0.7);margin-top:0.3rem;letter-spacing:0.06em;" id="size-limit-note"></div>
+    <!-- STEG 4: ANTAL & PRIS -->
+    <div class="step" id="price-step">
+      <div class="step-hdr">
+        <div class="step-num">4</div>
+        <div class="step-title">Antal & ungefärligt pris</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Textböjning</label>
-        <div class="curve-pills" style="margin-top:0.4rem;">
-          <div class="curve-pill active" onclick="setGlobalCurve('straight',this)">— Rak</div>
-          <div class="curve-pill" onclick="setGlobalCurve('convex',this)">⌢ Konvex</div>
-          <div class="curve-pill" onclick="setGlobalCurve('concave',this)">⌣ Konkav</div>
+      <div id="camp-tag"></div>
+      <table class="price-tbl" id="price-tbl" style="display:none;"></table>
+      <div class="qty-price" style="margin-top:0.8rem;">
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-inp" type="number" id="qty" value="1" min="1" max="9999" oninput="updatePrice()"/>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="price-block">
+          <div class="price-per" id="price-per">Pris på förfrågan</div>
+          <div class="price-total" id="price-total"></div>
         </div>
       </div>
+      <div class="loyalty-msg" id="loyalty-msg"></div>
     </div>
-  </div>
 
-  <!-- PRIS -->
-  <div class="price-section" id="price-section" style="display:none;">
-    <div class="main-section-title">Priser — ungefärliga (offert skickas inom 1–3 arbetsdagar)</div>
-    <div id="price-content"></div>
-    <div class="qty-wrap">
-      <button class="qty-btn" onclick="changeQty(-1)">−</button>
-      <input class="qty-input" type="number" id="qty" value="1" min="1" max="9999" oninput="updatePrice()"/>
-      <button class="qty-btn" onclick="changeQty(1)">+</button>
-      <div class="price-display">
-        <div class="price-per" id="price-per">—</div>
-        <div class="price-total" id="price-total">—</div>
-      </div>
+    <!-- BESTÄLL -->
+    <button class="order-btn" onclick="openOverlay()">Skicka förfrågan →</button>
+    <div class="quote-note">
+      Priser är ungefärliga — slutlig offert inom <strong>1–3 arbetsdagar</strong>.<br>
+      Offerten gäller i <strong>7 dagar</strong> och aktiveras vid betalning med fakturanummer.
     </div>
-    <div id="loyalty-row"></div>
-    <button class="order-btn" onclick="openOrder()">Skicka förfrågan →</button>
-    <div class="quote-info">
-      ✦ Priser är <strong>ungefärliga</strong> — slutlig offert skickas till dig inom <strong>1–3 arbetsdagar</strong>.<br>
-      Offerten är giltig i <strong>7 dagar</strong>. Beställningen aktiveras vid betalning med angivet fakturanummer.
-    </div>
-  </div>
 
-  <!-- OFFERT-LÄGE -->
-  <div id="quote-only-section" style="display:none;">
-    <div class="main-section">
-      <div class="main-section-title">Förfrågan</div>
-      <p style="font-size:0.78rem;letter-spacing:0.07em;color:#222;line-height:1.8;">Skicka din förfrågan så återkommer vi med en offert inom 1–3 arbetsdagar. Offerten är giltig i 7 dagar. Beställningen aktiveras vid betalning.</p>
-      <button class="order-btn" onclick="openOrder()" style="margin-top:1rem;">Skicka förfrågan →</button>
-    </div>
   </div>
-
 </div>
 
 <!-- BESTÄLLNING OVERLAY -->
-<div class="overlay" id="order-overlay">
+<div class="overlay" id="overlay">
   <div class="overlay-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <div class="overlay-hdr">
       <div class="overlay-title">Förfrågan</div>
-      <button style="background:none;border:none;cursor:pointer;color:#666;font-size:1.5rem;line-height:1;" onclick="closeOrder()">×</button>
+      <button class="close-btn" onclick="closeOverlay()">×</button>
     </div>
+    <div class="summary-box" id="summary-box"></div>
 
-    <div class="order-summary-box" id="order-summary"></div>
+    <label class="o-label">Namn *</label>
+    <input class="o-input" type="text" id="o-name" placeholder="För- och efternamn"/>
 
-    <label class="pay-label">Namn *</label>
-    <input class="pay-input" type="text" id="pay-name" placeholder="För- och efternamn"/>
-    <label class="pay-label">E-postadress *</label>
-    <input class="pay-input" type="email" id="pay-email" placeholder="din@email.com" oninput="checkLoyalty(this.value)"/>
-    <div id="loyalty-display"></div>
-    <label class="pay-label">Telefon</label>
-    <input class="pay-input" type="tel" id="pay-phone" placeholder="+46 70 000 00 00"/>
-    <label class="pay-label">Leveransadress *</label>
-    <input class="pay-input" type="text" id="pay-address" placeholder="Gatuadress, postnummer, ort"/>
-    <label class="pay-label">Fakturanummer (för aktivering av beställning)</label>
-    <input class="pay-input" type="text" id="pay-invoice" placeholder="Anges vid betalning — aktiverar din beställning"/>
-    <label class="pay-label">Övriga önskemål</label>
-    <input class="pay-input" type="text" id="pay-notes" placeholder="Eventuella specialönskemål"/>
+    <label class="o-label">E-postadress *</label>
+    <input class="o-input" type="email" id="o-email" placeholder="din@email.com" oninput="checkLoyalty(this.value)"/>
+    <div class="loyalty-overlay" id="loyalty-overlay"></div>
 
-    <button class="download-btn" onclick="downloadPreview()">⬇ Ladda ner förhandsvisning av gravyr</button>
+    <label class="o-label">Telefon</label>
+    <input class="o-input" type="tel" id="o-phone" placeholder="+46 70 000 00 00"/>
+
+    <label class="o-label">Leveransadress *</label>
+    <input class="o-input" type="text" id="o-address" placeholder="Gatuadress, postnummer, ort"/>
+
+    <label class="o-label">Fakturanummer</label>
+    <input class="o-input" type="text" id="o-invoice" placeholder="Anges vid betalning — aktiverar din beställning"/>
+
+    <label class="o-label">Övriga önskemål</label>
+    <input class="o-input" type="text" id="o-notes" placeholder="Eventuella specialönskemål"/>
+
+    <button class="dl-btn" onclick="downloadPreview()">⬇ Ladda ner förhandsvisning</button>
     <button class="send-btn" id="send-btn" onclick="sendOrder()">Skicka förfrågan</button>
-    <button class="back-btn-link" onclick="closeOrder()">← Tillbaka till produkten</button>
-    <div class="pay-status" id="pay-status"></div>
+    <button class="back-lnk" onclick="closeOverlay()">← Tillbaka till produkten</button>
+    <div class="o-status" id="o-status"></div>
   </div>
 </div>
 
 <div class="mini-footer">
   <div class="mini-footer-inner">
-    <div class="mini-footer-links">
+    <div class="footer-links">
       <a href="index.html#kopvillkor">Köpvillkor</a>
       <a href="kontakt.html">Kontakt</a>
     </div>
-    <div class="mini-footer-mid">Sverige &ndash; SEK</div>
-    <div class="mini-footer-copy">&copy; ALKAISY AB 559285-0588</div>
+    <div class="footer-copy">&copy; ALKAISY AB 559285-0588</div>
   </div>
-  <div style="text-align:center;padding:0.5rem 1rem;">
-    <div class="kopvillkor-note">Priser är ungefärliga. Slutlig offert skickas inom 1–3 arbetsdagar och är giltig i 7 dagar. Beställning aktiveras vid betalning med fakturanummer.</div>
+  <div class="footer-note">
+    Priser är ungefärliga. Slutlig offert skickas inom 1–3 arbetsdagar och är giltig i 7 dagar.
+    Beställning aktiveras vid betalning med fakturanummer.
   </div>
 </div>
 
 <script>
-// ── Firebase & EmailJS ──────────────────────────────────────
+// ── FIREBASE & EMAILJS ───────────────────────────────────────
 firebase.initializeApp({
   apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",
-  authDomain:"elegant-m.firebaseapp.com",
-  projectId:"elegant-m",
+  authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",
   storageBucket:"elegant-m.firebasestorage.app",
-  messagingSenderId:"885190093704",
-  appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"
+  messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"
 });
-const db = firebase.firestore();
-emailjs.init('syV4hDTJIVxj9xUyp');
+const db=firebase.firestore();
+emailjs.init("syV4hDTJIVxj9xUyp");
 
-// ── State ───────────────────────────────────────────────────
-const MAT_ID  = 'metall';
-const PROD_ID = 'penna';
-let productData = null;
-let globalStyle = 'alegreya';
-let globalCurve = 'straight';
-let globalSize  = 16;
-let maxFontSize = 32;
-let engraveColor = '#a0a0a0';
+// ── CONSTANTS ────────────────────────────────────────────────
+const MAT_ID  = "metall";
+const PROD_ID = "penna";
+const CUSTOMER_SVC = "service_rqr0oai";
+const TPL_OWNER    = "template_kvc84w1";
+const TPL_CUST     = "template_1qdf2dj";
 
-const fontMap = {
-  alegreya: "'Alegreya', serif",
-  allura:   "'Allura', cursive",
-  stencil:  "'Allerta Stencil', sans-serif"
+// ── STATE ────────────────────────────────────────────────────
+let PD         = null;   // product data
+let curStyle   = "alegreya";
+let curCurve   = "straight";
+let maxFS      = 32;
+let engColor   = "#b0b0b0";
+let images     = [];
+let curImgIdx  = 0;
+
+const fontMap={
+  alegreya:"'Alegreya',serif",
+  allura:"'Allura',cursive",
+  stencil:"'Allerta Stencil',sans-serif"
 };
 
-// ── Load product from Firebase ───────────────────────────────
-async function loadProduct() {
-  try {
-    const snap = await db.collection('materials').doc(MAT_ID)
-                         .collection('products').doc(PROD_ID).get();
-    if (!snap.exists) { showError(); return; }
-    productData = snap.data();
-    renderProduct();
-  } catch(e) {
-    console.error(e);
-    showError();
-  } finally {
-    document.getElementById('loading-overlay').classList.add('hidden');
+// ── HELPERS ──────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+
+// ── LOAD ─────────────────────────────────────────────────────
+async function init(){
+  try{
+    const snap=await db.collection("materials").doc(MAT_ID)
+                       .collection("products").doc(PROD_ID).get();
+    if(!snap.exists){ showErr(); return; }
+    PD=snap.data();
+    applyProduct();
+  }catch(e){ console.error(e); showErr(); }
+  finally{
+    const l=$("page-loader");
+    l.classList.add("fade");
+    setTimeout(()=>l.style.display="none",400);
   }
 }
 
-function showError() {
-  document.getElementById('loading-overlay').classList.add('hidden');
-  document.getElementById('page-desc-top').textContent = 'Produkten kunde inte laddas. Försök igen senare.';
+function showErr(){
+  $("prod-sub").textContent="Produkten kunde inte laddas. Försök igen senare.";
 }
 
-function renderProduct() {
-  const d = productData;
+function applyProduct(){
+  // Title & subtitle
+  if(PD.name)  $("prod-title").textContent=PD.name;
+  if(PD.desc)  $("prod-sub").textContent=PD.desc;
 
-  // Heading & desc
-  if (d.name) document.getElementById('page-heading').textContent = d.name;
-  if (d.desc) document.getElementById('page-desc-top').textContent = d.desc;
-
-  // Engrave settings from admin
-  if (d.engraveColor) engraveColor = d.engraveColor;
-  if (d.maxFontSize)  { maxFontSize = d.maxFontSize; globalSize = Math.min(globalSize, maxFontSize); }
-  if (d.maxFontSize) {
-    document.getElementById('global-size').max = maxFontSize;
-    document.getElementById('global-size').value = Math.min(16, maxFontSize);
-    document.getElementById('size-limit-note').textContent =
-      'Max textstorlek: ' + maxFontSize + 'px (satt av oss för optimal gravyr)';
+  // Engrave settings
+  if(PD.engraveColor)  engColor=PD.engraveColor;
+  if(PD.maxFontSize){
+    maxFS=PD.maxFontSize;
+    $("font-slider").max=maxFS;
+    $("font-slider").value=Math.min(16,maxFS);
+    $("size-note").textContent="Max textstorlek: "+maxFS+"px (satt av oss för optimal gravyr)";
   }
+  // Zone label
+  if(PD.engraveWidthMM&&PD.engraveHeightMM)
+    $("zone-label").textContent=PD.engraveWidthMM+" mm × "+PD.engraveHeightMM+" mm";
 
   // Images
-  const images = d.images || [];
-  const row = document.getElementById('images-row');
-  row.innerHTML = '';
-
-  if (images.length === 0) {
-    row.innerHTML = '<div style="text-align:center;color:#111;opacity:0.5;font-size:0.8rem;letter-spacing:0.1em;padding:2rem;">Bilder laddas upp snart.</div>';
-  } else {
-    images.forEach((img, idx) => {
-      const card = document.createElement('div');
-      card.className = 'image-card';
-      card.innerHTML = `
-        <img src="${img.url}" alt="${img.alt || d.name || 'Produkt'}" loading="lazy"/>
-        <div class="image-card-body">
-          ${img.alt ? `<div class="image-desc">${img.alt}</div>` : ''}
-          <div class="pen-preview-wrap">
-            <div class="pen-canvas" id="pen-canvas-${idx}">
-              <div class="gravyr-zone" id="gravyr-zone-${idx}">
-                <div class="gravyr-label" id="gravyr-label-${idx}"></div>
-              </div>
-              <svg id="pen-svg-${idx}" style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;overflow:visible;">
-                <defs>
-                  <path id="curve-path-${idx}" d=""/>
-                </defs>
-                <text id="pen-textpath-${idx}" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="${engraveColor}" filter="url(#engrave-filter-${idx})">
-                  <textPath href="#curve-path-${idx}" startOffset="50%">Din text</textPath>
-                </text>
-                <defs>
-                  <filter id="engrave-filter-${idx}">
-                    <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="rgba(255,255,255,0.4)" flood-opacity="1"/>
-                    <feDropShadow dx="0" dy="-1" stdDeviation="0.3" flood-color="rgba(0,0,0,0.3)" flood-opacity="1"/>
-                  </filter>
-                </defs>
-              </svg>
-            </div>
-          </div>
-        </div>`;
-      row.appendChild(card);
-      setupGravyrZone(idx, d);
-    });
-  }
-
-  // Show sections
-  document.getElementById('main-engrave-section').style.display = images.length > 0 ? 'block' : 'none';
-  updateAllPreviews();
+  images=PD.images||[];
+  if(images.length){ showImg(0); buildThumbs(); }
 
   // Price
-  renderPrice(d);
+  renderPriceTable();
+  updatePreview();
 }
 
-function setupGravyrZone(idx, d) {
-  const canvas = document.getElementById('pen-canvas-' + idx);
-  const zone   = document.getElementById('gravyr-zone-' + idx);
-  const label  = document.getElementById('gravyr-label-' + idx);
-  if (!canvas || !zone) return;
-
-  const cw = canvas.offsetWidth || 300;
-  const ch = canvas.offsetHeight || 70;
-
-  // Admin-defined area
-  const areaW = d.engraveWidth  || 60;  // % of canvas
-  const areaH = d.engraveHeight || 70;  // % of canvas
-  const pxW   = (areaW / 100) * cw;
-  const pxH   = (areaH / 100) * ch;
-  const left  = (cw - pxW) / 2;
-  const top   = (ch - pxH) / 2;
-
-  zone.style.left   = left + 'px';
-  zone.style.top    = top + 'px';
-  zone.style.width  = pxW + 'px';
-  zone.style.height = pxH + 'px';
-
-  // Show real mm measurements if available
-  if (d.engraveWidthMM && d.engraveHeightMM) {
-    label.textContent = d.engraveWidthMM + ' mm × ' + d.engraveHeightMM + ' mm';
-  }
+// ── GALLERY ──────────────────────────────────────────────────
+function showImg(idx){
+  curImgIdx=idx;
+  const img=images[idx];
+  if(!img)return;
+  $("no-img").style.display="none";
+  const el=$("main-img");
+  el.style.display="block";
+  el.src=img.url;
+  el.alt=img.alt||PD.name||"";
+  $("img-desc").textContent=img.alt||"";
+  document.querySelectorAll(".thumb").forEach((t,i)=>t.classList.toggle("active",i===idx));
 }
 
-function updateAllPreviews() {
-  const text  = document.getElementById('engrave-text').value || 'Din text';
-  const size  = parseInt(document.getElementById('global-size').value) || 16;
-  const images = productData ? (productData.images || []) : [];
-  document.getElementById('size-val').textContent = size + 'px';
-
-  images.forEach((_, idx) => {
-    updatePenPreview(idx, text, size, globalStyle, globalCurve);
+function buildThumbs(){
+  const wrap=$("thumbs"); wrap.innerHTML="";
+  images.forEach((img,i)=>{
+    const d=document.createElement("div");
+    d.className="thumb"+(i===0?" active":"");
+    d.innerHTML=`<img src="${img.url}" alt="${img.alt||""}"/>`;
+    d.onclick=()=>showImg(i);
+    wrap.appendChild(d);
   });
 }
 
-function updatePenPreview(idx, text, size, style, curve) {
-  const canvas = document.getElementById('pen-canvas-' + idx);
-  const svg    = document.getElementById('pen-svg-' + idx);
-  const tp     = document.getElementById('pen-textpath-' + idx);
-  const pathEl = document.getElementById('curve-path-' + idx);
-  if (!canvas || !svg || !tp || !pathEl) return;
-
-  const cw = canvas.offsetWidth || 300;
-  const ch = canvas.offsetHeight || 70;
-  const cx = cw / 2;
-  const cy = ch / 2;
-  const w  = cw * 0.6;
-
-  // Limit font size
-  const capped = Math.min(size, maxFontSize);
-
-  tp.setAttribute('font-size', capped);
-  tp.setAttribute('font-family', fontMap[style] || fontMap.alegreya);
-  tp.setAttribute('fill', engraveColor);
-
-  // Curve paths
-  let pathD;
-  if (curve === 'straight') {
-    pathD = `M ${cx - w/2} ${cy} L ${cx + w/2} ${cy}`;
-  } else if (curve === 'convex') {
-    pathD = `M ${cx - w/2} ${cy + 12} Q ${cx} ${cy - 18} ${cx + w/2} ${cy + 12}`;
-  } else {
-    pathD = `M ${cx - w/2} ${cy - 12} Q ${cx} ${cy + 18} ${cx + w/2} ${cy - 12}`;
-  }
-  pathEl.setAttribute('d', pathD);
-
-  // Update textPath content
-  tp.querySelector('textPath').textContent = text;
-}
-
-function setGlobalStyle(style, btn) {
-  globalStyle = style;
-  document.querySelectorAll('#global-style-pills .style-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  updateAllPreviews();
-}
-
-function setGlobalCurve(curve, btn) {
-  globalCurve = curve;
-  document.querySelectorAll('.curve-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  updateAllPreviews();
-}
-
-function updateSizeVal(v) {
-  const capped = Math.min(parseInt(v), maxFontSize);
-  document.getElementById('global-size').value = capped;
-  document.getElementById('size-val').textContent = capped + 'px';
-}
-
-// ── PRICE ───────────────────────────────────────────────────
-function renderPrice(d) {
-  if (d.quoteMode) {
-    document.getElementById('quote-only-section').style.display = 'block';
-    document.getElementById('price-section').style.display = 'none';
-    return;
-  }
-
-  const levels = d.priceLevels || [];
-  if (!levels.length) {
-    document.getElementById('quote-only-section').style.display = 'block';
-    document.getElementById('price-section').style.display = 'none';
-    return;
-  }
-
-  document.getElementById('price-section').style.display = 'block';
-  document.getElementById('quote-only-section').style.display = 'none';
-
-  // Campaign check
-  const camp = d.campaign || {};
-  const campActive = camp.active && camp.pct > 0 &&
-    (!camp.start || new Date() >= new Date(camp.start)) &&
-    (!camp.end   || new Date() <= new Date(camp.end));
-  const discount = campActive ? (1 - camp.pct / 100) : 1;
-
-  let html = '';
-  if (campActive) {
-    html += `<div style="margin-bottom:0.6rem;"><span class="campaign-badge">🏷 ${camp.name || 'Kampanj'} — ${camp.pct}% rabatt</span>`;
-    if (camp.end) html += ` <span style="font-size:0.6rem;color:#555;letter-spacing:0.06em;">Gäller till ${camp.end}</span>`;
-    html += '</div>';
-  }
-
-  html += '<table class="price-table"><thead><tr><th>Antal</th><th>Pris/st</th>' + (campActive ? '<th>Kampanj</th>' : '') + '</tr></thead><tbody>';
-  levels.forEach((lv, i) => {
-    const range = lv.max ? lv.min + '–' + lv.max + ' st' : lv.min + '+ st';
-    const camp_price = Math.round(lv.price * discount);
-    html += `<tr id="price-row-${i}"><td>${range}</td><td>${campActive ? '<span class="price-strike">' + lv.price + ' kr</span>' : lv.price + ' kr'}</td>${campActive ? '<td class="price-campaign">' + camp_price + ' kr</td>' : ''}</tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById('price-content').innerHTML = html;
+// ── PREVIEW ──────────────────────────────────────────────────
+function updatePreview(){
+  const text=$("eng-text").value||"Din text";
+  const fs=Math.min(parseInt($("font-slider").value)||16,maxFS);
+  $("font-slider").value=fs;
+  $("font-val").textContent=fs+"px";
+  renderSVG(text,fs,curStyle,curCurve);
   updatePrice();
 }
 
-function getPrice(qty) {
-  if (!productData || !productData.priceLevels) return null;
-  const camp = productData.campaign || {};
-  const campActive = camp.active && camp.pct > 0 &&
-    (!camp.start || new Date() >= new Date(camp.start)) &&
-    (!camp.end   || new Date() <= new Date(camp.end));
-  const discount = campActive ? (1 - camp.pct / 100) : 1;
-  for (const lv of productData.priceLevels) {
-    if (qty >= lv.min && (!lv.max || qty <= lv.max)) {
-      return { per: lv.price, discounted: Math.round(lv.price * discount), campActive };
-    }
+function renderSVG(text,fs,style,curve){
+  const inner=$("preview-inner");
+  const W=inner.offsetWidth||300;
+  const H=Math.max(W*0.22,60);
+  const cx=W/2, cy=H/2;
+  const pathW=W*0.62;
+
+  let pathD;
+  if(curve==="straight"){
+    pathD=`M ${cx-pathW/2} ${cy} L ${cx+pathW/2} ${cy}`;
+  }else if(curve==="convex"){
+    const bend=H*0.22;
+    pathD=`M ${cx-pathW/2} ${cy+bend} Q ${cx} ${cy-bend} ${cx+pathW/2} ${cy+bend}`;
+  }else{
+    const bend=H*0.22;
+    pathD=`M ${cx-pathW/2} ${cy-bend} Q ${cx} ${cy+bend} ${cx+pathW/2} ${cy-bend}`;
+  }
+
+  // Zone rect
+  const zW=W*0.62, zH=H*0.72;
+  const zX=(W-zW)/2, zY=(H-zH)/2;
+
+  inner.innerHTML=`
+    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+      <defs>
+        <filter id="ef">
+          <feDropShadow dx="0" dy="0.8" stdDeviation="0.4" flood-color="rgba(255,255,255,0.5)" flood-opacity="1"/>
+          <feDropShadow dx="0" dy="-0.6" stdDeviation="0.3" flood-color="rgba(0,0,0,0.35)" flood-opacity="1"/>
+        </filter>
+        <path id="cp" d="${pathD}"/>
+      </defs>
+      <defs>
+        <linearGradient id="pbg" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#a8a8a8"/>
+          <stop offset="15%" stop-color="#e0e0e0"/>
+          <stop offset="50%" stop-color="#b0b0b0"/>
+          <stop offset="85%" stop-color="#d8d8d8"/>
+          <stop offset="100%" stop-color="#b8b8b8"/>
+        </linearGradient>
+        <linearGradient id="pshine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+          <stop offset="50%" stop-color="rgba(0,0,0,0)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0.15)"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="${W}" height="${H}" rx="4" ry="${H/2}" fill="url(#pbg)"/>
+      <rect x="0" y="0" width="${W}" height="${H}" rx="4" ry="${H/2}" fill="url(#pshine)"/>
+      <ellipse cx="${W-H/2}" cy="${H/2}" rx="${H*0.45}" ry="${H*0.45}" fill="#c8c8c8" opacity="0.6"/>
+      <rect x="${zX}" y="${zY}" width="${zW}" height="${zH}" fill="none"
+        stroke="rgba(0,120,70,0.3)" stroke-width="1" stroke-dasharray="4,3" rx="3"/>
+      <text font-size="${fs}" font-family="${fontMap[style]||fontMap.alegreya}"
+        fill="${engColor}" filter="url(#ef)" text-anchor="middle">
+        <textPath href="#cp" startOffset="50%">${text}</textPath>
+      </text>
+    </svg>`;
+}
+
+function setStyle(s,btn){
+  curStyle=s;
+  document.querySelectorAll("#style-pills .pill").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  updatePreview();
+}
+
+function setCurve(c,btn){
+  curCurve=c;
+  btn.closest(".pills").querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  updatePreview();
+}
+
+// ── PRICE ────────────────────────────────────────────────────
+function campIsActive(){
+  if(!PD)return false;
+  const c=PD.campaign||{};
+  return c.active&&c.pct>0&&
+    (!c.start||new Date()>=new Date(c.start))&&
+    (!c.end||new Date()<=new Date(c.end));
+}
+
+function getUnitPrice(qty){
+  if(!PD||!PD.priceLevels||!PD.priceLevels.length)return null;
+  const disc=campIsActive()?1-(PD.campaign.pct/100):1;
+  for(const lv of PD.priceLevels){
+    if(qty>=lv.min&&(!lv.max||qty<=lv.max))
+      return{base:lv.price,final:Math.round(lv.price*disc),camp:campIsActive()};
   }
   return null;
 }
 
-function updatePrice() {
-  const qty = parseInt(document.getElementById('qty').value) || 1;
-  const p = getPrice(qty);
-  if (!p) return;
-  document.getElementById('price-per').textContent = (p.campActive ? p.discounted : p.per) + ' kr / st';
-  document.getElementById('price-total').textContent = (qty * (p.campActive ? p.discounted : p.per)).toLocaleString('sv-SE') + ' kr';
-
-  // Highlight active row
-  const levels = productData.priceLevels || [];
-  levels.forEach((lv, i) => {
-    const row = document.getElementById('price-row-' + i);
-    if (row) row.classList.toggle('active-row', qty >= lv.min && (!lv.max || qty <= lv.max));
+function renderPriceTable(){
+  if(!PD)return;
+  if(PD.quoteMode||!PD.priceLevels||!PD.priceLevels.length){
+    $("price-per").textContent="Pris på förfrågan";
+    $("price-total").textContent="";
+    $("price-tbl").style.display="none";
+    return;
+  }
+  const camp=campIsActive();
+  const c=PD.campaign||{};
+  let html="";
+  if(camp){
+    html+=`<div class="campaign-tag">🏷 ${c.name||"Kampanj"} — ${c.pct}% rabatt`;
+    if(c.end)html+=` · Gäller till ${c.end}`;
+    html+="</div>";
+    $("camp-tag").innerHTML=html;
+  }
+  const disc=camp?1-c.pct/100:1;
+  let tbl=`<thead><tr><th>Antal</th><th>Pris/st</th>${camp?"<th>Kampanj</th>":""}</tr></thead><tbody>`;
+  PD.priceLevels.forEach((lv,i)=>{
+    const range=lv.max?lv.min+"–"+lv.max+" st":lv.min+"+ st";
+    const cp=Math.round(lv.price*disc);
+    tbl+=`<tr id="pr-${i}"><td>${range}</td>`;
+    tbl+=`<td>${camp?"<span class='price-strike'>"+lv.price+" kr</span>":lv.price+" kr"}</td>`;
+    if(camp)tbl+=`<td class="price-campaign">${cp} kr</td>`;
+    tbl+="</tr>";
   });
-}
-
-function changeQty(delta) {
-  const inp = document.getElementById('qty');
-  inp.value = Math.max(1, (parseInt(inp.value) || 1) + delta);
+  tbl+="</tbody>";
+  $("price-tbl").innerHTML=tbl;
+  $("price-tbl").style.display="table";
   updatePrice();
 }
 
-// ── LOYALTY ─────────────────────────────────────────────────
-async function checkLoyalty(email) {
-  if (!email || !email.includes('@')) { document.getElementById('loyalty-display').innerHTML = ''; return; }
-  try {
-    const snap = await db.collection('customers').where('email','==',email.toLowerCase()).get();
-    if (snap.empty) { document.getElementById('loyalty-display').innerHTML = ''; return; }
-    const data = snap.docs[0].data();
-    const n = data.totalOrders || 1;
-    let icon = '🥉', level = 'Ny kund', msg = '';
-    if (n >= 10) { icon = '💎'; level = 'Platina'; msg = 'VIP-kund — din order prioriteras!'; }
-    else if (n >= 5) { icon = '🥇'; level = 'Guld'; msg = 'Lojal kund — tack för ditt förtroende!'; }
-    else if (n >= 2) { icon = '🥈'; level = 'Silver'; msg = 'Återkommande kund — välkommen tillbaka!'; }
-    document.getElementById('loyalty-display').innerHTML =
-      `<div class="loyalty-badge" style="margin-top:0.5rem;">${icon} ${level} — ${msg || 'Välkommen!'}<br><span style="font-size:0.58rem;opacity:0.7;">${n} beställning${n !== 1 ? 'ar' : ''} hos oss</span></div>`;
-  } catch(e) { console.warn(e); }
+function updatePrice(){
+  if(!PD)return;
+  const qty=parseInt($("qty").value)||1;
+  const p=getUnitPrice(qty);
+  if(!p){ $("price-per").textContent="Pris på förfrågan"; $("price-total").textContent=""; return; }
+  $("price-per").textContent=p.final+" kr / st"+(p.camp?" (kampanjpris)":"")+" — ungefärligt";
+  $("price-total").textContent=(qty*p.final).toLocaleString("sv-SE")+" kr";
+  if(PD.priceLevels)PD.priceLevels.forEach((_,i)=>{
+    const row=$("pr-"+i);
+    if(row){
+      const lv=PD.priceLevels[i];
+      row.classList.toggle("active-row",qty>=lv.min&&(!lv.max||qty<=lv.max));
+    }
+  });
 }
 
-// ── ORDER ────────────────────────────────────────────────────
-function openOrder() {
-  const text  = document.getElementById('engrave-text').value || '(ingen text)';
-  const qty   = document.getElementById('qty') ? document.getElementById('qty').value : '1';
-  const style = globalStyle;
-  const curve = { straight:'Rak', convex:'Konvex (uppåt)', concave:'Konkav (nedåt)' }[globalCurve];
-  const p = getPrice(parseInt(qty));
-  const priceStr = p ? (p.campActive ? p.discounted : p.per) + ' kr/st (ungefärligt)' : 'På förfrågan';
-
-  document.getElementById('order-summary').innerHTML =
-    `<strong>Produkt:</strong> ${productData?.name || 'Elegant Penna'}<br>` +
-    `<strong>Gravyrtext:</strong> ${text}<br>` +
-    `<strong>Textstil:</strong> ${style}<br>` +
-    `<strong>Textböjning:</strong> ${curve}<br>` +
-    `<strong>Antal:</strong> ${qty} st<br>` +
-    `<strong>Ungefärligt pris:</strong> ${priceStr}<br>` +
-    `<span style="font-size:0.65rem;color:#666;">Slutlig offert skickas inom 1–3 arbetsdagar.</span>`;
-
-  document.getElementById('pay-status').textContent = '';
-  document.getElementById('pay-status').className = 'pay-status';
-  document.getElementById('send-btn').disabled = false;
-  document.getElementById('send-btn').textContent = 'Skicka förfrågan';
-  document.getElementById('order-overlay').classList.add('active');
+function changeQty(d){
+  const inp=$("qty");
+  inp.value=Math.max(1,(parseInt(inp.value)||1)+d);
+  updatePrice();
 }
 
-function closeOrder() {
-  document.getElementById('order-overlay').classList.remove('active');
+// ── LOYALTY ──────────────────────────────────────────────────
+async function checkLoyalty(email){
+  const el=$("loyalty-overlay"); el.classList.remove("visible"); el.innerHTML="";
+  if(!email||!email.includes("@")||!email.includes("."))return;
+  try{
+    const snap=await db.collection("customers").where("email","==",email.toLowerCase()).get();
+    if(snap.empty)return;
+    const d=snap.docs[0].data(),n=d.totalOrders||1;
+    let icon="🥉",level="Ny kund",msg="Välkommen!";
+    if(n>=10){icon="💎";level="Platina";msg="VIP-kund — din order prioriteras!";}
+    else if(n>=5){icon="🥇";level="Guld";msg="Lojal kund — tack för ditt förtroende!";}
+    else if(n>=2){icon="🥈";level="Silver";msg="Återkommande kund — välkommen tillbaka!";}
+    el.innerHTML=icon+" "+level+" &mdash; "+msg;
+    el.classList.add("visible");
+  }catch(e){console.warn(e);}
 }
 
-function downloadPreview() {
-  // Create a canvas with the pen preview
-  const canvas = document.createElement('canvas');
-  canvas.width = 800; canvas.height = 200;
-  const ctx = canvas.getContext('2d');
-
-  // Background
-  const grad = ctx.createLinearGradient(0, 0, 800, 0);
-  grad.addColorStop(0, '#b0b0b0');
-  grad.addColorStop(0.2, '#e8e8e8');
-  grad.addColorStop(0.5, '#a8a8a8');
-  grad.addColorStop(0.8, '#e0e0e0');
-  grad.addColorStop(1, '#b8b8b8');
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.roundRect(0, 0, 800, 200, [10, 80, 80, 10]);
-  ctx.fill();
-
-  // Text
-  const text  = document.getElementById('engrave-text').value || 'Din text';
-  const size  = Math.min(parseInt(document.getElementById('global-size').value) || 16, maxFontSize);
-  const fontF = globalStyle === 'alegreya' ? 'Alegreya, serif' : globalStyle === 'allura' ? 'Allura, cursive' : 'Allerta Stencil, sans-serif';
-  ctx.font = size * 2.5 + 'px ' + fontF;
-  ctx.fillStyle = engraveColor;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, 400, 100);
-
-  // Download
-  const link = document.createElement('a');
-  link.download = 'elegant-m-penna-gravyr.png';
-  link.href = canvas.toDataURL();
-  link.click();
+// ── DOWNLOAD PREVIEW ─────────────────────────────────────────
+function downloadPreview(){
+  const svg=$("preview-inner").querySelector("svg");
+  if(!svg){alert("Ingen förhandsvisning att ladda ner.");return;}
+  const xml=new XMLSerializer().serializeToString(svg);
+  const blob=new Blob([xml],{type:"image/svg+xml"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="elegant-m-gravyr-penna.svg";a.click();
+  URL.revokeObjectURL(url);
 }
 
-async function sendOrder() {
-  const name    = document.getElementById('pay-name').value.trim();
-  const email   = document.getElementById('pay-email').value.trim();
-  const phone   = document.getElementById('pay-phone').value.trim();
-  const address = document.getElementById('pay-address').value.trim();
-  const invoice = document.getElementById('pay-invoice').value.trim();
-  const notes   = document.getElementById('pay-notes').value.trim();
+// ── OVERLAY ──────────────────────────────────────────────────
+function openOverlay(){
+  const text=$("eng-text").value||"(ingen text)";
+  const qty=$("qty").value;
+  const p=getUnitPrice(parseInt(qty));
+  const styleNames={alegreya:"Alegreya",allura:"Allura",stencil:"Allerta Stencil"};
+  const curveNames={straight:"Rak",convex:"Konvex (uppåt)",concave:"Konkav (nedåt)"};
+  const priceStr=p?p.final+" kr/st (ungefärligt)":"På förfrågan";
 
-  if (!name || !email || !address) {
-    document.getElementById('pay-status').textContent = 'Fyll i namn, e-post och adress.';
-    document.getElementById('pay-status').className = 'pay-status err';
-    return;
+  $("summary-box").innerHTML=
+    `<strong>Produkt:</strong> ${PD?.name||"Elegant Penna"}<br>`+
+    `<strong>Gravyrtext:</strong> ${text}<br>`+
+    `<strong>Textstil:</strong> ${styleNames[curStyle]}<br>`+
+    `<strong>Textböjning:</strong> ${curveNames[curCurve]}<br>`+
+    `<strong>Antal:</strong> ${qty} st<br>`+
+    `<strong>Ungefärligt pris:</strong> ${priceStr}<br>`+
+    `<span style="font-size:0.62rem;color:#666;">Slutlig offert inom 1–3 arbetsdagar.</span>`;
+
+  $("o-status").textContent="";$("o-status").className="o-status";
+  $("send-btn").disabled=false;$("send-btn").textContent="Skicka förfrågan";
+  $("overlay").classList.add("open");
+}
+
+function closeOverlay(){$("overlay").classList.remove("open");}
+$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeOverlay();});
+
+// ── SEND ORDER ───────────────────────────────────────────────
+async function sendOrder(){
+  const name=$("o-name").value.trim();
+  const email=$("o-email").value.trim();
+  const phone=$("o-phone").value.trim();
+  const address=$("o-address").value.trim();
+  const invoice=$("o-invoice").value.trim();
+  const notes=$("o-notes").value.trim();
+
+  if(!name||!email||!address){
+    $("o-status").textContent="Fyll i namn, e-post och adress.";
+    $("o-status").className="o-status err";return;
   }
 
-  const btn = document.getElementById('send-btn');
-  btn.disabled = true; btn.textContent = 'Skickar...';
+  const btn=$("send-btn");btn.disabled=true;btn.textContent="Skickar...";
 
-  const summaryText = document.getElementById('order-summary').innerText;
-  const text  = document.getElementById('engrave-text').value || '(ingen text)';
-  const qty   = document.getElementById('qty') ? document.getElementById('qty').value : '1';
-  const style = globalStyle;
-  const curve = { straight:'Rak', convex:'Konvex', concave:'Konkav' }[globalCurve];
+  const text=$("eng-text").value||"(ingen text)";
+  const qty=$("qty").value;
+  const styleNames={alegreya:"Alegreya",allura:"Allura",stencil:"Allerta Stencil"};
+  const curveNames={straight:"Rak",convex:"Konvex",concave:"Konkav"};
+  const summaryTxt=$("summary-box").innerText;
 
-  const params = {
-    from_name:  name,
-    from_email: email,
-    phone:      phone || 'Ej angiven',
-    message:    'FÖRFRÅGAN — ELEGANT PENNA\n\n' + summaryText +
-                '\n\nGravyrtext: ' + text +
-                '\nTextstil: ' + style +
-                '\nTextböjning: ' + curve +
-                '\nAntal: ' + qty +
-                '\nLeveransadress: ' + address +
-                '\nFakturanummer: ' + (invoice || 'Ej angivet') +
-                '\nÖvrigt: ' + (notes || 'Inga'),
-    to_email: (function(){ const p=['elegant','.m.se','@gmail','.com']; return p.join(''); })()
+  const params={
+    from_name:name,from_email:email,phone:phone||"Ej angiven",
+    message:"FÖRFRÅGAN — ELEGANT PENNA\n\n"+summaryTxt+
+      "\n\nGravyrtext: "+text+
+      "\nTextstil: "+styleNames[curStyle]+
+      "\nTextböjning: "+curveNames[curCurve]+
+      "\nAntal: "+qty+
+      "\nLeveransadress: "+address+
+      "\nFakturanummer: "+(invoice||"Ej angivet")+
+      "\nÖvrigt: "+(notes||"Inga"),
+    to_email:(function(){return["elegant",".m.se","@gmail",".com"].join("");})()
   };
 
-  try {
-    await emailjs.send('service_rqr0oai', 'template_kvc84w1', params);
-    await emailjs.send('service_rqr0oai', 'template_1qdf2dj', params);
+  try{
+    await emailjs.send(CUSTOMER_SVC,TPL_OWNER,params);
+    await emailjs.send(CUSTOMER_SVC,TPL_CUST,params);
 
-    // Save order to Firebase
-    const orderRef = await db.collection('orders').add({
-      customerName:   name,
-      customerEmail:  email.toLowerCase(),
-      phone:          phone,
-      address:        address,
-      product:        productData?.name || 'Elegant Penna',
-      material:       'Metall',
-      qty:            qty,
-      engraveText:    text,
-      engraveStyle:   style,
-      engraveCurve:   curve,
-      invoiceRef:     invoice,
-      notes:          notes,
-      status:         'new',
-      createdAt:      new Date().toISOString()
+    // Save order
+    await db.collection("orders").add({
+      customerName:name,customerEmail:email.toLowerCase(),
+      phone,address,product:PD?.name||"Elegant Penna",
+      material:"Metall",qty,engraveText:text,
+      engraveStyle:curStyle,engraveCurve:curCurve,
+      invoiceRef:invoice,notes,status:"new",
+      createdAt:new Date().toISOString()
     });
 
-    // Update customer record
-    const custSnap = await db.collection('customers').where('email','==',email.toLowerCase()).get();
-    if (custSnap.empty) {
-      await db.collection('customers').add({
-        name, email: email.toLowerCase(), phone,
-        totalOrders: 1,
-        firstOrder:  new Date().toISOString(),
-        lastOrder:   new Date().toISOString()
+    // Update customer
+    const cs=await db.collection("customers").where("email","==",email.toLowerCase()).get();
+    if(cs.empty){
+      await db.collection("customers").add({
+        name,email:email.toLowerCase(),phone,
+        totalOrders:1,firstOrder:new Date().toISOString(),lastOrder:new Date().toISOString()
       });
-    } else {
-      const custRef  = custSnap.docs[0].ref;
-      const custData = custSnap.docs[0].data();
-      await custRef.update({
-        totalOrders: (custData.totalOrders || 0) + 1,
-        lastOrder:   new Date().toISOString(),
-        name:        name
-      });
+    }else{
+      const ref=cs.docs[0].ref,d=cs.docs[0].data();
+      await ref.update({totalOrders:(d.totalOrders||0)+1,lastOrder:new Date().toISOString(),name});
     }
 
-    document.getElementById('pay-status').textContent = '✓ Förfrågan skickad! Vi återkommer inom 1–3 arbetsdagar.';
-    document.getElementById('pay-status').className = 'pay-status ok';
-    btn.textContent = 'Skickat!';
-  } catch(e) {
+    $("o-status").textContent="✓ Förfrågan skickad! Vi återkommer inom 1–3 arbetsdagar.";
+    $("o-status").className="o-status ok";
+    btn.textContent="Skickat!";
+  }catch(e){
     console.error(e);
-    document.getElementById('pay-status').textContent = 'Något gick fel. Maila oss: elegant.m.se@gmail.com';
-    document.getElementById('pay-status').className = 'pay-status err';
-    btn.disabled = false; btn.textContent = 'Skicka förfrågan';
+    $("o-status").textContent="Något gick fel. Maila oss: elegant.m.se@gmail.com";
+    $("o-status").className="o-status err";
+    btn.disabled=false;btn.textContent="Skicka förfrågan";
   }
 }
 
-// Close overlay on background click
-document.getElementById('order-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeOrder();
-});
-
-// Init
-loadProduct();
+window.addEventListener("resize",updatePreview);
+init();
 </script>
 </body>
 </html>
