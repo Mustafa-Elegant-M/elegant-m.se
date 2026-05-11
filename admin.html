@@ -219,6 +219,27 @@
           <div id="pl-container"></div>
           <button class="btn-s" onclick="addPL()" style="margin-top:0.5rem;">+ Nivå</button>
         </div>
+        <!-- GRAVYRZON TOGGLE -->
+        <div class="tgl-row" style="margin-bottom:0.5rem;">
+          <div><div class="tgl-lbl">Flyttbar gravyrzon</div><div class="tgl-sub">På: kunden kan flytta text fritt. Av: text är låst inom zonen</div></div>
+          <label class="tgl"><input type="checkbox" id="tgl-movable" checked/><span class="tgl-sl"></span></label>
+        </div>
+
+        <!-- RAMAR -->
+        <div style="margin-top:1rem;">
+          <div class="panel-ttl" style="margin-bottom:0.7rem;">Rambibliotek för denna produkt</div>
+          <div style="font-size:0.62rem;color:#777;letter-spacing:0.07em;margin-bottom:0.6rem;">Ladda upp ramar (PNG/SVG) — kunden ser och väljer bland dessa</div>
+          <div class="upzone" style="padding:0.8rem;">
+            <div class="flbl" style="color:rgba(0,255,180,0.55);margin-top:0;">Ladda upp ny ram</div>
+            <input class="finp" type="text" id="frame-name" placeholder="Ramens namn (t.ex. Enkel cirkel)" style="margin-bottom:0.5rem;padding:0.5rem 0.8rem;font-size:0.8rem;"/>
+            <input type="file" id="frame-upload" accept="image/png,image/svg+xml"/>
+            <progress id="frame-prog" max="100" style="display:none;"></progress>
+            <button class="btn-p" id="frame-up-btn" onclick="uploadFrame()" style="margin-top:0.3rem;">Ladda upp ram</button>
+          </div>
+          <div id="frames-list" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;"></div>
+          <div class="status" id="frame-status"></div>
+        </div>
+
         <div style="margin-top:1.5rem;">
           <div class="tgl-row">
             <div><div class="tgl-lbl">Kampanjpris</div><div class="tgl-sub">Procentuellt avdrag på alla nivåer automatiskt</div></div>
@@ -580,6 +601,8 @@ async function loadDetail(mId,pId){
   $("eng-w-pct").value=d.engraveWidth||"";
   $("eng-h-pct").value=d.engraveHeight||"";
   $("eng-desc").value=d.engraveDesc||"";
+  if($("tgl-movable"))$("tgl-movable").checked=d.engraveMovable!==false;
+  renderFramesList(d.frames||[]);
   setSt("eng-status","","");
 }
 
@@ -592,7 +615,8 @@ window.saveEngrave=async function(){
     engraveHeightMM:parseFloat($("eng-h-mm").value)||0,
     engraveWidth:parseFloat($("eng-w-pct").value)||70,
     engraveHeight:parseFloat($("eng-h-pct").value)||70,
-    engraveDesc:$("eng-desc").value.trim()
+    engraveDesc:$("eng-desc").value.trim(),
+    engraveMovable:$("tgl-movable")?$("tgl-movable").checked:true
   };
   try{
     await db.collection("materials").doc(mId).collection("products").doc(pId).set(eng,{merge:true});
@@ -782,6 +806,62 @@ window.sendReport=async function(auto=false){
 };
 
 // MODALS
+// FRAMES
+function renderFramesList(frames){
+  const list=$("frames-list");if(!list)return;
+  list.innerHTML="";
+  if(!frames.length){list.innerHTML='<div style="font-size:0.62rem;color:#555;font-style:italic;">Inga ramar uppladda.</div>';return;}
+  frames.forEach((f,i)=>{
+    const wrap=document.createElement("div");
+    wrap.style.cssText="position:relative;width:70px;text-align:center;";
+    wrap.innerHTML='<div style="width:70px;height:70px;border:0.5px solid rgba(0,255,180,0.2);border-radius:8px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;overflow:hidden;"><img src="'+f.url+'" style="max-width:100%;max-height:100%;object-fit:contain;padding:4px;" alt="'+f.name+'"/></div><div style="font-size:0.52rem;color:#888;margin-top:3px;letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+f.name+'</div><button onclick="deleteFrame('+i+')" style="position:absolute;top:2px;right:2px;background:rgba(255,60,60,0.7);border:none;cursor:pointer;color:white;font-size:0.55rem;border-radius:4px;padding:1px 4px;line-height:1.4;">✕</button>';
+    list.appendChild(wrap);
+  });
+}
+
+window.uploadFrame=async function(){
+  const file=$("frame-upload").files[0];
+  const name=$("frame-name").value.trim()||"Ram";
+  if(!file){setSt("frame-status","Välj en bildfil.","err");return;}
+  if(!cMat||!cProd){setSt("frame-status","Öppna en produkt först.","err");return;}
+  const btn=$("frame-up-btn"),prog=$("frame-prog");
+  btn.disabled=true;btn.textContent="Laddar...";prog.style.display="block";
+
+  try{
+    const fd=new FormData();
+    fd.append("file",file);
+    fd.append("upload_preset","elegant-m-admin");
+    fd.append("folder","elegant-m/frames/"+cMat.id+"/"+cProd.id);
+    const r=await new Promise((res,rej)=>{
+      const x=new XMLHttpRequest();
+      x.upload.onprogress=e=>{if(e.lengthComputable)prog.value=(e.loaded/e.total)*100;};
+      x.onload=()=>x.status===200?res(JSON.parse(x.responseText)):rej();
+      x.onerror=()=>rej();
+      x.open("POST","https://api.cloudinary.com/v1_1/dqqirxxnz/image/upload");
+      x.send(fd);
+    });
+    const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
+    const snap=await ref.get();
+    const frames=(snap.data().frames||[]);
+    frames.push({url:r.secure_url,publicId:r.public_id,name});
+    await ref.set({frames},{merge:true});
+    $("frame-name").value="";$("frame-upload").value="";
+    renderFramesList(frames);
+    setSt("frame-status","✓ Ram uppladdad!","ok");
+  }catch(e){setSt("frame-status","Fel: "+e.message,"err");}
+  finally{btn.disabled=false;btn.textContent="Ladda upp ram";prog.style.display="none";}
+};
+
+window.deleteFrame=async function(idx){
+  if(!confirm("Ta bort ram?"))return;
+  const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
+  const snap=await ref.get();
+  const frames=snap.data().frames||[];
+  frames.splice(idx,1);
+  await ref.set({frames},{merge:true});
+  renderFramesList(frames);
+};
+
 window.openM=function(id){$(id).classList.add("open");};
 window.closeM=function(id){$(id).classList.remove("open");};
 document.querySelectorAll(".modal-bg").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
