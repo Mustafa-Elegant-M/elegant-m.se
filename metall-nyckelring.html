@@ -11,341 +11,138 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --teal1:#2bb8c0;--teal2:#1e9aa2;--teal3:#178590;--teal4:#127880;
-      --dark1:rgba(0,0,0,0.55);--dark2:rgba(0,0,0,0.35);
-      --glass:rgba(255,255,255,0.18);--glass2:rgba(255,255,255,0.28);
-      --border:rgba(0,0,0,0.12);--text:#111;--text2:#333;--text3:#555;
-    }
-    body{
-      background:linear-gradient(160deg,var(--teal1) 0%,var(--teal2) 30%,var(--teal3) 60%,var(--teal4) 100%);
-      min-height:100vh;font-family:"Josefin Sans",sans-serif;overflow-x:hidden;
-    }
-    body::before{
-      content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-      background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),
-                       radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px);
-      background-size:28px 28px,18px 22px;background-position:0 0,7px 9px;
-      animation:glitter 6s ease-in-out infinite alternate;
-    }
+    body{background:linear-gradient(160deg,#2bb8c0 0%,#1e9aa2 30%,#178590 60%,#127880 100%);min-height:100vh;font-family:"Josefin Sans",sans-serif;overflow-x:hidden;}
+    body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(100,255,180,0.55) 0.5px,transparent 0.5px),radial-gradient(circle,rgba(60,255,150,0.35) 0.3px,transparent 0.3px);background-size:28px 28px,18px 22px;background-position:0 0,7px 9px;animation:glitter 6s ease-in-out infinite alternate;}
     @keyframes glitter{0%{opacity:0.4}50%{opacity:0.9}100%{opacity:0.45}}
-
-    /* LOADING */
-    #page-loader{
-      position:fixed;inset:0;z-index:999;
-      background:linear-gradient(160deg,var(--teal1),var(--teal4));
-      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
-      transition:opacity 0.4s;
-    }
+    #page-loader{position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,#2bb8c0,#127880);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;transition:opacity 0.4s;}
     #page-loader.fade{opacity:0;pointer-events:none;}
     .spinner{width:36px;height:36px;border:2px solid rgba(0,0,0,0.12);border-top-color:#111;border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .loader-txt{font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:#111;opacity:0.6;}
-
-    /* TOP BAR */
-    .top-bar{
-      position:relative;z-index:10;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:1.5rem 2rem 0;max-width:1200px;margin:0 auto;
-    }
-    .back-link{
-      font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;
-      text-decoration:none;color:var(--text);opacity:0.6;
-      display:flex;align-items:center;gap:0.4rem;transition:opacity 0.2s;
-    }
+    .top-bar{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem 0;max-width:1400px;margin:0 auto;}
+    .back-link{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.6;display:flex;align-items:center;gap:0.4rem;transition:opacity 0.2s;}
     .back-link:hover{opacity:1;}
     .back-link::before{content:"←";font-size:0.9rem;}
-    .site-name{
-      font-family:"Cormorant Garamond",serif;font-size:clamp(1.2rem,2.5vw,1.8rem);
-      font-weight:300;letter-spacing:0.18em;text-decoration:none;
-      background:linear-gradient(135deg,#111,#2a2a2a,#111);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
+    .site-name{font-family:"Cormorant Garamond",serif;font-size:clamp(1.2rem,2.5vw,1.8rem);font-weight:300;letter-spacing:0.18em;text-decoration:none;background:linear-gradient(135deg,#111,#2a2a2a,#111);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
     .site-name span{font-style:italic;}
-    .top-spacer{width:80px;}
 
-    /* HERO */
-    .hero{
-      position:relative;z-index:10;
-      max-width:1200px;margin:0 auto;
-      padding:2rem 2rem 0;
-      display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;
-    }
-    @media(max-width:768px){.hero{grid-template-columns:1fr;gap:1.5rem;padding:1.5rem 1rem 0;}}
+    /* LAYOUT */
+    .main-wrap{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:1.5rem 1.5rem 3rem;display:grid;grid-template-columns:1fr 380px;gap:2rem;align-items:start;}
+    @media(max-width:900px){.main-wrap{grid-template-columns:1fr;}}
 
-    /* LEFT: GALLERY */
-    .gallery{position:relative;}
-    .main-img-wrap{
-      border-radius:16px;overflow:hidden;
-      background:var(--glass);
-      box-shadow:0 8px 32px rgba(0,0,0,0.25);
-      aspect-ratio:4/3;position:relative;
-    }
-    .main-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s;}
-    .no-img-placeholder{
-      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-      flex-direction:column;gap:0.5rem;color:var(--text);opacity:0.4;
-      font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;
-    }
-    .thumbs{display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;}
-    .thumb{
-      width:72px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;
-      border:2px solid transparent;transition:border-color 0.2s;flex-shrink:0;
-      background:var(--glass);
-    }
-    .thumb.active{border-color:rgba(0,0,0,0.5);}
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-    .img-desc{
-      margin-top:0.8rem;font-size:0.72rem;letter-spacing:0.07em;
-      color:var(--text);opacity:0.65;line-height:1.7;min-height:1.4rem;
-    }
+    /* CANVAS AREA */
+    .canvas-wrap{background:rgba(255,255,255,0.12);border:0.5px solid rgba(0,0,0,0.1);border-radius:18px;overflow:hidden;position:sticky;top:1rem;}
+    #gravyr-canvas{width:100%;aspect-ratio:4/3;position:relative;background:#f0f0f0;display:block;}
+    .canvas-toolbar{display:flex;gap:0.5rem;padding:0.7rem 1rem;background:rgba(255,255,255,0.15);border-top:0.5px solid rgba(0,0,0,0.08);flex-wrap:wrap;align-items:center;}
+    .tb-btn{padding:0.4rem 0.8rem;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#111;transition:all 0.2s;}
+    .tb-btn:hover{background:rgba(255,255,255,0.4);}
+    .tb-btn.danger{border-color:rgba(220,60,60,0.3);color:rgba(180,40,40,0.8);}
+    .tb-btn.danger:hover{background:rgba(220,60,60,0.1);}
+    .tb-sep{width:1px;height:20px;background:rgba(0,0,0,0.15);margin:0 0.2rem;}
 
-    /* RIGHT: CONFIGURATOR */
-    .config{display:flex;flex-direction:column;gap:1.2rem;}
+    /* PRODUCT INFO */
+    .prod-title{font-family:"Cormorant Garamond",serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#111,#333,#111);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .prod-sub{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:#111;opacity:0.5;margin-top:0.2rem;margin-bottom:1.2rem;}
 
-    .product-title{
-      font-family:"Cormorant Garamond",serif;
-      font-size:clamp(2rem,4vw,3rem);font-weight:300;letter-spacing:0.12em;
-      background:linear-gradient(135deg,#111,#333,#111);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
-    .product-subtitle{
-      font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;
-      color:var(--text);opacity:0.5;margin-top:0.2rem;
-    }
+    /* PANELS */
+    .panel{background:rgba(255,255,255,0.16);border:0.5px solid rgba(0,0,0,0.1);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;}
+    .panel-title{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:#111;opacity:0.6;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;}
+    .panel-title-num{width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.1);font-size:0.58rem;display:flex;align-items:center;justify-content:center;color:#111;flex-shrink:0;}
 
-    /* STEP */
-    .step{
-      background:var(--glass);border:0.5px solid var(--border);
-      border-radius:14px;padding:1.1rem 1.3rem;
-    }
-    .step-hdr{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.9rem;}
-    .step-num{
-      width:22px;height:22px;border-radius:50%;
-      background:rgba(0,0,0,0.12);
-      font-size:0.6rem;letter-spacing:0.05em;font-weight:600;
-      display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;
-    }
-    .step-title{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--text);opacity:0.65;}
-
-    /* PREVIEW BOX */
-    .preview-box{
-      width:100%;border-radius:10px;overflow:hidden;
-      background:var(--glass2);border:0.5px dashed rgba(0,80,50,0.3);
-      position:relative;margin-bottom:0.9rem;
-    }
-    .preview-inner{
-      position:relative;width:100%;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .preview-svg{width:100%;display:block;overflow:visible;}
-    .zone-label{
-      position:absolute;bottom:4px;right:6px;
-      font-size:0.48rem;letter-spacing:0.08em;text-transform:uppercase;
-      color:rgba(0,80,50,0.55);background:rgba(255,255,255,0.5);
-      padding:1px 5px;border-radius:3px;
-    }
-
-    /* TEXT INPUT */
-    .text-inp{
-      width:100%;background:var(--glass2);border:0.5px solid var(--border);
-      border-radius:10px;padding:0.75rem 1rem;
-      font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:var(--text);
-      outline:none;transition:border-color 0.2s;
-    }
-    .text-inp:focus{border-color:rgba(0,80,60,0.45);}
+    /* ADD TEXT */
+    .text-inp{width:100%;background:rgba(255,255,255,0.28);border:0.5px solid rgba(0,0,0,0.12);border-radius:10px;padding:0.7rem 0.9rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:#111;outline:none;transition:border-color 0.2s;margin-bottom:0.6rem;}
+    .text-inp:focus{border-color:rgba(0,80,60,0.4);}
     .text-inp::placeholder{color:rgba(0,0,0,0.28);}
+    .add-text-btn{width:100%;padding:0.6rem;background:rgba(0,0,0,0.1);border:0.5px solid rgba(0,0,0,0.15);border-radius:10px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#111;transition:all 0.2s;}
+    .add-text-btn:hover{background:rgba(0,0,0,0.18);}
+
+    /* SELECTED ELEMENT CONTROLS */
+    .el-controls{display:none;}
+    .el-controls.visible{display:block;}
+    .ctrl-row{display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;}
+    .ctrl-label{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#333;min-width:64px;}
+    .ctrl-inp{flex:1;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.12);border-radius:7px;padding:0.35rem 0.5rem;font-family:"Josefin Sans",sans-serif;font-size:0.8rem;color:#111;outline:none;}
+    input[type=range].ctrl-range{flex:1;accent-color:#007a5e;cursor:pointer;}
+    .ctrl-val{font-size:0.68rem;color:#333;min-width:36px;text-align:right;}
 
     /* PILLS */
-    .pills{display:flex;gap:0.5rem;flex-wrap:wrap;}
-    .pill{
-      padding:0.4rem 0.85rem;background:var(--glass);
-      border:0.5px solid var(--border);border-radius:20px;cursor:pointer;
-      font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
-      color:var(--text2);transition:all 0.2s;
-    }
-    .pill:hover{border-color:rgba(0,80,60,0.35);}
-    .pill.active{background:rgba(0,0,0,0.12);border-color:rgba(0,80,60,0.5);color:var(--text);}
-    .pill-font-alegreya{font-family:"Alegreya",serif;font-size:0.85rem;letter-spacing:0.03em;}
-    .pill-font-allura{font-family:"Allura",cursive;font-size:1rem;letter-spacing:0.03em;}
-    .pill-font-stencil{font-family:"Allerta Stencil",sans-serif;font-size:0.58rem;letter-spacing:0.05em;}
+    .pills{display:flex;gap:0.4rem;flex-wrap:wrap;}
+    .pill{padding:0.35rem 0.7rem;background:rgba(255,255,255,0.22);border:0.5px solid rgba(0,0,0,0.1);border-radius:16px;cursor:pointer;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#333;transition:all 0.2s;}
+    .pill.active{background:rgba(0,0,0,0.12);border-color:rgba(0,80,60,0.4);color:#111;}
+    .pill-alegreya{font-family:"Alegreya",serif;font-size:0.8rem;letter-spacing:0.02em;}
+    .pill-allura{font-family:"Allura",cursive;font-size:0.9rem;}
+    .pill-stencil{font-family:"Allerta Stencil",sans-serif;font-size:0.55rem;}
 
-    /* SLIDER */
-    .slider-wrap{display:flex;align-items:center;gap:0.8rem;}
-    .slider-wrap input[type=range]{flex:1;accent-color:#007a5e;cursor:pointer;height:4px;}
-    .slider-val{
-      font-size:0.68rem;letter-spacing:0.08em;color:var(--text2);
-      min-width:38px;text-align:right;
-    }
-    .slider-note{font-size:0.58rem;color:rgba(0,80,50,0.7);letter-spacing:0.06em;margin-top:0.3rem;}
+    /* FRAMES */
+    .frames-grid{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.3rem;}
+    .frame-thumb{width:60px;height:60px;border:1.5px solid rgba(0,0,0,0.1);border-radius:8px;cursor:pointer;overflow:hidden;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;}
+    .frame-thumb:hover{border-color:rgba(0,80,60,0.45);}
+    .frame-thumb.active{border-color:rgba(0,120,70,0.7);background:rgba(0,120,70,0.08);}
+    .frame-thumb img{width:100%;height:100%;object-fit:contain;padding:4px;}
+    .no-frames{font-size:0.65rem;color:#555;font-style:italic;letter-spacing:0.06em;}
 
-    /* QTY & PRICE */
-    .qty-price{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;}
-    .qty-ctrl{display:flex;align-items:center;gap:0.5rem;}
-    .qty-btn{
-      width:32px;height:32px;border-radius:50%;
-      background:var(--glass2);border:0.5px solid var(--border);
-      color:var(--text);font-size:1rem;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;
-    }
-    .qty-btn:hover{border-color:rgba(0,80,60,0.4);}
-    .qty-inp{
-      width:56px;text-align:center;background:var(--glass2);
-      border:0.5px solid var(--border);border-radius:8px;
-      padding:0.4rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;
-      color:var(--text);outline:none;
-    }
-    .price-block{margin-left:auto;text-align:right;}
-    .price-per{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);}
-    .price-total{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:300;color:var(--text);}
-    .price-strike{text-decoration:line-through;opacity:0.4;font-size:1rem;}
-    .price-campaign{color:rgba(160,80,0,0.9);}
-    .campaign-tag{
-      display:inline-block;background:rgba(255,150,0,0.15);
-      border:0.5px solid rgba(255,150,0,0.35);color:rgba(160,80,0,0.9);
-      font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;
-      padding:0.18rem 0.5rem;border-radius:8px;margin-top:0.3rem;
-    }
+    /* ROTATION INPUT */
+    .rot-wrap{display:flex;align-items:center;gap:0.5rem;flex:1;}
+    .rot-wrap input[type=number]{width:58px;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.12);border-radius:7px;padding:0.3rem 0.4rem;font-family:"Josefin Sans",sans-serif;font-size:0.78rem;color:#111;outline:none;text-align:center;}
+    .rot-wrap span{font-size:0.68rem;color:#444;}
 
-    /* PRICE TABLE */
-    .price-tbl{width:100%;border-collapse:collapse;margin-top:0.6rem;font-size:0.68rem;}
-    .price-tbl th{
-      font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;
-      color:rgba(0,80,60,0.75);padding:0.3rem 0.5rem;
-      border-bottom:0.5px solid rgba(0,80,60,0.18);text-align:left;
-    }
+    /* PRICE */
+    .price-tbl{width:100%;border-collapse:collapse;font-size:0.68rem;margin-top:0.5rem;}
+    .price-tbl th{font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,80,60,0.75);padding:0.28rem 0.5rem;border-bottom:0.5px solid rgba(0,80,60,0.18);text-align:left;}
     .price-tbl th:not(:first-child){text-align:right;}
-    .price-tbl td{padding:0.26rem 0.5rem;border-bottom:0.5px solid rgba(0,0,0,0.05);color:var(--text3);}
+    .price-tbl td{padding:0.25rem 0.5rem;border-bottom:0.5px solid rgba(0,0,0,0.05);color:#333;}
     .price-tbl td:not(:first-child){text-align:right;}
     .price-tbl tr.active-row td{color:rgba(0,100,60,0.95);font-weight:600;}
+    .campaign-tag{display:inline-block;background:rgba(255,150,0,0.15);border:0.5px solid rgba(255,150,0,0.35);color:rgba(160,80,0,0.9);font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.18rem 0.5rem;border-radius:8px;margin-bottom:0.5rem;}
+    .qty-row{display:flex;align-items:center;gap:0.6rem;margin-top:0.8rem;}
+    .qty-btn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.12);color:#111;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .qty-inp{width:52px;text-align:center;background:rgba(255,255,255,0.28);border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;padding:0.35rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:#111;outline:none;}
+    .price-display{margin-left:auto;text-align:right;}
+    .price-per{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#333;}
+    .price-total{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;color:#111;}
 
-    /* LOYALTY */
-    .loyalty-msg{
-      display:none;align-items:center;gap:0.5rem;
-      background:rgba(255,255,255,0.2);border:0.5px solid rgba(0,0,0,0.1);
-      border-radius:10px;padding:0.6rem 0.9rem;
-      font-size:0.65rem;letter-spacing:0.07em;color:var(--text);
-    }
-    .loyalty-msg.visible{display:flex;}
+    /* SAVE/SHARE */
+    .save-row{display:flex;gap:0.5rem;margin-top:0.5rem;}
+    .save-btn{flex:1;padding:0.55rem;background:rgba(255,255,255,0.2);border:0.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#111;transition:all 0.2s;}
+    .save-btn:hover{background:rgba(255,255,255,0.35);}
+    .save-msg{font-size:0.6rem;color:rgba(0,100,60,0.8);letter-spacing:0.08em;margin-top:0.3rem;min-height:1rem;}
 
     /* ORDER BTN */
-    .order-btn{
-      width:100%;padding:1rem;
-      background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));
-      border:0.5px solid rgba(0,180,120,0.5);border-radius:30px;cursor:pointer;
-      font-family:"Josefin Sans",sans-serif;font-size:0.78rem;
-      letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.92);
-      transition:all 0.25s;
-    }
-    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,180,120,0.18);transform:scale(1.01);}
-
-    /* QUOTE NOTE */
-    .quote-note{
-      font-size:0.65rem;letter-spacing:0.06em;color:var(--text);
-      opacity:0.55;line-height:1.8;text-align:center;margin-top:0.4rem;
-    }
+    .order-btn{width:100%;padding:1rem;background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));border:0.5px solid rgba(0,180,120,0.5);border-radius:30px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.78rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.92);transition:all 0.25s;margin-top:0.5rem;}
+    .order-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 20px rgba(0,180,120,0.18);}
+    .quote-note{font-size:0.62rem;letter-spacing:0.05em;color:#111;opacity:0.5;line-height:1.8;text-align:center;margin-top:0.4rem;}
 
     /* OVERLAY */
-    .overlay{
-      display:none;position:fixed;inset:0;z-index:500;
-      background:rgba(0,0,0,0.75);align-items:center;justify-content:center;
-      backdrop-filter:blur(8px);padding:1rem;
-    }
+    .overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:1rem;}
     .overlay.open{display:flex;}
-    .overlay-box{
-      background:linear-gradient(160deg,#071a12,#040f0a);
-      border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;
-      width:min(96vw,520px);max-height:92vh;overflow-y:auto;
-      padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.6);
-      scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;
-      animation:popIn 0.3s ease both;
-    }
+    .overlay-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;width:min(96vw,520px);max-height:92vh;overflow-y:auto;padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.6);scrollbar-width:thin;scrollbar-color:rgba(0,200,150,0.3) transparent;animation:popIn 0.3s ease both;}
     @keyframes popIn{from{opacity:0;transform:scale(0.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .overlay-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
-    .overlay-title{
-      font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;
-      letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
-    .close-btn{background:none;border:none;cursor:pointer;color:#666;font-size:1.4rem;line-height:1;padding:0.2rem 0.4rem;transition:color 0.2s;}
-    .close-btn:hover{color:#ccc;}
-    .summary-box{
-      background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);
-      border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.2rem;
-      font-size:0.7rem;letter-spacing:0.06em;color:#999;line-height:1.9;
-    }
+    .ov-title{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;}
+    .summary-box{background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;font-size:0.7rem;letter-spacing:0.06em;color:#999;line-height:1.9;}
     .summary-box strong{color:rgba(0,255,180,0.7);}
     .o-label{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#888;display:block;margin-top:0.9rem;margin-bottom:0.35rem;}
-    .o-input{
-      width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);
-      border-radius:10px;padding:0.7rem 0.9rem;
-      font-family:"Josefin Sans",sans-serif;font-size:0.88rem;color:#ddd;
-      outline:none;transition:border-color 0.2s;
-    }
+    .o-input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.7rem 0.9rem;font-family:"Josefin Sans",sans-serif;font-size:0.88rem;color:#ddd;outline:none;transition:border-color 0.2s;}
     .o-input:focus{border-color:rgba(0,255,180,0.4);}
     .o-input::placeholder{color:rgba(255,255,255,0.2);}
-    .loyalty-overlay{
-      display:none;align-items:center;gap:0.5rem;
-      background:rgba(0,255,180,0.06);border:0.5px solid rgba(0,255,180,0.15);
-      border-radius:8px;padding:0.5rem 0.8rem;margin-top:0.4rem;
-      font-size:0.65rem;letter-spacing:0.07em;color:#aaa;
-    }
-    .loyalty-overlay.visible{display:flex;}
-    .dl-btn{
-      width:100%;padding:0.7rem;background:rgba(255,255,255,0.05);
-      border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;cursor:pointer;
-      font-family:"Josefin Sans",sans-serif;font-size:0.65rem;letter-spacing:0.2em;
-      text-transform:uppercase;color:#888;margin-top:0.7rem;transition:all 0.2s;
-    }
+    .loyalty-ov{display:none;align-items:center;gap:0.5rem;background:rgba(0,255,180,0.06);border:0.5px solid rgba(0,255,180,0.15);border-radius:8px;padding:0.5rem 0.8rem;margin-top:0.4rem;font-size:0.65rem;letter-spacing:0.07em;color:#aaa;}
+    .loyalty-ov.visible{display:flex;}
+    .dl-btn{width:100%;padding:0.65rem;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.15);border-radius:18px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#888;margin-top:0.7rem;transition:all 0.2s;}
     .dl-btn:hover{border-color:rgba(255,255,255,0.35);color:#ccc;}
-    .send-btn{
-      width:100%;padding:0.95rem;margin-top:0.8rem;
-      background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));
-      border:0.5px solid rgba(0,255,180,0.4);border-radius:25px;cursor:pointer;
-      font-family:"Josefin Sans",sans-serif;font-size:0.75rem;letter-spacing:0.28em;
-      text-transform:uppercase;color:rgba(0,255,180,0.92);transition:all 0.25s;
-    }
-    .send-btn:hover{border-color:rgba(0,255,180,0.8);box-shadow:0 0 18px rgba(0,255,180,0.12);}
+    .send-btn{width:100%;padding:0.95rem;margin-top:0.8rem;background:linear-gradient(135deg,rgba(0,60,40,0.92),rgba(0,30,20,0.97));border:0.5px solid rgba(0,255,180,0.4);border-radius:25px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.75rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(0,255,180,0.92);transition:all 0.25s;}
+    .send-btn:hover{border-color:rgba(0,255,180,0.8);}
     .send-btn:disabled{opacity:0.4;cursor:not-allowed;}
-    .back-lnk{
-      background:none;border:none;cursor:pointer;
-      font-family:"Josefin Sans",sans-serif;font-size:0.62rem;
-      letter-spacing:0.15em;text-transform:uppercase;color:#555;
-      display:block;width:100%;text-align:center;margin-top:0.7rem;
-    }
+    .back-lnk{background:none;border:none;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;display:block;width:100%;text-align:center;margin-top:0.7rem;}
     .back-lnk:hover{color:#aaa;}
     .o-status{text-align:center;margin-top:0.7rem;font-size:0.72rem;letter-spacing:0.08em;min-height:1.1rem;}
     .o-status.ok{color:#4cff80;}.o-status.err{color:#ff7070;}
 
-    /* MINI FOOTER */
-    .mini-footer{
-      position:relative;z-index:10;
-      border-top:0.5px solid rgba(0,0,0,0.18);
-      padding:1rem 0;margin-top:3rem;
-    }
-    .mini-footer-inner{
-      display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
-      max-width:1200px;margin:0 auto;padding:0 2rem;gap:0.8rem;
-    }
-    .footer-links a{
-      font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
-      text-decoration:none;color:var(--text);opacity:0.55;
-      padding:0 0.6rem;border-right:1px solid rgba(0,0,0,0.18);line-height:1;
-    }
+    .mini-footer{position:relative;z-index:10;border-top:0.5px solid rgba(0,0,0,0.18);padding:1rem 0;margin-top:1rem;}
+    .mini-footer-inner{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;max-width:1400px;margin:0 auto;padding:0 2rem;gap:0.8rem;}
+    .footer-links a{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;color:#111;opacity:0.55;padding:0 0.6rem;border-right:1px solid rgba(0,0,0,0.18);line-height:1;}
     .footer-links a:first-child{padding-left:0;}
     .footer-links a:last-child{border-right:none;}
-    .footer-links a:hover{opacity:0.9;}
-    .footer-copy{font-size:0.6rem;letter-spacing:0.07em;color:var(--text);opacity:0.5;}
-    .footer-note{
-      text-align:center;padding:0.4rem 2rem;
-      font-size:0.56rem;letter-spacing:0.05em;color:var(--text);opacity:0.42;line-height:1.6;
-    }
-
-    @media(max-width:600px){
-      .top-bar{padding:1rem 1rem 0;}
-      .mini-footer-inner{flex-direction:column;align-items:center;text-align:center;}
-      .thumbs{justify-content:center;}
-    }
+    .footer-copy{font-size:0.6rem;letter-spacing:0.07em;color:#111;opacity:0.5;}
+    .footer-note{text-align:center;padding:0.4rem 2rem;font-size:0.55rem;letter-spacing:0.05em;color:#111;opacity:0.4;line-height:1.6;}
   </style>
 </head>
 <body>
@@ -355,157 +152,139 @@
 <div class="top-bar">
   <a class="back-link" href="metall.html">Metall</a>
   <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
-  <div class="top-spacer"></div>
+  <div style="width:80px;"></div>
 </div>
 
-<div class="hero">
+<div class="main-wrap">
 
-  <!-- VÄNSTER: GALLERI -->
-  <div class="gallery">
-    <div class="main-img-wrap" id="main-img-wrap">
-      <div class="no-img-placeholder" id="no-img">
-        <span style="font-size:2rem;">📷</span>
-        <span>Bilder laddas snart</span>
+  <!-- VÄNSTER: GRAVYR CANVAS -->
+  <div>
+    <div class="canvas-wrap">
+      <div id="gravyr-canvas"></div>
+      <div class="canvas-toolbar">
+        <button class="tb-btn" onclick="addTextRow()">+ Text</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn danger" id="del-btn" onclick="deleteSelected()" style="display:none;">🗑 Ta bort</button>
+        <button class="tb-btn" onclick="saveDesign()">💾 Spara</button>
+        <button class="tb-btn" onclick="copyLink()">🔗 Dela länk</button>
+        <button class="tb-btn" onclick="exportPNG()">⬇ Ladda ner</button>
+        <div class="save-msg" id="save-msg"></div>
       </div>
-      <img id="main-img" src="" alt="" style="display:none;"/>
     </div>
-    <div class="thumbs" id="thumbs"></div>
-    <div class="img-desc" id="img-desc"></div>
   </div>
 
-  <!-- HÖGER: KONFIGURATOR -->
-  <div class="config">
+  <!-- HÖGER: KONTROLLER -->
+  <div>
+    <div class="prod-title" id="prod-title">Metallnyckelring</div>
+    <div class="prod-sub" id="prod-sub">Lasergravyr med precision och kärlek</div>
 
-    <div>
-      <div class="product-title" id="prod-title">Metallnyckelring</div>
-      <div class="product-subtitle" id="prod-sub">Lasergravyr — personlig & bestående</div>
+    <!-- STEG 1: LÄGG TILL TEXT -->
+    <div class="panel">
+      <div class="panel-title"><div class="panel-title-num">1</div>Lägg till text</div>
+      <input class="text-inp" type="text" id="new-text-inp" placeholder="Skriv din text här..." maxlength="60"/>
+      <button class="add-text-btn" onclick="addTextRow()">+ Lägg till textrad</button>
     </div>
 
-    <!-- STEG 1: TEXT & FÖRHANDSVISNING -->
-    <div class="step">
-      <div class="step-hdr">
-        <div class="step-num">1</div>
-        <div class="step-title">Skriv din text</div>
+    <!-- STEG 2: REDIGERA VALD TEXT -->
+    <div class="panel el-controls" id="el-controls">
+      <div class="panel-title"><div class="panel-title-num">2</div>Redigera vald text</div>
+
+      <div class="ctrl-row">
+        <div class="ctrl-label">Text</div>
+        <input class="ctrl-inp" type="text" id="ctrl-text" placeholder="Din text" oninput="updateElText(this.value)"/>
       </div>
-      <div class="preview-box">
-        <div class="preview-inner" id="preview-inner">
-          <svg width="100%" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-          <defs>
-            <radialGradient id="krbg0" cx="38%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#e4e4e4"/>
-              <stop offset="50%" stop-color="#a8a8a8"/>
-              <stop offset="100%" stop-color="#787878"/>
-            </radialGradient>
-          </defs>
-          <circle cx="80" cy="80" r="70" fill="url(#krbg0)"/>
-          <text x="80" y="85" text-anchor="middle" font-family="Alegreya,serif" font-size="14" fill="#b0b0b0" opacity="0.6">Din text</text>
-        </svg>
+
+      <div class="ctrl-row" style="margin-top:0.3rem;">
+        <div class="ctrl-label">Stil</div>
+        <div class="pills" id="font-pills">
+          <div class="pill pill-alegreya active" onclick="updateElFont('alegreya',this)">Alegreya</div>
+          <div class="pill pill-allura" onclick="updateElFont('allura',this)">Allura</div>
+          <div class="pill pill-stencil" onclick="updateElFont('stencil',this)">Stencil</div>
         </div>
-        <div class="zone-label" id="zone-label"></div>
       </div>
-      <input class="text-inp" type="text" id="eng-text"
-        placeholder="T.ex. ditt namn, datum eller citat..."
-        oninput="updatePreview()" maxlength="60"/>
+
+      <div class="ctrl-row" style="margin-top:0.5rem;">
+        <div class="ctrl-label">Böjning</div>
+        <div class="pills" id="curve-pills">
+          <div class="pill active" onclick="updateElCurve('straight',this)">— Rak</div>
+          <div class="pill" onclick="updateElCurve('convex',this)">⌢ Konvex</div>
+          <div class="pill" onclick="updateElCurve('concave',this)">⌣ Konkav</div>
+        </div>
+      </div>
+
+      <div class="ctrl-row" style="margin-top:0.5rem;">
+        <div class="ctrl-label">Storlek</div>
+        <input type="range" class="ctrl-range" id="font-size-slider" min="8" max="32" value="18" oninput="updateElFontSize(+this.value)"/>
+        <div class="ctrl-val" id="font-size-val">18px</div>
+      </div>
+
+      <div class="ctrl-row" style="margin-top:0.3rem;">
+        <div class="ctrl-label">Rotation</div>
+        <div class="rot-wrap">
+          <input type="range" class="ctrl-range" id="rot-slider" min="0" max="359" value="0" oninput="updateElRot(+this.value)"/>
+          <input type="number" id="rot-num" min="0" max="359" value="0" oninput="updateElRot(+this.value)" style="width:52px;background:rgba(255,255,255,0.3);border:0.5px solid rgba(0,0,0,0.12);border-radius:7px;padding:0.3rem 0.4rem;font-family:'Josefin Sans',sans-serif;font-size:0.78rem;color:#111;outline:none;text-align:center;"/>
+          <span>°</span>
+        </div>
+      </div>
     </div>
 
-    <!-- STEG 2: TEXTSTIL -->
-    <div class="step">
-      <div class="step-hdr">
-        <div class="step-num">2</div>
-        <div class="step-title">Välj textstil</div>
-      </div>
-      <div class="pills" id="style-pills">
-        <div class="pill pill-font-alegreya active" onclick="setStyle('alegreya',this)">Alegreya</div>
-        <div class="pill pill-font-allura" onclick="setStyle('allura',this)">Allura</div>
-        <div class="pill pill-font-stencil" onclick="setStyle('stencil',this)">Stencil</div>
-      </div>
-    </div>
-
-    <!-- STEG 3: BÖJNING & STORLEK -->
-    <div class="step">
-      <div class="step-hdr">
-        <div class="step-num">3</div>
-        <div class="step-title">Anpassa texten</div>
-      </div>
-      <div style="margin-bottom:0.7rem;">
-        <div class="step-title" style="margin-bottom:0.5rem;">Textböjning</div>
-        <div class="pills">
-          <div class="pill active" onclick="setCurve('straight',this)">— Rak</div>
-          <div class="pill" onclick="setCurve('convex',this)">⌢ Konvex</div>
-          <div class="pill" onclick="setCurve('concave',this)">⌣ Konkav</div>
-        </div>
-      </div>
-      <div>
-        <div class="step-title" style="margin-bottom:0.5rem;">Textstorlek</div>
-        <div class="slider-wrap">
-          <input type="range" id="font-slider" min="8" max="32" value="16" oninput="updatePreview()"/>
-          <div class="slider-val" id="font-val">16px</div>
-        </div>
-        <div class="slider-note" id="size-note"></div>
+    <!-- STEG 3: RAM -->
+    <div class="panel">
+      <div class="panel-title"><div class="panel-title-num">3</div>Välj ram (valfritt)</div>
+      <div class="frames-grid" id="frames-grid">
+        <div class="no-frames">Inga ramar tillgängliga för denna produkt.</div>
       </div>
     </div>
 
     <!-- STEG 4: ANTAL & PRIS -->
-    <div class="step" id="price-step">
-      <div class="step-hdr">
-        <div class="step-num">4</div>
-        <div class="step-title">Antal & ungefärligt pris</div>
-      </div>
+    <div class="panel">
+      <div class="panel-title"><div class="panel-title-num">4</div>Antal & ungefärligt pris</div>
       <div id="camp-tag"></div>
       <table class="price-tbl" id="price-tbl" style="display:none;"></table>
-      <div class="qty-price" style="margin-top:0.8rem;">
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <input class="qty-inp" type="number" id="qty" value="1" min="1" max="9999" oninput="updatePrice()"/>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-        </div>
-        <div class="price-block">
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <input class="qty-inp" type="number" id="qty" value="1" min="1" max="9999" oninput="updatePrice()"/>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+        <div class="price-display">
           <div class="price-per" id="price-per">Pris på förfrågan</div>
           <div class="price-total" id="price-total"></div>
         </div>
       </div>
-      <div class="loyalty-msg" id="loyalty-msg"></div>
     </div>
 
-    <!-- BESTÄLL -->
+    <!-- SPARA & BESTÄLL -->
+    <div class="save-row">
+      <button class="save-btn" onclick="saveDesign()">💾 Spara design</button>
+      <button class="save-btn" onclick="copyLink()">🔗 Dela länk</button>
+    </div>
+
     <button class="order-btn" onclick="openOverlay()">Skicka förfrågan →</button>
-    <div class="quote-note">
-      Priser är ungefärliga — slutlig offert inom <strong>1–3 arbetsdagar</strong>.<br>
-      Offerten gäller i <strong>7 dagar</strong> och aktiveras vid betalning med fakturanummer.
-    </div>
-
+    <div class="quote-note">Priser är ungefärliga — slutlig offert inom <strong>1–3 arbetsdagar</strong>.<br>Offerten gäller i <strong>7 dagar</strong> och aktiveras vid betalning.</div>
   </div>
 </div>
 
 <!-- BESTÄLLNING OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="overlay-box">
-    <div class="overlay-hdr">
-      <div class="overlay-title">Förfrågan</div>
-      <button class="close-btn" onclick="closeOverlay()">×</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div class="ov-title">Förfrågan</div>
+      <button style="background:none;border:none;cursor:pointer;color:#666;font-size:1.4rem;line-height:1;" onclick="closeOverlay()">×</button>
     </div>
     <div class="summary-box" id="summary-box"></div>
-
     <label class="o-label">Namn *</label>
     <input class="o-input" type="text" id="o-name" placeholder="För- och efternamn"/>
-
     <label class="o-label">E-postadress *</label>
     <input class="o-input" type="email" id="o-email" placeholder="din@email.com" oninput="checkLoyalty(this.value)"/>
-    <div class="loyalty-overlay" id="loyalty-overlay"></div>
-
+    <div class="loyalty-ov" id="loyalty-ov"></div>
     <label class="o-label">Telefon</label>
     <input class="o-input" type="tel" id="o-phone" placeholder="+46 70 000 00 00"/>
-
     <label class="o-label">Leveransadress *</label>
     <input class="o-input" type="text" id="o-address" placeholder="Gatuadress, postnummer, ort"/>
-
     <label class="o-label">Fakturanummer</label>
     <input class="o-input" type="text" id="o-invoice" placeholder="Anges vid betalning — aktiverar din beställning"/>
-
     <label class="o-label">Övriga önskemål</label>
     <input class="o-input" type="text" id="o-notes" placeholder="Eventuella specialönskemål"/>
-
-    <button class="dl-btn" onclick="downloadPreview()">⬇ Ladda ner förhandsvisning</button>
+    <button class="dl-btn" onclick="exportPNG()">⬇ Ladda ner förhandsvisning av gravyr</button>
     <button class="send-btn" id="send-btn" onclick="sendOrder()">Skicka förfrågan</button>
     <button class="back-lnk" onclick="closeOverlay()">← Tillbaka till produkten</button>
     <div class="o-status" id="o-status"></div>
@@ -520,13 +299,560 @@
     </div>
     <div class="footer-copy">&copy; ALKAISY AB 559285-0588</div>
   </div>
-  <div class="footer-note">
-    Priser är ungefärliga. Slutlig offert skickas inom 1–3 arbetsdagar och är giltig i 7 dagar.
-    Beställning aktiveras vid betalning med fakturanummer.
-  </div>
+  <div class="footer-note">Priser är ungefärliga. Slutlig offert skickas inom 1–3 arbetsdagar och är giltig i 7 dagar. Beställning aktiveras vid betalning med fakturanummer.</div>
 </div>
 
 <script>
+
+// ═══════════════════════════════════════════════════════════
+// ELEGANT-M GRAVYR EDITOR — Shared Engine
+// ═══════════════════════════════════════════════════════════
+
+class GravyrEditor {
+  constructor(canvasId, options = {}) {
+    this.canvasEl    = document.getElementById(canvasId);
+    this.options     = options;
+    this.elements    = [];   // { type:'text'|'frame', id, x,y,w,h, rot, ... }
+    this.selected    = null;
+    this.dragState   = null;
+    this.zone        = { x:0.1, y:0.1, w:0.8, h:0.8 }; // % of canvas
+    this.engColor    = '#b0b0b0';
+    this.maxFont     = 32;
+    this.movable     = true; // admin toggle
+    this.frames      = [];   // available frame image objects
+    this._nextId     = 1;
+
+    this._build();
+  }
+
+  // ── BUILD DOM ─────────────────────────────────────────────
+  _build() {
+    const c = this.canvasEl;
+    c.style.position   = 'relative';
+    c.style.overflow   = 'hidden';
+    c.style.userSelect = 'none';
+    c.style.touchAction= 'none';
+
+    // Product image layer
+    this.imgEl = document.createElement('img');
+    this.imgEl.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;';
+    c.appendChild(this.imgEl);
+
+    // SVG layer (zone + frames + text)
+    this.svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    this.svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;overflow:hidden;';
+    this.svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
+
+    // defs: clipPath for zone
+    this.defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+    this.clipRect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    this.clipRect.id = 'gravyr-clip-rect';
+    const clipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+    clipPath.id = 'gravyr-clip';
+    clipPath.appendChild(this.clipRect);
+    this.defs.appendChild(clipPath);
+
+    // engrave filter
+    const filter = document.createElementNS('http://www.w3.org/2000/svg','filter');
+    filter.id = 'ef';
+    filter.innerHTML = '<feDropShadow dx="0" dy="0.8" stdDeviation="0.4" flood-color="rgba(255,255,255,0.5)" flood-opacity="1"/><feDropShadow dx="0" dy="-0.6" stdDeviation="0.3" flood-color="rgba(0,0,0,0.35)" flood-opacity="1"/>';
+    this.defs.appendChild(filter);
+    this.svg.appendChild(this.defs);
+
+    // Content group (clipped to zone)
+    this.contentGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+    this.contentGroup.setAttribute('clip-path','url(#gravyr-clip)');
+    this.svg.appendChild(this.contentGroup);
+
+    // Zone overlay (dashed border — NOT clipped)
+    this.zoneRect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    this.zoneRect.setAttribute('fill','none');
+    this.zoneRect.setAttribute('stroke','rgba(0,180,100,0.45)');
+    this.zoneRect.setAttribute('stroke-width','1.5');
+    this.zoneRect.setAttribute('stroke-dasharray','6,4');
+    this.zoneRect.setAttribute('rx','3');
+    this.zoneRect.setAttribute('pointer-events','none');
+    this.svg.appendChild(this.zoneRect);
+
+    // Zone label
+    this.zoneLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+    this.zoneLabel.setAttribute('fill','rgba(0,120,70,0.6)');
+    this.zoneLabel.setAttribute('font-size','9');
+    this.zoneLabel.setAttribute('font-family','Josefin Sans,sans-serif');
+    this.zoneLabel.setAttribute('letter-spacing','1');
+    this.zoneLabel.setAttribute('pointer-events','none');
+    this.svg.appendChild(this.zoneLabel);
+
+    // Selection handles group
+    this.handlesGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+    this.handlesGroup.id = 'handles';
+    this.svg.appendChild(this.handlesGroup);
+
+    c.appendChild(this.svg);
+
+    // Interaction
+    this.svg.addEventListener('pointerdown', e => this._onPointerDown(e));
+    window.addEventListener('pointermove',   e => this._onPointerMove(e));
+    window.addEventListener('pointerup',     e => this._onPointerUp(e));
+    window.addEventListener('resize',        ()=> this._refresh());
+  }
+
+  // ── ZONE ─────────────────────────────────────────────────
+  setZone(xPct, yPct, wPct, hPct, labelText) {
+    this.zone = { x: xPct/100, y: yPct/100, w: wPct/100, h: hPct/100 };
+    this._zoneLabel = labelText || '';
+    this._refresh();
+  }
+
+  _zonePx() {
+    const cw = this.canvasEl.offsetWidth  || 400;
+    const ch = this.canvasEl.offsetHeight || 300;
+    return {
+      x: this.zone.x * cw,
+      y: this.zone.y * ch,
+      w: this.zone.w * cw,
+      h: this.zone.h * ch
+    };
+  }
+
+  _refresh() {
+    const z = this._zonePx();
+    // Clip rect
+    this.clipRect.setAttribute('x', z.x);
+    this.clipRect.setAttribute('y', z.y);
+    this.clipRect.setAttribute('width',  z.w);
+    this.clipRect.setAttribute('height', z.h);
+    // Zone border
+    this.zoneRect.setAttribute('x', z.x);
+    this.zoneRect.setAttribute('y', z.y);
+    this.zoneRect.setAttribute('width',  z.w);
+    this.zoneRect.setAttribute('height', z.h);
+    // Zone label
+    this.zoneLabel.setAttribute('x', z.x + z.w - 4);
+    this.zoneLabel.setAttribute('y', z.y + z.h + 12);
+    this.zoneLabel.setAttribute('text-anchor','end');
+    this.zoneLabel.textContent = this._zoneLabel || '';
+    // Re-render all elements
+    this._renderAll();
+  }
+
+  setProductImage(url) {
+    this.imgEl.src = url;
+    this.imgEl.style.display = url ? 'block' : 'none';
+  }
+
+  // ── ELEMENTS ──────────────────────────────────────────────
+  addText(text) {
+    const z = this._zonePx();
+    const id = 'el-' + (this._nextId++);
+    this.elements.push({
+      id, type: 'text', text,
+      x: z.x + z.w/2,
+      y: z.y + z.h/2,
+      fontSize: Math.min(18, this.maxFont),
+      fontFamily: 'alegreya',
+      curve: 'straight',
+      rot: 0,
+      color: this.engColor
+    });
+    this._renderAll();
+    this.select(id);
+    return id;
+  }
+
+  addFrame(imgUrl, frameId) {
+    const z = this._zonePx();
+    const id = 'el-' + (this._nextId++);
+    const size = Math.min(z.w, z.h) * 0.85;
+    this.elements.push({
+      id, type: 'frame', src: imgUrl, frameId,
+      x: z.x + z.w/2,
+      y: z.y + z.h/2,
+      w: size, h: size,
+      rot: 0
+    });
+    this._renderAll();
+    this.select(id);
+    return id;
+  }
+
+  removeSelected() {
+    if (!this.selected) return;
+    this.elements = this.elements.filter(e => e.id !== this.selected);
+    this.selected = null;
+    this._renderAll();
+    this._clearHandles();
+    if (this.options.onSelect) this.options.onSelect(null);
+  }
+
+  select(id) {
+    this.selected = id;
+    this._renderAll();
+    const el = this.elements.find(e => e.id === id);
+    if (this.options.onSelect) this.options.onSelect(el);
+  }
+
+  updateSelected(props) {
+    const el = this.elements.find(e => e.id === this.selected);
+    if (!el) return;
+    Object.assign(el, props);
+    this._renderAll();
+  }
+
+  getSelected() {
+    return this.elements.find(e => e.id === this.selected) || null;
+  }
+
+  // ── RENDER ────────────────────────────────────────────────
+  _fontFamilyCSS(key) {
+    const m = {
+      alegreya: "'Alegreya',serif",
+      allura:   "'Allura',cursive",
+      stencil:  "'Allerta Stencil',sans-serif"
+    };
+    return m[key] || m.alegreya;
+  }
+
+  _renderAll() {
+    // Clear content group
+    while (this.contentGroup.firstChild) this.contentGroup.removeChild(this.contentGroup.firstChild);
+    this._clearHandles();
+
+    this.elements.forEach(el => {
+      if (el.type === 'text') this._renderText(el);
+      else if (el.type === 'frame') this._renderFrame(el);
+    });
+
+    // Draw handles for selected
+    const sel = this.elements.find(e => e.id === this.selected);
+    if (sel) this._drawHandles(sel);
+  }
+
+  _renderText(el) {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('transform', `rotate(${el.rot||0},${el.x},${el.y})`);
+    g.style.cursor = 'move';
+    g.dataset.id = el.id;
+
+    const fs = Math.min(el.fontSize || 18, this.maxFont);
+    const pw = (this._zonePx().w) * 0.8;
+
+    if (el.curve === 'straight') {
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', el.x);
+      t.setAttribute('y', el.y);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('font-size', fs);
+      t.setAttribute('font-family', this._fontFamilyCSS(el.fontFamily));
+      t.setAttribute('fill', el.color || this.engColor);
+      t.setAttribute('filter','url(#ef)');
+      t.textContent = el.text;
+      g.appendChild(t);
+    } else {
+      const bend = el.curve === 'convex' ? -pw*0.28 : pw*0.28;
+      const x1 = el.x - pw/2, x2 = el.x + pw/2;
+      const y1 = el.y - bend, yc = el.y + bend;
+      const pathId = 'cp-' + el.id;
+      const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+      pathEl.id = pathId;
+      pathEl.setAttribute('d', `M ${x1} ${y1} Q ${el.x} ${yc} ${x2} ${y1}`);
+      pathEl.setAttribute('fill','none');
+      this.defs.appendChild(pathEl);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('font-size', fs);
+      t.setAttribute('font-family', this._fontFamilyCSS(el.fontFamily));
+      t.setAttribute('fill', el.color || this.engColor);
+      t.setAttribute('filter','url(#ef)');
+      const tp = document.createElementNS('http://www.w3.org/2000/svg','textPath');
+      tp.setAttribute('href','#'+pathId);
+      tp.setAttribute('startOffset','50%');
+      tp.setAttribute('text-anchor','middle');
+      tp.textContent = el.text;
+      t.appendChild(tp);
+      g.appendChild(t);
+    }
+
+    // Hit area
+    const hit = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    const fs2 = Math.min(el.fontSize||18, this.maxFont);
+    hit.setAttribute('x', el.x - 120);
+    hit.setAttribute('y', el.y - fs2 - 6);
+    hit.setAttribute('width', 240);
+    hit.setAttribute('height', fs2*2 + 12);
+    hit.setAttribute('fill','transparent');
+    hit.dataset.id = el.id;
+    g.appendChild(hit);
+
+    if (el.id === this.selected) {
+      const outline = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      outline.setAttribute('x', el.x - 122);
+      outline.setAttribute('y', el.y - fs2 - 8);
+      outline.setAttribute('width', 244);
+      outline.setAttribute('height', fs2*2 + 16);
+      outline.setAttribute('fill','rgba(0,180,100,0.06)');
+      outline.setAttribute('stroke','rgba(0,180,100,0.5)');
+      outline.setAttribute('stroke-width','1');
+      outline.setAttribute('rx','3');
+      outline.setAttribute('pointer-events','none');
+      g.insertBefore(outline, g.firstChild);
+    }
+
+    this.contentGroup.appendChild(g);
+  }
+
+  _renderFrame(el) {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('transform', `rotate(${el.rot||0},${el.x},${el.y})`);
+    g.style.cursor = 'move';
+    g.dataset.id = el.id;
+
+    const img = document.createElementNS('http://www.w3.org/2000/svg','image');
+    img.setAttribute('href', el.src);
+    img.setAttribute('x', el.x - el.w/2);
+    img.setAttribute('y', el.y - el.h/2);
+    img.setAttribute('width', el.w);
+    img.setAttribute('height', el.h);
+    img.setAttribute('preserveAspectRatio','xMidYMid meet');
+    img.dataset.id = el.id;
+
+    if (el.id === this.selected) {
+      const outline = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      outline.setAttribute('x', el.x - el.w/2 - 3);
+      outline.setAttribute('y', el.y - el.h/2 - 3);
+      outline.setAttribute('width', el.w + 6);
+      outline.setAttribute('height', el.h + 6);
+      outline.setAttribute('fill','none');
+      outline.setAttribute('stroke','rgba(0,180,100,0.5)');
+      outline.setAttribute('stroke-width','1.5');
+      outline.setAttribute('stroke-dasharray','4,3');
+      outline.setAttribute('rx','3');
+      outline.setAttribute('pointer-events','none');
+      g.appendChild(outline);
+    }
+
+    g.appendChild(img);
+    this.contentGroup.appendChild(g);
+  }
+
+  _drawHandles(el) {
+    const g = this.handlesGroup;
+    // Rotate handle (top center)
+    const rotH = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    const rotY = el.type === 'text' 
+      ? el.y - Math.min(el.fontSize||18, this.maxFont) - 20
+      : el.y - el.h/2 - 20;
+    rotH.setAttribute('cx', el.x);
+    rotH.setAttribute('cy', rotY);
+    rotH.setAttribute('r','8');
+    rotH.setAttribute('fill','rgba(0,180,100,0.85)');
+    rotH.setAttribute('cursor','grab');
+    rotH.setAttribute('stroke','white');
+    rotH.setAttribute('stroke-width','1.5');
+    rotH.dataset.handle = 'rotate';
+    rotH.dataset.elId = el.id;
+
+    // Rotate icon text
+    const rotIcon = document.createElementNS('http://www.w3.org/2000/svg','text');
+    rotIcon.setAttribute('x', el.x);
+    rotIcon.setAttribute('y', rotY + 4);
+    rotIcon.setAttribute('text-anchor','middle');
+    rotIcon.setAttribute('font-size','10');
+    rotIcon.setAttribute('fill','white');
+    rotIcon.setAttribute('pointer-events','none');
+    rotIcon.textContent = '↻';
+
+    // Scale handle (bottom right)
+    const scaleX = el.type === 'frame' ? el.x + el.w/2 : el.x + 122;
+    const scaleY = el.type === 'frame' ? el.y + el.h/2 : el.y + Math.min(el.fontSize||18, this.maxFont) + 8;
+    const scaleH = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    scaleH.setAttribute('x', scaleX - 8);
+    scaleH.setAttribute('y', scaleY - 8);
+    scaleH.setAttribute('width','16');
+    scaleH.setAttribute('height','16');
+    scaleH.setAttribute('rx','3');
+    scaleH.setAttribute('fill','rgba(0,120,180,0.85)');
+    scaleH.setAttribute('cursor','se-resize');
+    scaleH.setAttribute('stroke','white');
+    scaleH.setAttribute('stroke-width','1.5');
+    scaleH.dataset.handle = 'scale';
+    scaleH.dataset.elId = el.id;
+
+    const scaleIcon = document.createElementNS('http://www.w3.org/2000/svg','text');
+    scaleIcon.setAttribute('x', scaleX);
+    scaleIcon.setAttribute('y', scaleY + 4);
+    scaleIcon.setAttribute('text-anchor','middle');
+    scaleIcon.setAttribute('font-size','10');
+    scaleIcon.setAttribute('fill','white');
+    scaleIcon.setAttribute('pointer-events','none');
+    scaleIcon.textContent = '⤡';
+
+    g.appendChild(rotH); g.appendChild(rotIcon);
+    g.appendChild(scaleH); g.appendChild(scaleIcon);
+  }
+
+  _clearHandles() {
+    while (this.handlesGroup.firstChild) this.handlesGroup.removeChild(this.handlesGroup.firstChild);
+  }
+
+  // ── INTERACTION ───────────────────────────────────────────
+  _svgPoint(e) {
+    const r = this.canvasEl.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  _clampToZone(x, y) {
+    const z = this._zonePx();
+    return {
+      x: Math.max(z.x, Math.min(z.x + z.w, x)),
+      y: Math.max(z.y, Math.min(z.y + z.h, y))
+    };
+  }
+
+  _onPointerDown(e) {
+    const pt = this._svgPoint(e);
+    const target = e.target;
+
+    // Handle click?
+    if (target.dataset.handle) {
+      const elId = target.dataset.elId;
+      const el = this.elements.find(el => el.id === elId);
+      if (!el) return;
+      e.preventDefault();
+      this.svg.setPointerCapture(e.pointerId);
+      if (target.dataset.handle === 'rotate') {
+        this.dragState = { mode:'rotate', el, startPt: pt, startRot: el.rot||0 };
+      } else if (target.dataset.handle === 'scale') {
+        this.dragState = { mode:'scale', el, startPt: pt,
+          startFS: el.fontSize||18, startW: el.w||80, startH: el.h||80 };
+      }
+      return;
+    }
+
+    // Element click?
+    let elId = target.dataset.id;
+    if (!elId) elId = target.closest('[data-id]')?.dataset?.id;
+    if (elId) {
+      e.preventDefault();
+      this.select(elId);
+      const el = this.elements.find(el => el.id === elId);
+      if (el && this.movable) {
+        this.svg.setPointerCapture(e.pointerId);
+        this.dragState = { mode:'move', el, startPt: pt, startX: el.x, startY: el.y };
+      }
+      return;
+    }
+
+    // Deselect
+    this.selected = null;
+    this._renderAll();
+    if (this.options.onSelect) this.options.onSelect(null);
+  }
+
+  _onPointerMove(e) {
+    if (!this.dragState) return;
+    e.preventDefault();
+    const pt = this._svgPoint(e);
+    const ds = this.dragState;
+
+    if (ds.mode === 'move') {
+      let nx = ds.startX + pt.x - ds.startPt.x;
+      let ny = ds.startY + pt.y - ds.startPt.y;
+      const clamped = this._clampToZone(nx, ny);
+      ds.el.x = clamped.x;
+      ds.el.y = clamped.y;
+      this._renderAll();
+    } else if (ds.mode === 'rotate') {
+      const dx = pt.x - ds.el.x;
+      const dy = pt.y - ds.el.y;
+      const angle = Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 90;
+      ds.el.rot = angle;
+      this._renderAll();
+      if (this.options.onRotate) this.options.onRotate(angle);
+    } else if (ds.mode === 'scale') {
+      const dx = pt.x - ds.startPt.x;
+      const dy = pt.y - ds.startPt.y;
+      const delta = (dx + dy) / 2;
+      if (ds.el.type === 'text') {
+        const newFS = Math.max(8, Math.min(this.maxFont, ds.startFS + delta * 0.3));
+        ds.el.fontSize = Math.round(newFS);
+        this._renderAll();
+        if (this.options.onFontSize) this.options.onFontSize(ds.el.fontSize);
+      } else {
+        const scale = Math.max(0.2, 1 + delta * 0.005);
+        ds.el.w = Math.max(20, ds.startW * scale);
+        ds.el.h = Math.max(20, ds.startH * scale);
+        this._renderAll();
+      }
+    }
+  }
+
+  _onPointerUp(e) {
+    this.dragState = null;
+    if (this.options.onChangeEnd) this.options.onChangeEnd();
+  }
+
+  // ── SAVE / LOAD ───────────────────────────────────────────
+  serialize() {
+    return JSON.stringify({
+      elements: this.elements.map(el => ({...el}))
+    });
+  }
+
+  deserialize(json) {
+    try {
+      const data = JSON.parse(json);
+      this.elements = data.elements || [];
+      this._nextId = Math.max(...this.elements.map(e => parseInt(e.id.split('-')[1])+1), 1);
+      this._renderAll();
+    } catch(e) { console.warn('Deserialize error:', e); }
+  }
+
+  // ── EXPORT PNG ────────────────────────────────────────────
+  async exportPNG(filename) {
+    // Get SVG as string
+    const svgEl = this.svg.cloneNode(true);
+    const cw = this.canvasEl.offsetWidth;
+    const ch = this.canvasEl.offsetHeight;
+    svgEl.setAttribute('width', cw);
+    svgEl.setAttribute('height', ch);
+    svgEl.removeAttribute('style');
+
+    // Remove zone border and handles for clean export
+    const zoneBorder = svgEl.querySelector('rect[stroke-dasharray]');
+    if (zoneBorder && zoneBorder !== svgEl.querySelector('[clip-path] rect')) {
+      // Keep clip, remove visual border
+    }
+
+    const xml = new XMLSerializer().serializeToString(svgEl);
+    const canvas = document.createElement('canvas');
+    canvas.width = cw * 2; canvas.height = ch * 2;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    // Draw product image first
+    if (this.imgEl.src && this.imgEl.complete) {
+      ctx.drawImage(this.imgEl, 0, 0, cw, ch);
+    }
+
+    // Draw SVG
+    const blob = new Blob([xml], {type:'image/svg+xml'});
+    const url  = URL.createObjectURL(blob);
+    await new Promise(res => {
+      const img = new Image();
+      img.onload = () => { ctx.drawImage(img, 0, 0, cw, ch); res(); };
+      img.src = url;
+    });
+    URL.revokeObjectURL(url);
+
+    const link = document.createElement('a');
+    link.download = filename || 'elegant-m-gravyr.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+}
+
+
 // ── FIREBASE & EMAILJS ───────────────────────────────────────
 firebase.initializeApp({
   apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",
@@ -537,259 +863,232 @@ firebase.initializeApp({
 const db=firebase.firestore();
 emailjs.init("syV4hDTJIVxj9xUyp");
 
-// ── CONSTANTS ────────────────────────────────────────────────
-const MAT_ID  = "metall";
-const PROD_ID = "nyckelring";
-const CUSTOMER_SVC = "service_rqr0oai";
-const TPL_OWNER    = "template_kvc84w1";
-const TPL_CUST     = "template_1qdf2dj";
+const MAT_ID="metall", PROD_ID="nyckelring";
+const STORAGE_KEY="elegantm_design_"+PROD_ID;
+let PD=null, editor=null;
 
-// ── STATE ────────────────────────────────────────────────────
-let PD         = null;   // product data
-let curStyle   = "alegreya";
-let curCurve   = "straight";
-let maxFS      = 32;
-let engColor   = "#b0b0b0";
-let images     = [];
-let curImgIdx  = 0;
-
-const fontMap={
-  alegreya:"'Alegreya',serif",
-  allura:"'Allura',cursive",
-  stencil:"'Allerta Stencil',sans-serif"
-};
-
-// ── HELPERS ──────────────────────────────────────────────────
 const $=id=>document.getElementById(id);
 
-// ── LOAD ─────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────
 async function init(){
   try{
     const snap=await db.collection("materials").doc(MAT_ID)
                        .collection("products").doc(PROD_ID).get();
-    if(!snap.exists){ showErr(); return; }
+    if(!snap.exists){showErr();return;}
     PD=snap.data();
     applyProduct();
-  }catch(e){ console.error(e); showErr(); }
+  }catch(e){console.error(e);showErr();}
   finally{
-    const l=$("page-loader");
-    l.classList.add("fade");
+    const l=$("page-loader");l.classList.add("fade");
     setTimeout(()=>l.style.display="none",400);
   }
 }
 
-function showErr(){
-  $("prod-sub").textContent="Produkten kunde inte laddas. Försök igen senare.";
-}
+function showErr(){$("prod-sub").textContent="Produkten kunde inte laddas.";}
 
 function applyProduct(){
-  // Title & subtitle
-  if(PD.name)  $("prod-title").textContent=PD.name;
-  if(PD.desc)  $("prod-sub").textContent=PD.desc;
+  if(PD.name) $("prod-title").textContent=PD.name;
+  if(PD.desc) $("prod-sub").textContent=PD.desc;
 
-  // Engrave settings
-  if(PD.engraveColor)  engColor=PD.engraveColor;
+  // Init editor
+  editor=new GravyrEditor("gravyr-canvas",{
+    onSelect:   onElementSelected,
+    onRotate:   val=>{ $("rot-slider").value=val; $("rot-num").value=val; },
+    onFontSize: val=>{ $("font-size-slider").value=val; $("font-size-val").textContent=val+"px"; },
+    onChangeEnd:saveDesign
+  });
+
+  // Apply admin settings
+  if(PD.engraveColor) editor.engColor=PD.engraveColor;
   if(PD.maxFontSize){
-    maxFS=PD.maxFontSize;
-    $("font-slider").max=maxFS;
-    $("font-slider").value=Math.min(16,maxFS);
-    $("size-note").textContent="Max textstorlek: "+maxFS+"px (satt av oss för optimal gravyr)";
+    editor.maxFont=PD.maxFontSize;
+    $("font-size-slider").max=PD.maxFontSize;
   }
-  // Zone label
-  if(PD.engraveWidthMM&&PD.engraveHeightMM)
-    $("zone-label").textContent=PD.engraveWidthMM+" mm × "+PD.engraveHeightMM+" mm";
+  editor.movable = PD.engraveMovable !== false; // default true
 
-  // Images
-  images=PD.images||[];
-  if(images.length){ showImg(0); buildThumbs(); }
+  // Zone
+  const zx=PD.engraveZoneX||10, zy=PD.engraveZoneY||15;
+  const zw=PD.engraveZoneW||80, zh=PD.engraveZoneH||70;
+  const label=(PD.engraveWidthMM&&PD.engraveHeightMM)?PD.engraveWidthMM+"mm × "+PD.engraveHeightMM+"mm":"";
+  editor.setZone(zx,zy,zw,zh,label);
+
+  // Product image (first image from admin)
+  const imgs=PD.images||[];
+  if(imgs.length) editor.setProductImage(imgs[0].url);
+
+  // Frames
+  renderFrames(PD.frames||[]);
 
   // Price
   renderPriceTable();
-  updatePreview();
+
+  // Load saved design
+  loadDesign();
 }
 
-// ── GALLERY ──────────────────────────────────────────────────
-function showImg(idx){
-  curImgIdx=idx;
-  const img=images[idx];
-  if(!img)return;
-  $("no-img").style.display="none";
-  const el=$("main-img");
-  el.style.display="block";
-  el.src=img.url;
-  el.alt=img.alt||PD.name||"";
-  $("img-desc").textContent=img.alt||"";
-  document.querySelectorAll(".thumb").forEach((t,i)=>t.classList.toggle("active",i===idx));
-}
-
-function buildThumbs(){
-  const wrap=$("thumbs"); wrap.innerHTML="";
-  images.forEach((img,i)=>{
+// ── FRAMES ───────────────────────────────────────────────────
+function renderFrames(frames){
+  const g=$("frames-grid");
+  if(!frames.length){g.innerHTML='<div class="no-frames">Inga ramar tillgängliga.</div>';return;}
+  g.innerHTML="";
+  frames.forEach(f=>{
     const d=document.createElement("div");
-    d.className="thumb"+(i===0?" active":"");
-    d.innerHTML=`<img src="${img.url}" alt="${img.alt||""}"/>`;
-    d.onclick=()=>showImg(i);
-    wrap.appendChild(d);
+    d.className="frame-thumb";
+    d.innerHTML=`<img src="${f.url}" alt="${f.name||'Ram'}"/>`;
+    d.title=f.name||"";
+    d.onclick=()=>{
+      document.querySelectorAll(".frame-thumb").forEach(t=>t.classList.remove("active"));
+      d.classList.add("active");
+      editor.addFrame(f.url,f.id||f.url);
+    };
+    g.appendChild(d);
   });
 }
 
-// ── PREVIEW ──────────────────────────────────────────────────
-function updatePreview(){
-  const text=$("eng-text").value||"Din text";
-  const fs=Math.min(parseInt($("font-slider").value)||16,maxFS);
-  $("font-slider").value=fs;
-  $("font-val").textContent=fs+"px";
-  renderSVG(text,fs,curStyle,curCurve);
-  updatePrice();
-}
-
-function renderSVG(text,fs,style,curve){
-  const inner=$("preview-inner");
-  const W=inner.offsetWidth||300;
-  const H=Math.max(W*1.0,60);
-  const cx=W/2, cy=H/2;
-  const pathW=W*0.55;
-
-  let pathD;
-  if(curve==="straight"){
-    pathD=`M ${cx-pathW/2} ${cy} L ${cx+pathW/2} ${cy}`;
-  }else if(curve==="convex"){
-    const bend=H*0.22;
-    pathD=`M ${cx-pathW/2} ${cy+bend} Q ${cx} ${cy-bend} ${cx+pathW/2} ${cy+bend}`;
-  }else{
-    const bend=H*0.22;
-    pathD=`M ${cx-pathW/2} ${cy-bend} Q ${cx} ${cy+bend} ${cx+pathW/2} ${cy-bend}`;
+// ── ELEMENT CONTROLS ─────────────────────────────────────────
+function onElementSelected(el){
+  const ctrl=$("el-controls");
+  const delBtn=$("del-btn");
+  if(!el){ctrl.classList.remove("visible");delBtn.style.display="none";return;}
+  ctrl.classList.add("visible");
+  delBtn.style.display="";
+  if(el.type==="text"){
+    $("ctrl-text").value=el.text||"";
+    $("font-size-slider").value=el.fontSize||18;
+    $("font-size-val").textContent=(el.fontSize||18)+"px";
+    $("rot-slider").value=el.rot||0;
+    $("rot-num").value=el.rot||0;
+    // Font pills
+    document.querySelectorAll("#font-pills .pill").forEach(p=>p.classList.remove("active"));
+    document.querySelector(`#font-pills .pill-${el.fontFamily||"alegreya"}`).classList.add("active");
+    // Curve pills
+    const curveMap={straight:0,convex:1,concave:2};
+    document.querySelectorAll("#curve-pills .pill").forEach((p,i)=>p.classList.toggle("active",i===curveMap[el.curve||"straight"]));
   }
-
-  // Zone rect
-  const zW=W*0.55, zH=H*0.55;
-  const zX=(W-zW)/2, zY=(H-zH)/2;
-
-  inner.innerHTML=`
-    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-      <defs>
-        <filter id="ef">
-          <feDropShadow dx="0" dy="0.8" stdDeviation="0.4" flood-color="rgba(255,255,255,0.5)" flood-opacity="1"/>
-          <feDropShadow dx="0" dy="-0.6" stdDeviation="0.3" flood-color="rgba(0,0,0,0.35)" flood-opacity="1"/>
-        </filter>
-        <path id="cp" d="${pathD}"/>
-      </defs>
-      <defs>
-        <radialGradient id="krbg" cx="38%" cy="30%" r="70%">
-          <stop offset="0%" stop-color="#e4e4e4"/>
-          <stop offset="50%" stop-color="#a8a8a8"/>
-          <stop offset="100%" stop-color="#787878"/>
-        </radialGradient>
-        <radialGradient id="krshine" cx="35%" cy="25%" r="55%">
-          <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
-          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-        </radialGradient>
-      </defs>
-      <circle cx="${cx}" cy="${cy}" r="${Math.min(cx,cy)*0.88}" fill="url(#krbg)"/>
-      <circle cx="${cx}" cy="${cy}" r="${Math.min(cx,cy)*0.88}" fill="url(#krshine)"/>
-      <circle cx="${cx}" cy="${cy}" r="${Math.min(cx,cy)*0.88}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-      <!-- ring at top -->
-      <circle cx="${cx}" cy="${cy-Math.min(cx,cy)*0.88}" r="${Math.min(cx,cy)*0.12}" fill="none" stroke="#999" stroke-width="${Math.min(cx,cy)*0.06}"/>
-      <rect x="${zX}" y="${zY}" width="${zW}" height="${zH}" fill="none"
-        stroke="rgba(0,120,70,0.3)" stroke-width="1" stroke-dasharray="4,3" rx="3"/>
-      <text font-size="${fs}" font-family="${fontMap[style]||fontMap.alegreya}"
-        fill="${engColor}" filter="url(#ef)" text-anchor="middle">
-        <textPath href="#cp" startOffset="50%">${text}</textPath>
-      </text>
-    </svg>`;
 }
 
-function setStyle(s,btn){
-  curStyle=s;
-  document.querySelectorAll("#style-pills .pill").forEach(p=>p.classList.remove("active"));
+function addTextRow(){
+  const txt=$("new-text-inp").value.trim()||"Din text";
+  editor.addText(txt);
+}
+
+function deleteSelected(){editor.removeSelected();}
+
+function updateElText(v){editor.updateSelected({text:v});}
+function updateElFont(f,btn){
+  document.querySelectorAll("#font-pills .pill").forEach(p=>p.classList.remove("active"));
   btn.classList.add("active");
-  updatePreview();
+  editor.updateSelected({fontFamily:f});
 }
-
-function setCurve(c,btn){
-  curCurve=c;
+function updateElCurve(c,btn){
   btn.closest(".pills").querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
   btn.classList.add("active");
-  updatePreview();
+  editor.updateSelected({curve:c});
+}
+function updateElFontSize(v){
+  if(!PD)return;
+  const capped=Math.min(v,editor.maxFont);
+  $("font-size-slider").value=capped;
+  $("font-size-val").textContent=capped+"px";
+  editor.updateSelected({fontSize:capped});
+}
+function updateElRot(v){
+  $("rot-slider").value=v;
+  $("rot-num").value=v;
+  editor.updateSelected({rot:v});
 }
 
 // ── PRICE ────────────────────────────────────────────────────
-function campIsActive(){
+function campActive(){
   if(!PD)return false;
   const c=PD.campaign||{};
-  return c.active&&c.pct>0&&
-    (!c.start||new Date()>=new Date(c.start))&&
-    (!c.end||new Date()<=new Date(c.end));
+  return c.active&&c.pct>0&&(!c.start||new Date()>=new Date(c.start))&&(!c.end||new Date()<=new Date(c.end));
 }
-
 function getUnitPrice(qty){
   if(!PD||!PD.priceLevels||!PD.priceLevels.length)return null;
-  const disc=campIsActive()?1-(PD.campaign.pct/100):1;
-  for(const lv of PD.priceLevels){
+  const disc=campActive()?1-(PD.campaign.pct/100):1;
+  for(const lv of PD.priceLevels)
     if(qty>=lv.min&&(!lv.max||qty<=lv.max))
-      return{base:lv.price,final:Math.round(lv.price*disc),camp:campIsActive()};
-  }
+      return{base:lv.price,final:Math.round(lv.price*disc),camp:campActive()};
   return null;
 }
-
 function renderPriceTable(){
-  if(!PD)return;
-  if(PD.quoteMode||!PD.priceLevels||!PD.priceLevels.length){
-    $("price-per").textContent="Pris på förfrågan";
-    $("price-total").textContent="";
-    $("price-tbl").style.display="none";
-    return;
-  }
-  const camp=campIsActive();
-  const c=PD.campaign||{};
-  let html="";
-  if(camp){
-    html+=`<div class="campaign-tag">🏷 ${c.name||"Kampanj"} — ${c.pct}% rabatt`;
-    if(c.end)html+=` · Gäller till ${c.end}`;
-    html+="</div>";
-    $("camp-tag").innerHTML=html;
-  }
-  const disc=camp?1-c.pct/100:1;
-  let tbl=`<thead><tr><th>Antal</th><th>Pris/st</th>${camp?"<th>Kampanj</th>":""}</tr></thead><tbody>`;
+  if(!PD||PD.quoteMode||!PD.priceLevels||!PD.priceLevels.length)return;
+  const ca=campActive(),c=PD.campaign||{},disc=ca?1-c.pct/100:1;
+  if(ca) $("camp-tag").innerHTML=`<div class="campaign-tag">🏷 ${c.name||"Kampanj"} — ${c.pct}% rabatt${c.end?" · Gäller till "+c.end:""}</div>`;
+  let tbl=`<thead><tr><th>Antal</th><th>Pris/st</th>${ca?"<th>Kampanj</th>":""}</tr></thead><tbody>`;
   PD.priceLevels.forEach((lv,i)=>{
-    const range=lv.max?lv.min+"–"+lv.max+" st":lv.min+"+ st";
+    const r=lv.max?lv.min+"–"+lv.max+" st":lv.min+"+ st";
     const cp=Math.round(lv.price*disc);
-    tbl+=`<tr id="pr-${i}"><td>${range}</td>`;
-    tbl+=`<td>${camp?"<span class='price-strike'>"+lv.price+" kr</span>":lv.price+" kr"}</td>`;
-    if(camp)tbl+=`<td class="price-campaign">${cp} kr</td>`;
-    tbl+="</tr>";
+    tbl+=`<tr id="pr-${i}"><td>${r}</td><td>${ca?"<span style='text-decoration:line-through;opacity:0.4'>"+lv.price+" kr</span>":lv.price+" kr"}</td>${ca?"<td style='color:rgba(160,80,0,0.9)'>"+cp+" kr</td>":""}</tr>`;
   });
-  tbl+="</tbody>";
-  $("price-tbl").innerHTML=tbl;
+  $("price-tbl").innerHTML=tbl+"</tbody>";
   $("price-tbl").style.display="table";
   updatePrice();
 }
-
 function updatePrice(){
   if(!PD)return;
   const qty=parseInt($("qty").value)||1;
   const p=getUnitPrice(qty);
-  if(!p){ $("price-per").textContent="Pris på förfrågan"; $("price-total").textContent=""; return; }
-  $("price-per").textContent=p.final+" kr / st"+(p.camp?" (kampanjpris)":"")+" — ungefärligt";
+  if(!p){$("price-per").textContent="Pris på förfrågan";$("price-total").textContent="";return;}
+  $("price-per").textContent=p.final+" kr/st"+(p.camp?" (kampanj)":"")+" — ungefärligt";
   $("price-total").textContent=(qty*p.final).toLocaleString("sv-SE")+" kr";
-  if(PD.priceLevels)PD.priceLevels.forEach((_,i)=>{
-    const row=$("pr-"+i);
-    if(row){
-      const lv=PD.priceLevels[i];
-      row.classList.toggle("active-row",qty>=lv.min&&(!lv.max||qty<=lv.max));
-    }
+  PD.priceLevels.forEach((_,i)=>{
+    const row=$("pr-"+i);if(!row)return;
+    const lv=PD.priceLevels[i];
+    row.classList.toggle("active-row",qty>=lv.min&&(!lv.max||qty<=lv.max));
+  });
+}
+function changeQty(d){const i=$("qty");i.value=Math.max(1,(parseInt(i.value)||1)+d);updatePrice();}
+
+// ── SAVE / LOAD / SHARE ───────────────────────────────────────
+function saveDesign(){
+  if(!editor)return;
+  try{
+    localStorage.setItem(STORAGE_KEY,editor.serialize());
+    showSaveMsg("✓ Design sparad!");
+  }catch(e){showSaveMsg("Kunde inte spara.");}
+}
+
+function loadDesign(){
+  // Check URL first
+  const params=new URLSearchParams(window.location.search);
+  const encoded=params.get("design");
+  if(encoded){
+    try{
+      const json=decodeURIComponent(atob(encoded));
+      editor.deserialize(json);
+      return;
+    }catch(e){}
+  }
+  // Then localStorage
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved) editor.deserialize(saved);
+}
+
+function copyLink(){
+  if(!editor)return;
+  saveDesign();
+  const encoded=btoa(encodeURIComponent(editor.serialize()));
+  const url=window.location.origin+window.location.pathname+"?design="+encoded;
+  navigator.clipboard.writeText(url).then(()=>showSaveMsg("✓ Länk kopierad!")).catch(()=>{
+    prompt("Kopiera länken:",url);
   });
 }
 
-function changeQty(d){
-  const inp=$("qty");
-  inp.value=Math.max(1,(parseInt(inp.value)||1)+d);
-  updatePrice();
+function showSaveMsg(msg){
+  $("save-msg").textContent=msg;
+  setTimeout(()=>$("save-msg").textContent="",3000);
+}
+
+async function exportPNG(){
+  if(!editor){alert("Ingen design att ladda ner.");return;}
+  await editor.exportPNG("elegant-m-gravyr-"+PROD_ID+".png");
 }
 
 // ── LOYALTY ──────────────────────────────────────────────────
 async function checkLoyalty(email){
-  const el=$("loyalty-overlay"); el.classList.remove("visible"); el.innerHTML="";
+  const el=$("loyalty-ov");el.classList.remove("visible");el.innerHTML="";
   if(!email||!email.includes("@")||!email.includes("."))return;
   try{
     const snap=await db.collection("customers").where("email","==",email.toLowerCase()).get();
@@ -799,122 +1098,87 @@ async function checkLoyalty(email){
     if(n>=10){icon="💎";level="Platina";msg="VIP-kund — din order prioriteras!";}
     else if(n>=5){icon="🥇";level="Guld";msg="Lojal kund — tack för ditt förtroende!";}
     else if(n>=2){icon="🥈";level="Silver";msg="Återkommande kund — välkommen tillbaka!";}
-    el.innerHTML=icon+" "+level+" &mdash; "+msg;
-    el.classList.add("visible");
+    el.innerHTML=icon+" "+level+" — "+msg;el.classList.add("visible");
   }catch(e){console.warn(e);}
 }
 
-// ── DOWNLOAD PREVIEW ─────────────────────────────────────────
-function downloadPreview(){
-  const svg=$("preview-inner").querySelector("svg");
-  if(!svg){alert("Ingen förhandsvisning att ladda ner.");return;}
-  const xml=new XMLSerializer().serializeToString(svg);
-  const blob=new Blob([xml],{type:"image/svg+xml"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="elegant-m-gravyr-nyckelring.svg";a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ── OVERLAY ──────────────────────────────────────────────────
+// ── ORDER ────────────────────────────────────────────────────
 function openOverlay(){
-  const text=$("eng-text").value||"(ingen text)";
+  saveDesign();
   const qty=$("qty").value;
   const p=getUnitPrice(parseInt(qty));
-  const styleNames={alegreya:"Alegreya",allura:"Allura",stencil:"Allerta Stencil"};
-  const curveNames={straight:"Rak",convex:"Konvex (uppåt)",concave:"Konkav (nedåt)"};
-  const priceStr=p?p.final+" kr/st (ungefärligt)":"På förfrågan";
-
+  const elems=editor?editor.elements:[];
+  const texts=elems.filter(e=>e.type==="text").map(e=>e.text).join(" | ")||"(ingen text)";
+  const frames=elems.filter(e=>e.type==="frame").length;
   $("summary-box").innerHTML=
     `<strong>Produkt:</strong> ${PD?.name||"Metallnyckelring"}<br>`+
-    `<strong>Gravyrtext:</strong> ${text}<br>`+
-    `<strong>Textstil:</strong> ${styleNames[curStyle]}<br>`+
-    `<strong>Textböjning:</strong> ${curveNames[curCurve]}<br>`+
+    `<strong>Text(er):</strong> ${texts}<br>`+
+    `<strong>Ramar:</strong> ${frames} st<br>`+
     `<strong>Antal:</strong> ${qty} st<br>`+
-    `<strong>Ungefärligt pris:</strong> ${priceStr}<br>`+
+    `<strong>Ungefärligt pris:</strong> ${p?p.final+" kr/st":"På förfrågan"}<br>`+
     `<span style="font-size:0.62rem;color:#666;">Slutlig offert inom 1–3 arbetsdagar.</span>`;
-
   $("o-status").textContent="";$("o-status").className="o-status";
   $("send-btn").disabled=false;$("send-btn").textContent="Skicka förfrågan";
   $("overlay").classList.add("open");
 }
-
 function closeOverlay(){$("overlay").classList.remove("open");}
 $("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeOverlay();});
 
-// ── SEND ORDER ───────────────────────────────────────────────
 async function sendOrder(){
-  const name=$("o-name").value.trim();
-  const email=$("o-email").value.trim();
-  const phone=$("o-phone").value.trim();
-  const address=$("o-address").value.trim();
-  const invoice=$("o-invoice").value.trim();
-  const notes=$("o-notes").value.trim();
-
+  const name=$("o-name").value.trim(),email=$("o-email").value.trim();
+  const phone=$("o-phone").value.trim(),address=$("o-address").value.trim();
+  const invoice=$("o-invoice").value.trim(),notes=$("o-notes").value.trim();
   if(!name||!email||!address){
     $("o-status").textContent="Fyll i namn, e-post och adress.";
     $("o-status").className="o-status err";return;
   }
-
   const btn=$("send-btn");btn.disabled=true;btn.textContent="Skickar...";
-
-  const text=$("eng-text").value||"(ingen text)";
   const qty=$("qty").value;
-  const styleNames={alegreya:"Alegreya",allura:"Allura",stencil:"Allerta Stencil"};
-  const curveNames={straight:"Rak",convex:"Konvex",concave:"Konkav"};
-  const summaryTxt=$("summary-box").innerText;
-
+  const elems=editor?editor.elements:[];
+  const texts=elems.filter(e=>e.type==="text").map(e=>e.text).join(" | ")||"(ingen text)";
+  const frames=elems.filter(e=>e.type==="frame").length;
+  const p=getUnitPrice(parseInt(qty));
+  const designJson=editor?editor.serialize():"";
   const params={
     from_name:name,from_email:email,phone:phone||"Ej angiven",
-    message:"FÖRFRÅGAN — METALLNYCKELRING\n\n"+summaryTxt+
-      "\n\nGravyrtext: "+text+
-      "\nTextstil: "+styleNames[curStyle]+
-      "\nTextböjning: "+curveNames[curCurve]+
+    message:"FÖRFRÅGAN — "+(PD?.name||"METALLNYCKELRING").toUpperCase()+
+      "\n\nText(er): "+texts+
+      "\nAntal ramar: "+frames+
       "\nAntal: "+qty+
+      "\nUngefärligt pris: "+(p?p.final+" kr/st":"På förfrågan")+
       "\nLeveransadress: "+address+
       "\nFakturanummer: "+(invoice||"Ej angivet")+
-      "\nÖvrigt: "+(notes||"Inga"),
+      "\nÖvrigt: "+(notes||"Inga")+
+      "\n\nDesign sparad (JSON bifogas i admin).",
     to_email:(function(){return["elegant",".m.se","@gmail",".com"].join("");})()
   };
-
   try{
-    await emailjs.send(CUSTOMER_SVC,TPL_OWNER,params);
-    await emailjs.send(CUSTOMER_SVC,TPL_CUST,params);
-
-    // Save order
+    await emailjs.send("service_rqr0oai","template_kvc84w1",params);
+    await emailjs.send("service_rqr0oai","template_1qdf2dj",params);
     await db.collection("orders").add({
-      customerName:name,customerEmail:email.toLowerCase(),
-      phone,address,product:PD?.name||"Metallnyckelring",
-      material:"Metall",qty,engraveText:text,
-      engraveStyle:curStyle,engraveCurve:curCurve,
-      invoiceRef:invoice,notes,status:"new",
-      createdAt:new Date().toISOString()
+      customerName:name,customerEmail:email.toLowerCase(),phone,address,
+      product:PD?.name||"Metallnyckelring",material:"Metall",qty,
+      engraveTexts:texts,frameCount:frames,invoiceRef:invoice,notes,
+      designJson,status:"new",createdAt:new Date().toISOString()
     });
-
-    // Update customer
     const cs=await db.collection("customers").where("email","==",email.toLowerCase()).get();
     if(cs.empty){
-      await db.collection("customers").add({
-        name,email:email.toLowerCase(),phone,
-        totalOrders:1,firstOrder:new Date().toISOString(),lastOrder:new Date().toISOString()
-      });
+      await db.collection("customers").add({name,email:email.toLowerCase(),phone,
+        totalOrders:1,firstOrder:new Date().toISOString(),lastOrder:new Date().toISOString()});
     }else{
       const ref=cs.docs[0].ref,d=cs.docs[0].data();
       await ref.update({totalOrders:(d.totalOrders||0)+1,lastOrder:new Date().toISOString(),name});
     }
-
     $("o-status").textContent="✓ Förfrågan skickad! Vi återkommer inom 1–3 arbetsdagar.";
-    $("o-status").className="o-status ok";
-    btn.textContent="Skickat!";
+    $("o-status").className="o-status ok";btn.textContent="Skickat!";
   }catch(e){
     console.error(e);
     $("o-status").textContent="Något gick fel. Maila oss: elegant.m.se@gmail.com";
-    $("o-status").className="o-status err";
-    btn.disabled=false;btn.textContent="Skicka förfrågan";
+    $("o-status").className="o-status err";btn.disabled=false;btn.textContent="Skicka förfrågan";
   }
 }
 
-window.addEventListener("resize",updatePreview);
+window.addEventListener("resize",()=>editor&&editor._refresh());
 init();
 </script>
 </body>
