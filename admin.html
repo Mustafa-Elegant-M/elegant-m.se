@@ -124,6 +124,7 @@
     .modal-foot{display:flex;gap:0.8rem;margin-top:1.5rem;justify-content:flex-end;}
     /* MISC */
     .loading{color:rgba(0,255,180,0.4);font-size:0.7rem;letter-spacing:0.15em;text-align:center;padding:2rem;}
+    .zh{position:absolute;width:12px;height:12px;background:rgba(0,255,180,0.9);border:1px solid rgba(0,0,0,0.3);border-radius:2px;}
     .empty{color:#444;font-size:0.7rem;text-align:center;padding:2rem;font-style:italic;}
     @media(max-width:600px){
       .frow{grid-template-columns:1fr;}
@@ -261,10 +262,63 @@
       <div class="panel">
         <div class="panel-hdr">
           <div class="panel-ttl">Gravyrinställningar</div>
-          <button class="btn-p" onclick="saveEngrave()">Spara</button>
+          <button class="btn-p" onclick="saveEngrave()">Spara allt</button>
         </div>
-        <div style="font-size:0.62rem;color:#666;letter-spacing:0.08em;margin-bottom:1rem;">Styr gravyrytans storlek, färg och max textstorlek för kunden.</div>
-        <div class="frow">
+        <div style="font-size:0.62rem;color:#666;letter-spacing:0.08em;margin-bottom:1rem;">
+          Dra och ändra storleken på den gröna rutan direkt på produktbilden nedan.
+        </div>
+
+        <!-- VISUELL ZONEDITOR -->
+        <div style="margin-bottom:1.2rem;">
+          <div class="flbl" style="margin-bottom:0.5rem;">Gravyrzon — dra rutan, dra i hörnen för att ändra storlek</div>
+          <div id="zone-editor-wrap" style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#1a1a1a;border:0.5px solid rgba(0,255,180,0.2);">
+            <img id="zone-product-img" src="" alt="" style="width:100%;display:block;opacity:0.85;"/>
+            <div id="zone-no-img" style="width:100%;height:200px;display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;">Ladda upp produktbild för att se zonen</div>
+            <!-- DRAGGABLE ZONE -->
+            <div id="zone-box" style="position:absolute;border:2px solid rgba(0,255,180,0.85);background:rgba(0,255,180,0.08);cursor:move;box-shadow:0 0 0 1px rgba(0,0,0,0.3);border-radius:2px;display:none;">
+              <!-- Corner handles -->
+              <div class="zh" data-c="nw" style="top:-6px;left:-6px;cursor:nw-resize;"></div>
+              <div class="zh" data-c="ne" style="top:-6px;right:-6px;cursor:ne-resize;"></div>
+              <div class="zh" data-c="sw" style="bottom:-6px;left:-6px;cursor:sw-resize;"></div>
+              <div class="zh" data-c="se" style="bottom:-6px;right:-6px;cursor:se-resize;"></div>
+              <!-- Zone label -->
+              <div id="zone-box-label" style="position:absolute;bottom:4px;right:6px;font-size:0.5rem;letter-spacing:0.08em;color:rgba(0,255,180,0.9);background:rgba(0,0,0,0.5);padding:1px 5px;border-radius:3px;pointer-events:none;white-space:nowrap;"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.5rem;font-size:0.6rem;letter-spacing:0.08em;color:#777;flex-wrap:wrap;">
+            <span>X: <strong id="zv-x">—</strong>%</span>
+            <span>Y: <strong id="zv-y">—</strong>%</span>
+            <span>Bredd: <strong id="zv-w">—</strong>%</span>
+            <span>Höjd: <strong id="zv-h">—</strong>%</span>
+          </div>
+        </div>
+
+        <!-- NUMERISKA FÄLT -->
+        <div class="frow" style="margin-bottom:0.6rem;">
+          <div class="fgrp"><label class="flbl">Zon X-position (%)</label>
+            <input class="finp" type="number" id="eng-x-pct" placeholder="T.ex. 10" min="0" max="90" oninput="updateZoneFromInputs()"/>
+          </div>
+          <div class="fgrp"><label class="flbl">Zon Y-position (%)</label>
+            <input class="finp" type="number" id="eng-y-pct" placeholder="T.ex. 25" min="0" max="90" oninput="updateZoneFromInputs()"/>
+          </div>
+        </div>
+        <div class="frow" style="margin-bottom:0.6rem;">
+          <div class="fgrp"><label class="flbl">Zon bredd (%)</label>
+            <input class="finp" type="number" id="eng-w-pct" placeholder="T.ex. 80" min="5" max="100" oninput="updateZoneFromInputs()"/>
+          </div>
+          <div class="fgrp"><label class="flbl">Zon höjd (%)</label>
+            <input class="finp" type="number" id="eng-h-pct" placeholder="T.ex. 50" min="5" max="100" oninput="updateZoneFromInputs()"/>
+          </div>
+        </div>
+        <div class="frow" style="margin-bottom:0.6rem;">
+          <div class="fgrp"><label class="flbl">Gravyryta bredd (mm)</label>
+            <input class="finp" type="number" id="eng-w-mm" placeholder="T.ex. 80" min="1"/>
+          </div>
+          <div class="fgrp"><label class="flbl">Gravyryta höjd (mm)</label>
+            <input class="finp" type="number" id="eng-h-mm" placeholder="T.ex. 8" min="1"/>
+          </div>
+        </div>
+        <div class="frow" style="margin-bottom:0.6rem;">
           <div class="fgrp"><label class="flbl">Gravyrfärg</label>
             <select class="finp" id="eng-color">
               <option value="#c0c0c0">Silver</option>
@@ -279,24 +333,7 @@
             <input class="finp" type="number" id="eng-maxfont" placeholder="T.ex. 24" min="8" max="72"/>
           </div>
         </div>
-        <div class="frow">
-          <div class="fgrp"><label class="flbl">Gravyryta bredd (mm)</label>
-            <input class="finp" type="number" id="eng-w-mm" placeholder="T.ex. 80" min="1"/>
-          </div>
-          <div class="fgrp"><label class="flbl">Gravyryta höjd (mm)</label>
-            <input class="finp" type="number" id="eng-h-mm" placeholder="T.ex. 8" min="1"/>
-          </div>
-        </div>
-        <div class="frow">
-          <div class="fgrp"><label class="flbl">Förhandsvisning bredd (%)</label>
-            <input class="finp" type="number" id="eng-w-pct" placeholder="T.ex. 70" min="10" max="100"/>
-            <div style="font-size:0.55rem;color:#555;margin-top:0.3rem;">Hur stor del av produktbilden gravyrzonen täcker</div>
-          </div>
-          <div class="fgrp"><label class="flbl">Förhandsvisning höjd (%)</label>
-            <input class="finp" type="number" id="eng-h-pct" placeholder="T.ex. 70" min="10" max="100"/>
-          </div>
-        </div>
-        <div class="fgrp" style="margin-top:0.5rem;">
+        <div class="fgrp" style="margin-bottom:0.6rem;">
           <label class="flbl">Gravyrbeskrivning till kund</label>
           <input class="finp" type="text" id="eng-desc" placeholder="T.ex. Gravyren syns längs pennans kropp i silverfärg"/>
         </div>
@@ -598,11 +635,16 @@ async function loadDetail(mId,pId){
   $("eng-maxfont").value=d.maxFontSize||"";
   $("eng-w-mm").value=d.engraveWidthMM||"";
   $("eng-h-mm").value=d.engraveHeightMM||"";
-  $("eng-w-pct").value=d.engraveWidth||"";
-  $("eng-h-pct").value=d.engraveHeight||"";
+  $("eng-w-pct").value=d.engraveWidth||70;
+  $("eng-h-pct").value=d.engraveHeight||50;
+  $("eng-x-pct").value=d.engraveZoneX||10;
+  $("eng-y-pct").value=d.engraveZoneY||25;
   $("eng-desc").value=d.engraveDesc||"";
   if($("tgl-movable"))$("tgl-movable").checked=d.engraveMovable!==false;
   renderFramesList(d.frames||[]);
+  // Setup zone editor with first product image
+  const firstImg=(d.images&&d.images.length)?d.images[0].url:"";
+  initZoneEditor(firstImg, d.engraveZoneX||10, d.engraveZoneY||25, d.engraveWidth||70, d.engraveHeight||50, d.engraveWidthMM, d.engraveHeightMM);
   setSt("eng-status","","");
 }
 
@@ -614,7 +656,9 @@ window.saveEngrave=async function(){
     engraveWidthMM:parseFloat($("eng-w-mm").value)||0,
     engraveHeightMM:parseFloat($("eng-h-mm").value)||0,
     engraveWidth:parseFloat($("eng-w-pct").value)||70,
-    engraveHeight:parseFloat($("eng-h-pct").value)||70,
+    engraveHeight:parseFloat($("eng-h-pct").value)||50,
+    engraveZoneX:parseFloat($("eng-x-pct").value)||10,
+    engraveZoneY:parseFloat($("eng-y-pct").value)||25,
     engraveDesc:$("eng-desc").value.trim(),
     engraveMovable:$("tgl-movable")?$("tgl-movable").checked:true
   };
@@ -860,6 +904,138 @@ window.deleteFrame=async function(idx){
   frames.splice(idx,1);
   await ref.set({frames},{merge:true});
   renderFramesList(frames);
+};
+
+// ── VISUAL ZONE EDITOR ────────────────────────────────────────
+let zoneState={x:10,y:25,w:70,h:50};
+let zoneDrag=null;
+
+function initZoneEditor(imgUrl,x,y,w,h,wMM,hMM){
+  zoneState={x:x||10,y:y||25,w:w||70,h:h||50};
+  const imgEl=$("zone-product-img");
+  const noImg=$("zone-no-img");
+  const box=$("zone-box");
+  if(imgUrl){
+    imgEl.src=imgUrl;imgEl.style.display="block";noImg.style.display="none";
+    imgEl.onload=()=>renderZoneBox(wMM,hMM);
+    if(imgEl.complete)renderZoneBox(wMM,hMM);
+  }else{
+    imgEl.style.display="none";noImg.style.display="flex";box.style.display="none";
+  }
+}
+
+function renderZoneBox(wMM,hMM){
+  const wrap=$("zone-editor-wrap");
+  const box=$("zone-box");
+  const label=$("zone-box-label");
+  if(!wrap||!box)return;
+  const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+  const px=zoneState.x/100*cw, py=zoneState.y/100*ch;
+  const pw=zoneState.w/100*cw, ph=zoneState.h/100*ch;
+  box.style.left=px+"px"; box.style.top=py+"px";
+  box.style.width=pw+"px"; box.style.height=ph+"px";
+  box.style.display="block";
+  const lbl=(wMM&&hMM)?wMM+"mm × "+hMM+"mm":"";
+  label.textContent=lbl;
+  // Update readout
+  $("zv-x").textContent=Math.round(zoneState.x);
+  $("zv-y").textContent=Math.round(zoneState.y);
+  $("zv-w").textContent=Math.round(zoneState.w);
+  $("zv-h").textContent=Math.round(zoneState.h);
+}
+
+function updateZoneFromInputs(){
+  zoneState.x=parseFloat($("eng-x-pct").value)||10;
+  zoneState.y=parseFloat($("eng-y-pct").value)||25;
+  zoneState.w=parseFloat($("eng-w-pct").value)||70;
+  zoneState.h=parseFloat($("eng-h-pct").value)||50;
+  const wMM=$("eng-w-mm").value, hMM=$("eng-h-mm").value;
+  renderZoneBox(wMM,hMM);
+}
+
+// Zone drag & resize
+(function(){
+  function setup(){
+    const box=$("zone-box");
+    const wrap=$("zone-editor-wrap");
+    if(!box||!wrap)return;
+
+    // Move zone (drag body)
+    box.addEventListener("pointerdown",function(e){
+      if(e.target.classList.contains("zh"))return;
+      e.preventDefault();
+      const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+      const startX=e.clientX, startY=e.clientY;
+      const startZX=zoneState.x, startZY=zoneState.y;
+      function onMove(e){
+        const dx=(e.clientX-startX)/cw*100;
+        const dy=(e.clientY-startY)/ch*100;
+        zoneState.x=Math.max(0,Math.min(100-zoneState.w,startZX+dx));
+        zoneState.y=Math.max(0,Math.min(100-zoneState.h,startZY+dy));
+        syncInputsFromZone();
+        renderZoneBox($("eng-w-mm").value,$("eng-h-mm").value);
+      }
+      function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
+      window.addEventListener("pointermove",onMove);
+      window.addEventListener("pointerup",onUp);
+    });
+
+    // Resize (corner handles)
+    box.querySelectorAll(".zh").forEach(function(h){
+      h.addEventListener("pointerdown",function(e){
+        e.preventDefault();e.stopPropagation();
+        const corner=h.dataset.c;
+        const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+        const startX=e.clientX,startY=e.clientY;
+        const sz={...zoneState};
+        function onMove(e){
+          const dx=(e.clientX-startX)/cw*100;
+          const dy=(e.clientY-startY)/ch*100;
+          if(corner.includes("e"))zoneState.w=Math.max(5,Math.min(100-zoneState.x,sz.w+dx));
+          if(corner.includes("s"))zoneState.h=Math.max(5,Math.min(100-zoneState.y,sz.h+dy));
+          if(corner.includes("w")){
+            const newX=Math.max(0,Math.min(sz.x+sz.w-5,sz.x+dx));
+            zoneState.w=sz.x+sz.w-newX; zoneState.x=newX;
+          }
+          if(corner.includes("n")){
+            const newY=Math.max(0,Math.min(sz.y+sz.h-5,sz.y+dy));
+            zoneState.h=sz.y+sz.h-newY; zoneState.y=newY;
+          }
+          syncInputsFromZone();
+          renderZoneBox($("eng-w-mm").value,$("eng-h-mm").value);
+        }
+        function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
+        window.addEventListener("pointermove",onMove);
+        window.addEventListener("pointerup",onUp);
+      });
+    });
+  }
+  // Setup after DOM ready
+  window.addEventListener("DOMContentLoaded",setup);
+})();
+
+function syncInputsFromZone(){
+  $("eng-x-pct").value=Math.round(zoneState.x*10)/10;
+  $("eng-y-pct").value=Math.round(zoneState.y*10)/10;
+  $("eng-w-pct").value=Math.round(zoneState.w*10)/10;
+  $("eng-h-pct").value=Math.round(zoneState.h*10)/10;
+  $("zv-x").textContent=Math.round(zoneState.x);
+  $("zv-y").textContent=Math.round(zoneState.y);
+  $("zv-w").textContent=Math.round(zoneState.w);
+  $("zv-h").textContent=Math.round(zoneState.h);
+}
+
+// When image uploads happen, refresh zone editor
+const origUploadImgs=window.uploadImgs;
+window.uploadImgs=async function(){
+  await origUploadImgs();
+  // Refresh zone editor with new first image
+  if(cMat&&cProd){
+    const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
+    const snap=await ref.get();
+    const imgs=snap.data()&&snap.data().images||[];
+    if(imgs.length)$("zone-product-img").src=imgs[0].url;
+  }
 };
 
 window.openM=function(id){$(id).classList.add("open");};
