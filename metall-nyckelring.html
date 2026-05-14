@@ -31,8 +31,8 @@
     @media(max-width:900px){.main-wrap{grid-template-columns:1fr;}}
 
     /* CANVAS AREA */
-    .canvas-wrap{background:rgba(255,255,255,0.12);border:0.5px solid rgba(0,0,0,0.1);border-radius:18px;overflow:hidden;position:sticky;top:1rem;}
-    #gravyr-canvas{width:100%;aspect-ratio:4/3;position:relative;background:#f0f0f0;display:block;}
+    .canvas-wrap{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,0,0,0.2);border-radius:18px;overflow:hidden;position:sticky;top:1rem;}
+    #gravyr-canvas{width:100%;aspect-ratio:1/1;position:relative;background:#1a1a1a;display:block;min-height:200px;}
     .canvas-toolbar{display:flex;gap:0.5rem;padding:0.7rem 1rem;background:rgba(255,255,255,0.15);border-top:0.5px solid rgba(0,0,0,0.08);flex-wrap:wrap;align-items:center;}
     .tb-btn{padding:0.4rem 0.8rem;background:rgba(255,255,255,0.25);border:0.5px solid rgba(0,0,0,0.12);border-radius:8px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#111;transition:all 0.2s;}
     .tb-btn:hover{background:rgba(255,255,255,0.4);}
@@ -906,10 +906,10 @@ function applyProduct(){
   }
   editor.movable = PD.engraveMovable !== false; // default true
 
-  // Zone
-  const zx=PD.engraveZoneX||10, zy=PD.engraveZoneY||15;
-  const zw=PD.engraveZoneW||80, zh=PD.engraveZoneH||70;
-  const label=(PD.engraveWidthMM&&PD.engraveHeightMM)?PD.engraveWidthMM+"mm × "+PD.engraveHeightMM+"mm":"";
+  // Zone — from admin settings
+  const zx=PD.engraveZoneX||10, zy=PD.engraveZoneY||25;
+  const zw=PD.engraveWidth||70, zh=PD.engraveHeight||50;
+  const label=(PD.engraveWidthMM&&PD.engraveHeightMM)?PD.engraveWidthMM+" mm × "+PD.engraveHeightMM+" mm":"";
   editor.setZone(zx,zy,zw,zh,label);
 
   // Product image (first image from admin)
