@@ -675,6 +675,12 @@ async function loadDetail(mId,pId){
 window.saveEngrave=async function(){
   const mId=cMat.id,pId=cProd.id;
   const eng={
+    // NYT: Spara designfunktioner till Firebase så att kundsidan vet vad som är tillåtet
+    allowRotation: $("allow-rot").checked,
+    allowCurve: $("allow-cur").checked,
+    allowStyle: $("allow-sty").checked,
+    allowMovable: $("allow-mov").checked,
+    
     engraveColor:$("eng-color").value,
     maxFontSize:parseInt($("eng-maxfont").value)||24,
     engraveWidthMM:parseFloat($("eng-w-mm").value)||0,
@@ -683,14 +689,16 @@ window.saveEngrave=async function(){
     engraveHeight:parseFloat($("eng-h-pct").value)||50,
     engraveZoneX:parseFloat($("eng-x-pct").value)||10,
     engraveZoneY:parseFloat($("eng-y-pct").value)||25,
-    engraveDesc:$("eng-desc").value.trim(),
-    engraveMovable:$("tgl-movable")?$("tgl-movable").checked:true
+    engraveDesc:$("eng-desc").value.trim()
   };
-  try{
-    await db.collection("materials").doc(mId).collection("products").doc(pId).set(eng,{merge:true});
-    setSt("eng-status","Gravyrinstellningar sparade!","ok");
-    setTimeout(()=>setSt("eng-status","",""),3000);
-  }catch(e){setSt("eng-status","Fel: "+e.message,"err");}
+  try {
+    // Vi använder {merge: true} så att vi bara uppdaterar gravyren utan att radera produktens namn eller priser
+    await db.collection("materials").doc(mId).collection("products").doc(pId).set(eng, {merge: true});
+    setSt("eng-status", "Alla inställningar sparade!", "ok");
+    setTimeout(() => setSt("eng-status", "", ""), 3000);
+  } catch(e) {
+    setSt("eng-status", "Fel: " + e.message, "err");
+  }
 };
 
 // IMAGES
