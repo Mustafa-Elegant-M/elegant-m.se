@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sten — ELEGANT-M</title>
+  <meta name="description" content="Personliga lasergravyrer på sten. Nyckelringar, minnesstenar och mer. ELEGANT-M."/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:linear-gradient(160deg,#b5a99a 0%,#9e9086 30%,#897a6e 60%,#7a6b5f 100%);min-height:100vh;font-family:'Josefin Sans',sans-serif;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(255,245,220,0.6) 0.5px,transparent 0.5px),radial-gradient(circle,rgba(240,220,180,0.4) 0.3px,transparent 0.3px),radial-gradient(circle,rgba(255,235,200,0.5) 0.4px,transparent 0.4px);background-size:28px 28px,18px 22px,40px 32px;background-position:0 0,7px 9px,15px 5px;animation:glitterShift 6s ease-in-out infinite alternate;}
+    @keyframes glitterShift{0%{opacity:0.35}50%{opacity:0.85}100%{opacity:0.4}}
+
+    .top-bar{position:relative;z-index:10;width:100%;max-width:1200px;margin:0 auto;padding:1.8rem 2.5rem 0;display:flex;align-items:center;justify-content:space-between;}
+    .back-link{font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;color:#1a1209;opacity:0.65;display:flex;align-items:center;gap:0.5rem;transition:opacity 0.2s;}
+    .back-link:hover{opacity:1;}
+    .back-link::before{content:'←';font-size:1rem;}
+    .site-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.3rem,2.5vw,1.9rem);font-weight:300;letter-spacing:0.18em;background:linear-gradient(135deg,#1a1209 0%,#3a2a1a 50%,#1a1209 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;white-space:nowrap;}
+    .site-name span{font-style:italic;}
+    .top-spacer{width:100px;}
+
+    .page-title{position:relative;z-index:10;text-align:center;padding:2rem 1rem 0.5rem;}
+    .page-title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,8vw,6rem);font-weight:300;letter-spacing:0.15em;background:linear-gradient(135deg,#1a1209 0%,#3a2a1a 50%,#1a1209 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .page-title p{font-size:clamp(0.7rem,1.3vw,0.85rem);letter-spacing:0.28em;text-transform:uppercase;color:#1a1209;opacity:0.55;margin-top:0.5rem;}
+    .title-line{width:120px;height:0.5px;margin:1.2rem auto 0;background:linear-gradient(90deg,transparent,#1a1209aa,transparent);}
+
+    /* Bigger container to fit more buttons */
+    .btn-container{position:relative;z-index:10;width:min(98vw,1200px);aspect-ratio:980/1100;margin:0 auto;}
+    .hex-btn{position:absolute;transform:translate(-50%,-50%);width:min(13.5vw,126px);height:min(13.5vw,126px);cursor:pointer;transition:transform 0.25s;display:block;text-decoration:none;}
+    .hex-btn.coming{cursor:default;}
+    .hex-btn.active:hover{transform:translate(-50%,-50%) scale(1.08);}
+    .hex-btn svg{width:100%;height:100%;overflow:visible;}
+
+    /* Stone-themed gradient: dark warm granite */
+    .hex-fill{fill:url(#hexGradStone);}
+    .hex-btn.coming .hex-fill{fill:url(#hexGradDimStone);opacity:0.6;}
+
+    /* Warm gold neon stroke instead of cyan */
+    .hex-stroke{fill:none;stroke:#e8c87a;stroke-width:1.8;stroke-linejoin:round;animation:neonStroke 2.5s ease-in-out infinite alternate;filter:url(#neonGlowStone);}
+    @keyframes neonStroke{0%{stroke-opacity:0.75;stroke-width:1.4;}100%{stroke-opacity:1.0;stroke-width:2.2;}}
+    .hex-btn.coming .hex-stroke{stroke:#c4a45a;stroke-width:1;stroke-opacity:0.35;animation:none;filter:none;}
+
+    .hex-icon{font-size:clamp(1.1rem,2.2vw,1.6rem);line-height:1;filter:drop-shadow(0 0 4px rgba(232,200,122,0.6));text-align:center;}
+    .hex-label{font-family:'Josefin Sans',sans-serif;font-size:clamp(0.48rem,0.95vw,0.68rem);letter-spacing:0.13em;text-transform:uppercase;font-weight:600;background:linear-gradient(135deg,#c4a870,#f0e0c0,#d4b880,#f5e8d0,#c0a060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.3;width:100%;padding:0 6px;}
+    .hex-btn.coming .hex-label{background:none;-webkit-text-fill-color:rgba(160,140,100,0.4);font-size:clamp(0.4rem,0.8vw,0.56rem);}
+
+    .mini-footer{position:relative;z-index:10;width:100%;border-top:0.5px solid rgba(0,0,0,0.2);padding:1rem 0;margin-top:2rem;}
+    .mini-footer-inner{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;width:100%;max-width:1200px;margin:0 auto;padding:0 2rem;gap:1rem;}
+    .mini-footer-links{display:flex;gap:0;align-items:center;}
+    .mini-footer-links a{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;color:#1a1209;opacity:0.6;padding:0 0.7rem;border-right:1px solid rgba(0,0,0,0.2);line-height:1;transition:opacity 0.2s;}
+    .mini-footer-links a:first-child{padding-left:0;}
+    .mini-footer-links a:last-child{border-right:none;}
+    .mini-footer-links a:hover{opacity:1;}
+    .mini-footer-mid{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:#1a1209;opacity:0.6;}
+    .mini-footer-copy{font-size:0.62rem;letter-spacing:0.08em;color:#1a1209;opacity:0.6;text-align:right;}
+
+    @media(max-width:600px){
+      .top-bar{padding:1.2rem 1.2rem 0;}
+      .site-name{font-size:1rem;letter-spacing:0.1em;}
+      .top-spacer{width:50px;}
+      .hex-btn{width:min(18vw,80px);height:min(18vw,80px);}
+      .hex-label{font-size:0.42rem;letter-spacing:0.08em;}
+      .hex-icon{font-size:0.95rem;}
+      .mini-footer-inner{flex-direction:column;align-items:center;gap:0.6rem;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Dark warm granite gradient -->
+    <radialGradient id="hexGradStone" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#2e2318"/>
+      <stop offset="50%" stop-color="#1a150d"/>
+      <stop offset="100%" stop-color="#0d0a06"/>
+    </radialGradient>
+    <radialGradient id="hexGradDimStone" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#221c12"/>
+      <stop offset="100%" stop-color="#0d0a06"/>
+    </radialGradient>
+    <!-- Gold warm glow -->
+    <filter id="neonGlowStone" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b2"/>
+      <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<div class="top-bar">
+  <a class="back-link" href="index.html">Tillbaka</a>
+  <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
+  <div class="top-spacer"></div>
+</div>
+
+<div class="page-title">
+  <h1>Sten</h1>
+  <p>Lasergravyr på natursten — tidlös skönhet i varje detalj</p>
+  <div class="title-line"></div>
+</div>
+
+<div class="btn-container">
+
+  <!-- RAD 1: 2 knappar -->
+  <!-- STEN-NYCKELRING → aktiv -->
+  <a class="hex-btn active" style="left:35%;top:10%;" href="sten-nyckelring.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">🔑</div>
+          <div class="hex-label" style="font-size:clamp(0.38rem,0.75vw,0.55rem);letter-spacing:0.08em;">Sten&#8209;nyckelring</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- MINNESSTEN → aktiv -->
+  <a class="hex-btn active" style="left:65%;top:10%;" href="sten-minnessten.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">🪨</div>
+          <div class="hex-label">Minnessten</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- RAD 2: 3 knappar -->
+  <!-- DEKORSTEN → aktiv -->
+  <a class="hex-btn active" style="left:20%;top:28%;" href="sten-dekorsten.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">💎</div>
+          <div class="hex-label">Dekorsten</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- BORDSSKYLT → aktiv -->
+  <a class="hex-btn active" style="left:50%;top:28%;" href="sten-bordsskylt.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="20" viewBox="0 0 28 20">
+              <rect x="1" y="2" width="26" height="14" rx="2" fill="none" stroke="rgba(232,200,122,0.7)" stroke-width="1.2"/>
+              <line x1="14" y1="16" x2="14" y2="19" stroke="rgba(232,200,122,0.5)" stroke-width="1"/>
+              <line x1="8" y1="19" x2="20" y2="19" stroke="rgba(232,200,122,0.5)" stroke-width="1"/>
+              <text x="14" y="12" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="4.5" font-weight="600" letter-spacing="0.4" fill="rgba(232,200,122,0.85)">NAMN</text>
+            </svg>
+          </div>
+          <div class="hex-label">Bordsskylt</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- NAMNSKYLT → aktiv -->
+  <a class="hex-btn active" style="left:80%;top:28%;" href="sten-namnskylt.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">🏷️</div>
+          <div class="hex-label">Namnskylt</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- RAD 3: 2 knappar -->
+  <!-- UNDERLÄGG / COASTER → aktiv -->
+  <a class="hex-btn active" style="left:35%;top:52%;" href="sten-underlagg.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">🫗</div>
+          <div class="hex-label" style="font-size:clamp(0.38rem,0.75vw,0.55rem);letter-spacing:0.08em;">Glasunderlägg</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- GRAVYRPLATTA → aktiv -->
+  <a class="hex-btn active" style="left:65%;top:52%;" href="sten-gravyrplatta.html">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+      <foreignObject x="0" y="0" width="100" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;">
+          <div class="hex-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <rect x="2" y="4" width="20" height="16" rx="1.5" fill="none" stroke="rgba(232,200,122,0.7)" stroke-width="1.2"/>
+              <line x1="6" y1="9" x2="18" y2="9" stroke="rgba(232,200,122,0.5)" stroke-width="0.8"/>
+              <line x1="6" y1="12" x2="15" y2="12" stroke="rgba(232,200,122,0.5)" stroke-width="0.8"/>
+              <line x1="6" y1="15" x2="12" y2="15" stroke="rgba(232,200,122,0.5)" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="hex-label" style="font-size:clamp(0.38rem,0.75vw,0.55rem);">Gravyrplatta</div>
+        </div>
+      </foreignObject>
+    </svg>
+  </a>
+
+  <!-- RAD 4: COMING SOON x3 -->
+  <div class="hex-btn coming" style="left:20%;top:74%;">
+    <svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+    <foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg>
+  </div>
+
+  <div class="hex-btn coming" style="left:50%;top:74%;">
+    <svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+    <foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg>
+  </div>
+
+  <div class="hex-btn coming" style="left:80%;top:74%;">
+    <svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+    <foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg>
+  </div>
+
+  <!-- RAD 5: 1 centrerad COMING SOON -->
+  <div class="hex-btn coming" style="left:50%;top:92%;width:min(14vw,128px);height:min(14vw,128px);">
+    <svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,2 98,26 98,74 50,98 2,74 2,26"/><polygon class="hex-stroke" points="50,2 98,26 98,74 50,98 2,74 2,26"/>
+    <foreignObject x="0" y="0" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 6px;box-sizing:border-box;"><div class="hex-icon">✦</div><div class="hex-label">Coming Soon</div></div></foreignObject></svg>
+  </div>
+
+</div>
+
+<div class="mini-footer">
+  <div class="mini-footer-inner">
+    <div class="mini-footer-links">
+      <a href="index.html">Köpvillkor</a>
+      <a href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="mini-footer-mid">Sverige &ndash; SEK</div>
+    <div class="mini-footer-copy">&copy; ALKAISY AB 559285-0588</div>
+  </div>
+</div>
+
+</body>
+</html>
