@@ -649,7 +649,13 @@ async function loadDetail(mId,pId){
   $("camp-pct").value=cp.pct||"";$("camp-name").value=cp.name||"";
   $("camp-start").value=cp.start||"";$("camp-end").value=cp.end||"";
   $("camp-box").style.display=cp.active?"block":"none";
-  // Gravyrinstellningar
+
+  // NYT: Ladda designfunktioner från Firebase
+  $("allow-rot").checked = d.allowRotation !== false;
+  $("allow-cur").checked = d.allowCurve !== false;
+  $("allow-sty").checked = d.allowStyle !== false;
+  $("allow-mov").checked = d.allowMovable !== false;
+
   if(d.engraveColor)$("eng-color").value=d.engraveColor;
   $("eng-maxfont").value=d.maxFontSize||"";
   $("eng-w-mm").value=d.engraveWidthMM||"";
@@ -659,14 +665,13 @@ async function loadDetail(mId,pId){
   $("eng-x-pct").value=d.engraveZoneX||10;
   $("eng-y-pct").value=d.engraveZoneY||25;
   $("eng-desc").value=d.engraveDesc||"";
-  if($("tgl-movable"))$("tgl-movable").checked=d.engraveMovable!==false;
+  
   renderFramesList(d.frames||[]);
-  // Setup zone editor with first product image
   const firstImg=(d.images&&d.images.length)?d.images[0].url:"";
   initZoneEditor(firstImg, d.engraveZoneX||10, d.engraveZoneY||25, d.engraveWidth||70, d.engraveHeight||50, d.engraveWidthMM, d.engraveHeightMM);
   setSt("eng-status","","");
 }
-
+  
 window.saveEngrave=async function(){
   const mId=cMat.id,pId=cProd.id;
   const eng={
