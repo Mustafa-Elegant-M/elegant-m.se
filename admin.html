@@ -264,6 +264,30 @@
           <div class="panel-ttl">Gravyrinställningar</div>
           <button class="btn-p" onclick="saveEngrave()">Spara allt</button>
         </div>
+        
+        <!-- NYT: DESIGNFUNKTIONER (Toggles för kunden) -->
+        <div style="margin-bottom:1.5rem; padding:1rem; background:rgba(0,255,180,0.05); border-radius:12px; border:0.5px solid rgba(0,255,180,0.1);">
+          <div class="panel-ttl" style="margin-bottom:1rem; font-size:0.7rem;">Tillåtna funktioner för kunden</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+            <div class="tgl-row">
+              <div><div class="tgl-lbl">Rotation</div><div class="tgl-sub">Kunden kan rotera texten</div></div>
+              <label class="tgl"><input type="checkbox" id="allow-rot" checked/><span class="tgl-sl"></span></label>
+            </div>
+            <div class="tgl-row">
+              <div><div class="tgl-lbl">Böjning</div><div class="tgl-sub">Konkav/Konvex text</div></div>
+              <label class="tgl"><input type="checkbox" id="allow-cur" checked/><span class="tgl-sl"></span></label>
+            </div>
+            <div class="tgl-row">
+              <div><div class="tgl-lbl">Score/Fill</div><div class="tgl-sub">Välja mellan kontur/fyllning</div></div>
+              <label class="tgl"><input type="checkbox" id="allow-sty" checked/><span class="tgl-sl"></span></label>
+            </div>
+            <div class="tgl-row">
+              <div><div class="tgl-lbl">Flytta fritt</div><div class="tgl-sub">Dra texten på bilden</div></div>
+              <label class="tgl"><input type="checkbox" id="allow-mov" checked/><span class="tgl-sl"></span></label>
+            </div>
+          </div>
+        </div>
+
         <div style="font-size:0.62rem;color:#666;letter-spacing:0.08em;margin-bottom:1rem;">
           Dra och ändra storleken på den gröna rutan direkt på produktbilden nedan.
         </div>
@@ -274,14 +298,11 @@
           <div id="zone-editor-wrap" style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#1a1a1a;border:0.5px solid rgba(0,255,180,0.2);">
             <img id="zone-product-img" src="" alt="" style="width:100%;display:block;opacity:0.85;"/>
             <div id="zone-no-img" style="width:100%;height:200px;display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;">Ladda upp produktbild för att se zonen</div>
-            <!-- DRAGGABLE ZONE -->
             <div id="zone-box" style="position:absolute;border:2px solid rgba(0,255,180,0.85);background:rgba(0,255,180,0.08);cursor:move;box-shadow:0 0 0 1px rgba(0,0,0,0.3);border-radius:2px;display:none;">
-              <!-- Corner handles -->
               <div class="zh" data-c="nw" style="top:-6px;left:-6px;cursor:nw-resize;"></div>
               <div class="zh" data-c="ne" style="top:-6px;right:-6px;cursor:ne-resize;"></div>
               <div class="zh" data-c="sw" style="bottom:-6px;left:-6px;cursor:sw-resize;"></div>
               <div class="zh" data-c="se" style="bottom:-6px;right:-6px;cursor:se-resize;"></div>
-              <!-- Zone label -->
               <div id="zone-box-label" style="position:absolute;bottom:4px;right:6px;font-size:0.5rem;letter-spacing:0.08em;color:rgba(0,255,180,0.9);background:rgba(0,0,0,0.5);padding:1px 5px;border-radius:3px;pointer-events:none;white-space:nowrap;"></div>
             </div>
           </div>
@@ -339,8 +360,6 @@
         </div>
         <div class="status" id="eng-status"></div>
       </div>
-    </div>
-  </div>
 
   <!-- ORDRAR -->
   <div id="tab-orders" style="display:none;">
