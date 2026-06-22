@@ -152,6 +152,11 @@
   <input class="inp" type="email" id="login-email" placeholder="din@email.com"/>
   <label class="lbl">Lösenord</label>
   <input class="inp" type="password" id="login-pass" placeholder="••••••••••"/>
+  
+  <div style="text-align:right;">
+    <button class="btn-link" style="display:inline-block; width:auto; text-align:right; margin-top:0; padding:0.2rem 0; color:rgba(0,255,180,0.6);" onclick="resetPassword()">Glömt lösenord?</button>
+  </div>
+
   <button class="btn-main" id="login-btn" onclick="doLogin()">Logga in</button>
   <div class="status" id="login-status"></div>
 </div>
@@ -502,6 +507,22 @@ window.doLogin=async function(){
     btn.disabled=false;btn.textContent="Logga in";
   }
 };
+
+// NYTT: Funktion för lösenordsåterställning
+window.resetPassword=async function(){
+  const email=$("login-email").value.trim();
+  if(!email){
+    setSt("login-status","Skriv din e-postadress först.","err");
+    return;
+  }
+  try{
+    await auth.sendPasswordResetEmail(email);
+    setSt("login-status","Återställningslänk skickad till din e-post!","ok");
+  }catch(e){
+    setSt("login-status","Ett fel uppstod. Kontrollera e-postadressen.","err");
+  }
+};
+
 window.doOTP=function(){
   const v=$("otp-input").value.trim();
   if(Date.now()>OTPexp){setSt("otp-status","Koden gick ut.","err");return;}
