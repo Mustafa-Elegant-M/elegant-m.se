@@ -1,372 +1,72 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Designa Dricksglas — ELEGANT-M</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Great+Vibes&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
-  
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dricksglas Kollektion — ELEGANT-M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      background: linear-gradient(160deg, #f4f5f7 0%, #d5d9de 30%, #aeb4ba 60%, #858b92 100%);
-      min-height: 100vh;
-      font-family: 'Josefin Sans', sans-serif;
-      color: #111;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.5px, transparent 0.5px),
-                        radial-gradient(circle, rgba(200,200,200,0.4) 0.3px, transparent 0.3px);
-      background-size: 28px 28px, 18px 22px;
-      animation: glitterShift 6s ease-in-out infinite alternate;
-    }
-    @keyframes glitterShift { 0% { opacity: 0.4 } 100% { opacity: 0.8 } }
-
-    /* Navigering */
-    .top-bar {
-      position: relative; z-index: 10; max-width: 1200px; margin: 0 auto;
-      padding: 1.8rem 2.5rem 0; display: flex; align-items: center; justify-content: space-between;
-    }
-    .back-link {
-      font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none;
-      color: #111; opacity: 0.65; display: flex; align-items: center; gap: 0.5rem;
-    }
-    .site-name {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 300;
-      letter-spacing: 0.18em; text-decoration: none; color: #111;
-    }
-    .site-name span { font-style: italic; }
-
-    /* Layout för Produktsida + Designstudio */
-    .product-container {
-      position: relative; z-index: 10; max-width: 1200px; margin: 2rem auto;
-      display: flex; gap: 3rem; padding: 0 2rem;
-    }
-
-    /* VÄNSTER: Stor Live-förhandsgranskning av dricksglaset */
-    .preview-column {
-      flex: 1.2;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      padding: 2rem;
-      backdrop-filter: blur(10px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .glass-render-box {
-      position: relative;
-      width: 100%;
-      max-width: 450px;
-      aspect-ratio: 1/1;
-      border-radius: 6px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    }
-    .glass-render-box img.main-glass-img {
-      width: 100%; height: 100%; object-fit: cover; pointer-events: none;
-    }
-
-    /* Gravyrytan (Hämtas dynamiskt från Admin/Firebase) */
-    .dricksglas-gravure-zone {
-      position: absolute;
-      top: 25%; left: 25%; width: 50%; height: 45%; /* Standardfall innan Firebase laddat */
-      border: 1px dashed rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.02);
-      overflow: hidden;
-    }
-
-    /* Element som kunden kan flytta runt */
-    .draggable-element {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      cursor: grab;
-    }
-    .draggable-element:active { cursor: grabbing; }
-
-    /* CRYSTAL WHITE MATTE - Filter för uppladdad bild */
-    .user-uploaded-vector {
-      width: 90px;
-      filter: brightness(0) invert(1) opacity(0.85) drop-shadow(0px 0px 2px rgba(255,255,255,0.6));
-    }
-    .user-uploaded-vector img { width: 100%; height: auto; pointer-events: none; display: block; }
-
-    /* CRYSTAL WHITE MATTE - Effekt för skriven text */
-    .user-typed-text {
-      font-size: 26px;
-      white-space: nowrap;
-      color: rgba(255, 255, 255, 0.95);
-      text-shadow: 0px 0px 3px rgba(255,255,255,0.7);
-      line-height: 1;
-    }
-
-    /* HÖGER: Produktinfo & Anpassningsverktyg */
-    .details-column {
-      flex: 0.8;
-      background: rgba(255, 255, 255, 0.35);
-      border: 1px solid rgba(255,255,255,0.4);
-      border-radius: 8px;
-      padding: 2.5rem;
-      backdrop-filter: blur(5px);
-    }
-    
-    .product-meta h1 {
-      font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300;
-      letter-spacing: 0.05em; margin-bottom: 0.5rem;
-    }
-    .product-meta .price {
-      font-size: 1.2rem; font-weight: 400; letter-spacing: 0.1em; margin-bottom: 1.5rem;
-    }
-
-    /* Designverktyg paneler */
-    .studio-box {
-      background: rgba(255,255,255,0.4);
-      padding: 1.2rem; border-radius: 6px; margin-bottom: 1.2rem;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-    .studio-box h3 {
-      font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
-      margin-bottom: 1rem; opacity: 0.9;
-    }
-
-    .input-field, .select-field {
-      width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.6);
-      border: 1px solid rgba(0,0,0,0.12); font-family: 'Josefin Sans', sans-serif;
-      font-size: 0.9rem; color: #111; outline: none; border-radius: 4px;
-    }
-    .input-field:focus, .select-field:focus { border-color: #111; }
-
-    .upload-btn-wrapper {
-      display: block; width: 100%; padding: 0.8rem; text-align: center;
-      border: 1px solid #111; background: transparent; color: #111;
-      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; transition: all 0.3s; border-radius: 4px;
-    }
-    .upload-btn-wrapper:hover { background: #111; color: #fff; }
-    input[type="file"] { display: none; }
-    input[type="range"] { width: 100%; cursor: pointer; accent-color: #111; margin-top: 0.5rem; }
-
-    /* Köpknappen */
-    .checkout-btn {
-      width: 100%; padding: 1.2rem; background: #111; color: #fff;
-      border: none; font-family: 'Josefin Sans', sans-serif; font-size: 0.9rem;
-      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
-      transition: background 0.3s; margin-top: 1rem; border-radius: 4px;
-    }
-    .checkout-btn:hover { background: #333; }
-
-    @media(max-width: 900px) {
-      .product-container { flex-direction: column; padding: 0 1rem; }
-      .details-column { width: 100%; }
-    }
+    body { background: linear-gradient(160deg, #f4f5f7, #aeb4ba); min-height: 100vh; font-family: 'Josefin Sans', sans-serif; color: #111; padding: 2rem; }
+    .top-bar { max-width: 1200px; margin: 0 auto 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .site-name { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; text-decoration: none; color: #111; letter-spacing: 0.15em; }
+    .catalog-title { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
+    .product-card { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; backdrop-filter: blur(10px); transition: transform 0.3s; }
+    .product-card:hover { transform: translateY(-5px); }
+    .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 4px; overflow: hidden; background: #ddd; margin-bottom: 1rem; }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .product-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; letter-spacing: 0.05em; }
   </style>
 </head>
 <body>
 
   <div class="top-bar">
-    <a class="back-link" href="javascript:history.back()">Tillbaka</a>
-    <a class="site-name" href="index.html">ELEGANT<span>-M</span></a>
-    <div style="width: 80px;"></div>
+    <a href="index.html" style="color:#111; text-decoration:none; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase;">← Tillbaka</a>
+    <a href="index.html" class="site-name">ELEGANT<span>-M</span></a>
+    <div></div>
   </div>
 
-  <div class="product-container">
-    
-    <!-- VÄNSTER: Glaset & Gravyrmattan -->
-    <div class="preview-column">
-      <div class="glass-render-box">
-        <!-- Laddas från Firebase Storage -->
-        <img class="main-glass-img" id="glassImage" src="https://via.placeholder.com/600x600/7f8c8d/ffffff?text=Laddar+dricksglas..." alt="Dricksglas">
-        
-        <!-- Den exakta gravyrytan admin har ställt in -->
-        <div class="dricksglas-gravure-zone" id="gravureZone">
-          
-          <!-- Kundens bild -->
-          <div class="draggable-element user-uploaded-vector" id="canvasImage" style="display: none;">
-             <img id="renderImage" src="" alt="Gravyr motiv">
-          </div>
+  <h1 class="catalog-title">Våra Dricksglas</h1>
 
-          <!-- Kundens text -->
-          <div class="draggable-element user-typed-text" id="canvasText" style="display: none;"></div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- HÖGER: Verktyg anpassade enbart för detta Dricksglas -->
-    <div class="details-column">
-      <div class="product-meta">
-        <h1 id="glassName">Dricksglas</h1>
-        <div class="price" id="glassPrice">... kr</div>
-      </div>
-
-      <!-- BILDSTUDIO -->
-      <div class="studio-box">
-        <h3>Lägg till Motiv (Kristallvit gravyr)</h3>
-        <label class="upload-btn-wrapper">
-          <input type="file" id="fileSelector" accept="image/png, image/jpeg">
-          Ladda upp din logga/bild
-        </label>
-        <input type="range" id="imageScale" min="30" max="250" value="90">
-      </div>
-
-      <!-- TEXTSTUDIO -->
-      <div class="studio-box">
-        <h3>Gravera Namn eller Text</h3>
-        <div style="margin-bottom: 0.8rem;">
-          <input type="text" id="textSource" class="input-field" placeholder="Skriv din text här...">
-        </div>
-        <div style="margin-bottom: 0.8rem;">
-          <select id="fontSource" class="select-field">
-            <option value="'Great Vibes', cursive">Elegant Skrivstil (Great Vibes)</option>
-            <option value="'Josefin Sans', sans-serif">Modern & Rak (Josefin)</option>
-            <option value="'Cormorant Garamond', serif">Klassisk (Cormorant)</option>
-          </select>
-        </div>
-        <div>
-          <input type="range" id="textScale" min="14" max="75" value="26">
-        </div>
-      </div>
-
-      <button class="checkout-btn" onclick="addToCart()">Lägg i varukorg</button>
-    </div>
-
+  <div class="grid" id="catalogGrid">
+    <div style="text-align:center; width:100%; opacity:0.5;">Laddar kollektionen...</div>
   </div>
 
-  <!-- FIREBASE INTEGRATION -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
   <script>
-    // DIN FIREBASE KONFIGURATION
     const firebaseConfig = {
-      apiKey: "DIN_API_KEY",
-      authDomain: "DITT_PROJEKT.firebaseapp.com",
-      projectId: "DITT_PROJEKT_ID",
-      storageBucket: "DITT_PROJEKT.appspot.com",
-      messagingSenderId: "DIN_SENDER_ID",
-      appId: "DITT_APP_ID"
+      apiKey: "DIN_API_KEY", authDomain: "DITT_PROJEKT.firebaseapp.com",
+      projectId: "DITT_PROJEKT_ID", storageBucket: "DITT_PROJEKT.appspot.com",
+      messagingSenderId: "DIN_SENDER_ID", appId: "DITT_APP_ID"
     };
-
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Hämta ID från URL-strängen (t.ex: dricksglas.html?id=GLAS123)
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-
-    // LÄS IN RÄTT DRICKSGLAS FRÅN FIREBASE
-    async function loadGlassProduct() {
-      if(!productId) {
-        document.getElementById('glassName').innerText = "Inget glas valt";
-        return;
-      }
-
+    async function getProducts() {
+      const grid = document.getElementById('catalogGrid');
       try {
-        const doc = await db.collection('dricksglas').doc(productId).get();
-        if(doc.exists) {
+        const snapshot = await db.collection('dricksglas').get();
+        grid.innerHTML = '';
+        snapshot.forEach(doc => {
           const product = doc.data();
-          
-          // Uppdatera produktinfo
-          document.getElementById('glassName').innerText = product.name;
-          document.getElementById('glassPrice').innerText = (product.price || '399') + ' kr';
-          document.getElementById('glassImage').src = product.imageUrl;
-
-          // Ställ in den unika gravyrytan som Admin markerat
-          if(product.gravureArea) {
-            const zone = document.getElementById('gravureZone');
-            zone.style.top = product.gravureArea.top + '%';
-            zone.style.left = product.gravureArea.left + '%';
-            zone.style.width = product.gravureArea.width + '%';
-            zone.style.height = product.gravureArea.height + '%';
-          }
-        }
-      } catch (error) {
-        console.error("Kunde inte ladda glaset:", error);
-      }
+          grid.innerHTML += `
+            <div class="product-card" onclick="goToDesign('${doc.id}')">
+              <div class="img-box">
+                <img src="${product.imageUrl}" alt="${product.name}">
+              </div>
+              <h3>${product.name}</h3>
+            </div>
+          `;
+        });
+      } catch (err) { grid.innerHTML = 'Kunde inte ladda produkter.'; }
     }
 
-    // --- INTERAKTIV DESIGN-LOGIK ---
-    const fileSelector = document.getElementById('fileSelector');
-    const renderImage = document.getElementById('renderImage');
-    const canvasImage = document.getElementById('canvasImage');
-    const imageScale = document.getElementById('imageScale');
-
-    fileSelector.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          renderImage.src = event.target.result;
-          canvasImage.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
-      }
-    });
-    imageScale.addEventListener('input', e => canvasImage.style.width = e.target.value + 'px');
-
-    const textSource = document.getElementById('textSource');
-    const fontSource = document.getElementById('fontSource');
-    const textScale = document.getElementById('textScale');
-    const canvasText = document.getElementById('canvasText');
-
-    textSource.addEventListener('input', function(e) {
-      canvasText.innerText = e.target.value;
-      canvasText.style.display = e.target.value.trim() !== "" ? 'block' : 'none';
-    });
-    fontSource.addEventListener('change', e => canvasText.style.fontFamily = e.target.value);
-    textScale.addEventListener('input', e => canvasText.style.fontSize = e.target.value + 'px');
-
-    // --- DRA OCH SLÄPP LOGIK ---
-    let movingElement = null;
-    let isMoving = false;
-    let startX, startY, currentX, currentY;
-
-    const elements = document.querySelectorAll('.draggable-element');
-    elements.forEach(el => {
-      el.addEventListener('mousedown', startDrag);
-      el.addEventListener('touchstart', startDrag, {passive: false});
-    });
-
-    document.addEventListener('mousemove', doDrag);
-    document.addEventListener('touchmove', doDrag, {passive: false});
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchend', endDrag);
-
-    function startDrag(e) {
-      movingElement = e.currentTarget;
-      isMoving = true;
-      const data = e.type.includes('mouse') ? e : e.touches[0];
-      startX = data.clientX;
-      startY = data.clientY;
-      currentX = movingElement.offsetLeft;
-      currentY = movingElement.offsetTop;
+    function goToDesign(id) {
+      // Skickar kunden till designstudion och skickar med rätt ID helt automatiskt!
+      window.location.href = 'dricksglas-design.html?id=' + id;
     }
-
-    function doDrag(e) {
-      if (!isMoving || !movingElement) return;
-      e.preventDefault();
-      const data = e.type.includes('mouse') ? e : e.touches[0];
-      const moveX = data.clientX - startX;
-      const moveY = data.clientY - startY;
-      movingElement.style.left = (currentX + moveX) + 'px';
-      movingElement.style.top = (currentY + moveY) + 'px';
-    }
-
-    function endDrag() { isMoving = false; movingElement = null; }
-
-    function addToCart() {
-      alert("Designen sparad! Glaset har lagts i varukorgen.");
-    }
-
-    window.onload = loadGlassProduct;
+    window.onload = getProducts;
   </script>
 </body>
 </html>
