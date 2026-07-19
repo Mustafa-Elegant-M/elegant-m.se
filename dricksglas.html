@@ -1,55 +1,195 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dricksglas Kollektion — ELEGANT-M</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
+  
+  <!-- Typsnitt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: linear-gradient(160deg, #f4f5f7, #aeb4ba); min-height: 100vh; font-family: 'Josefin Sans', sans-serif; color: #111; padding: 2rem; }
-    .top-bar { max-width: 1200px; margin: 0 auto 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .site-name { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; text-decoration: none; color: #111; letter-spacing: 0.15em; }
-    .catalog-title { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.1em; }
-    .grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
-    .product-card { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; backdrop-filter: blur(10px); transition: transform 0.3s; }
-    .product-card:hover { transform: translateY(-5px); }
-    .img-box { width: 100%; aspect-ratio: 1/1; border-radius: 4px; overflow: hidden; background: #ddd; margin-bottom: 1rem; }
-    .img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .product-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; letter-spacing: 0.05em; }
+    
+    /* NY KRISTALLVIT MATT BAKGRUND */
+    body {
+      background: linear-gradient(135deg, #ffffff 0%, #f7f9fb 45%, #eef2f5 80%, #e2e7ec 100%);
+      min-height: 100vh;
+      font-family: 'Josefin Sans', sans-serif;
+      overflow-x: hidden;
+      color: #111;
+      position: relative;
+    }
+
+    /* Matt, frostad kristallyta (Vitt skimmer) */
+    body::before {
+      content: ''; 
+      position: fixed; 
+      inset: 0; 
+      z-index: 0; 
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.9) 0.8px, transparent 0.8px),
+                        radial-gradient(circle, rgba(230,235,240,0.5) 0.5px, transparent 0.5px);
+      background-size: 32px 32px, 20px 24px;
+      opacity: 0.8;
+      backdrop-filter: brightness(1.02);
+    }
+
+    /* Säkerställer att innehållet ligger ovanför bakgrundseffekten */
+    .top-bar, .catalog-title, .grid {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Navigering */
+    .top-bar { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 2rem 2rem 0;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+    }
+    .back-link {
+      color: #111; 
+      text-decoration: none; 
+      font-size: 0.75rem; 
+      letter-spacing: 0.15em; 
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+    
+    .site-name { 
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: 1.9rem; 
+      font-weight: 300;
+      letter-spacing: 0.18em; 
+      text-decoration: none; 
+      color: #111; 
+    }
+    .site-name span { font-style: italic; }
+
+    /* Rubrik */
+    .catalog-title { 
+      text-align: center; 
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: 2.8rem; 
+      font-weight: 300; 
+      margin: 4rem auto 3rem; 
+      text-transform: uppercase; 
+      letter-spacing: 0.15em; 
+    }
+
+    /* Produkt-grid */
+    .grid { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+      gap: 3rem; 
+      padding: 0 2rem 4rem;
+    }
+
+    /* Produktkort i frostat glas-stil (Ljust) */
+    .product-card { 
+      background: rgba(255, 255, 255, 0.4); 
+      border: 1px solid rgba(255, 255, 255, 0.6); 
+      border-radius: 8px; 
+      padding: 1.5rem; 
+      text-align: center; 
+      cursor: pointer; 
+      backdrop-filter: blur(10px); 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s; 
+    }
+    .product-card:hover { 
+      transform: translateY(-5px); 
+      background: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+    }
+    
+    .img-box { 
+      width: 100%; 
+      aspect-ratio: 1/1; 
+      border-radius: 4px; 
+      overflow: hidden; 
+      background: rgba(255,255,255,0.5); 
+      margin-bottom: 1.5rem; 
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .img-box img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+    }
+    
+    .product-card h3 { 
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: 1.5rem; 
+      font-weight: 400; 
+      letter-spacing: 0.05em; 
+      color: #111;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Toppmeny -->
   <div class="top-bar">
-    <a href="index.html" style="color:#111; text-decoration:none; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase;">← Tillbaka</a>
+    <a href="index.html" class="back-link">← Tillbaka</a>
     <a href="index.html" class="site-name">ELEGANT<span>-M</span></a>
-    <div></div>
+    <div style="width: 75px;"></div> <!-- Balanserar upp layouten -->
   </div>
 
+  <!-- Sidetitel -->
   <h1 class="catalog-title">Våra Dricksglas</h1>
 
+  <!-- Rutnät för produkter -->
   <div class="grid" id="catalogGrid">
-    <div style="text-align:center; width:100%; opacity:0.5;">Laddar kollektionen...</div>
+    <div style="text-align: center; width: 100%; opacity: 0.5; grid-column: 1 / -1; padding: 3rem 0;">
+      Öppnar det kristallvita galleriet...
+    </div>
   </div>
 
+  <!-- FIREBASE SCRIPTS -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  
   <script>
+    // 1. DIN FIREBASE KONFIGURATION (Klistra in dina egna nycklar här)
     const firebaseConfig = {
-      apiKey: "DIN_API_KEY", authDomain: "DITT_PROJEKT.firebaseapp.com",
-      projectId: "DITT_PROJEKT_ID", storageBucket: "DITT_PROJEKT.appspot.com",
-      messagingSenderId: "DIN_SENDER_ID", appId: "DITT_APP_ID"
+      apiKey: "DIN_API_KEY",
+      authDomain: "DITT_PROJEKT.firebaseapp.com",
+      projectId: "DITT_PROJEKT_ID",
+      storageBucket: "DITT_PROJEKT.appspot.com",
+      messagingSenderId: "DIN_SENDER_ID",
+      appId: "DITT_APP_ID"
     };
+    
+    // Initiera Firebase om det inte redan är gjort
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // 2. HÄMTA ALLA PRODUKTER FRÅN HUVUDSAMLINGEN
     async function getProducts() {
       const grid = document.getElementById('catalogGrid');
       try {
         const snapshot = await db.collection('dricksglas').get();
-        grid.innerHTML = '';
+        grid.innerHTML = ''; // Tömmer laddar-texten
+        
+        if (snapshot.empty) {
+          grid.innerHTML = '<div style="text-align:center; width:100%; grid-column: 1/-1; opacity:0.6;">Inga dricksglas hittades i databasen.</div>';
+          return;
+        }
+
         snapshot.forEach(doc => {
           const product = doc.data();
+          
+          // Bygg upp produktkortet dynamiskt
           grid.innerHTML += `
             <div class="product-card" onclick="goToDesign('${doc.id}')">
               <div class="img-box">
@@ -59,13 +199,18 @@
             </div>
           `;
         });
-      } catch (err) { grid.innerHTML = 'Kunde inte ladda produkter.'; }
+      } catch (err) { 
+        console.error("Fel vid hämtning:", err);
+        grid.innerHTML = '<div style="text-align:center; width:100%; grid-column: 1/-1; color:red;">Kunde inte ansluta till kollektionen. Kontrollera Firebase-nycklarna.</div>'; 
+      }
     }
 
+    // 3. AUTOMATISK VIDAREBEFORDRAN TILL DESIGNSTUDION
     function goToDesign(id) {
-      // Skickar kunden till designstudion och skickar med rätt ID helt automatiskt!
       window.location.href = 'dricksglas-design.html?id=' + id;
     }
+
+    // Starta hämtningen när sidan laddats
     window.onload = getProducts;
   </script>
 </body>
