@@ -18,6 +18,36 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
   <style>
+/* ── FINTRIMNINGS-BANNER ── */
+.fintrim-banner {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10, 10, 10, 0.85);
+  color: #ccc;
+  border: 1px solid rgba(200, 200, 200, 0.25);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.fintrim-banner button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.fintrim-banner button:hover {
+  color: #fff;
+}    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: linear-gradient(160deg, #2bb8c0 0%, #1e9aa2 30%, #178590 60%, #127880 100%);
