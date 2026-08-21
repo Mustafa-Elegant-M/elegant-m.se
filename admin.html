@@ -20,15 +20,13 @@
     /* LOGIN BOX */
     .auth-box{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
     .hidden{display:none!important;}
-    #login-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
-    #otp-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
+    #login-section,#otp-section{width:min(96vw,440px);margin:5rem auto;background:rgba(0,0,0,0.5);border:0.5px solid rgba(0,255,180,0.2);border-radius:20px;padding:2.5rem;box-shadow:0 0 60px rgba(0,0,0,0.6);}
     #admin-section{width:min(98vw,1200px);margin:2rem auto;padding:0 1rem 4rem;}
     .sec-title{font-family:"Cormorant Garamond",serif;font-size:2rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;}
     .sec-sub{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,255,180,0.45);margin-bottom:2rem;}
     .lbl{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.4rem;margin-top:1rem;}
     .inp{width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.8rem 1rem;font-family:"Josefin Sans",sans-serif;font-size:0.9rem;color:#ddd;outline:none;transition:border-color 0.2s;margin-bottom:0.2rem;}
     .inp:focus{border-color:rgba(0,255,180,0.4);}
-    .inp::placeholder{color:rgba(255,255,255,0.2);}
     .btn-main{width:100%;margin-top:1.5rem;padding:0.9rem;background:linear-gradient(135deg,rgba(0,60,40,0.95),rgba(0,30,20,0.98));border:0.5px solid rgba(0,255,180,0.45);border-radius:25px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,255,180,0.95);transition:all 0.2s;}
     .btn-main:hover{border-color:rgba(0,255,180,0.9);box-shadow:0 0 20px rgba(0,255,180,0.1);}
     .btn-main:disabled{opacity:0.4;cursor:not-allowed;}
@@ -36,11 +34,13 @@
     .btn-link:hover{color:rgba(0,255,180,0.9);}
     .status{font-size:0.7rem;letter-spacing:0.08em;min-height:1.2rem;margin-top:0.8rem;text-align:center;}
     .err{color:#ff7070;} .inf{color:rgba(0,255,180,0.8);} .ok{color:#4cff80;}
+    
     /* TABS */
     .tabs{display:flex;gap:0.5rem;margin-bottom:2rem;flex-wrap:wrap;}
     .tab{padding:0.6rem 1.2rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#777;transition:all 0.2s;}
     .tab.active{background:rgba(0,255,180,0.08);border-color:rgba(0,255,180,0.5);color:rgba(0,255,180,0.9);}
-    /* PANEL */
+    
+    /* PANEL & CARDS */
     .panel{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
     .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.8rem;}
     .panel-ttl{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,255,180,0.65);}
@@ -50,30 +50,41 @@
     .btn-s:hover{border-color:rgba(255,255,255,0.3);color:#ccc;}
     .btn-d{padding:0.5rem 0.7rem;background:rgba(255,60,60,0.06);border:0.5px solid rgba(255,60,60,0.2);border-radius:10px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.58rem;color:rgba(255,80,80,0.7);transition:all 0.2s;}
     .btn-d:hover{background:rgba(255,60,60,0.15);}
-    /* CARDS */
-    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;}
-    .card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.2rem;transition:border-color 0.2s;}
-    .card:hover{border-color:rgba(0,255,180,0.2);}
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem;}
+    .card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.2rem;transition:border-color 0.2s;position:relative;}
+    .card[draggable="true"]{cursor:grab;}
+    .card[draggable="true"]:active{cursor:grabbing;}
+    .card.dragging{opacity:0.4;border-color:rgba(0,255,180,0.6);}
     .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.8rem;}
-    .card-name{font-size:0.85rem;letter-spacing:0.08em;color:#ddd;}
-    .card-sub{font-size:0.58rem;letter-spacing:0.1em;color:#555;text-transform:uppercase;margin-top:0.2rem;}
-    .card-acts{display:flex;gap:0.4rem;flex-shrink:0;}
+    .card-name{font-size:0.85rem;letter-spacing:0.08em;color:#ddd;display:flex;align-items:center;gap:0.4rem;}
+    .card-sub{font-size:0.58rem;letter-spacing:0.1em;color:#777;text-transform:uppercase;margin-top:0.3rem;}
+    .card-acts{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.8rem;}
     .add-card{border:0.5px dashed rgba(0,255,180,0.25);background:rgba(0,255,180,0.02);display:flex;align-items:center;justify-content:center;gap:0.6rem;cursor:pointer;min-height:75px;color:rgba(0,255,180,0.5);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.2s;border-radius:12px;}
     .add-card:hover{border-color:rgba(0,255,180,0.6);color:rgba(0,255,180,0.9);background:rgba(0,255,180,0.05);}
+    
+    /* STATUS INDICATORS */
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+    .dot-green{background:#4cff80;box-shadow:0 0 8px rgba(76,255,128,0.6);}
+    .dot-red{background:#ff5555;box-shadow:0 0 8px rgba(255,85,85,0.6);}
+    .status-tag{font-size:0.52rem;letter-spacing:0.1em;padding:0.15rem 0.4rem;border-radius:8px;text-transform:uppercase;}
+    .tag-active{background:rgba(0,255,180,0.1);color:rgba(0,255,180,0.9);border:0.5px solid rgba(0,255,180,0.3);}
+    .tag-hidden{background:rgba(255,255,255,0.05);color:#777;border:0.5px solid rgba(255,255,255,0.1);}
+
     /* BREADCRUMB */
     .bc{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
     .bc-item{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;cursor:pointer;transition:color 0.2s;}
     .bc-item:hover{color:rgba(0,255,180,0.7);}
     .bc-item.active{color:rgba(0,255,180,0.8);cursor:default;}
     .bc-sep{color:#333;}
+    
     /* FORM */
     .fgrp{margin-bottom:1rem;}
     .flbl{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:#888;display:block;margin-bottom:0.35rem;}
-    .finp{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.7rem 0.9rem;font-family:"Josefin Sans",sans-serif;font-size:0.85rem;color:#ddd;outline:none;transition:border-color 0.2s;}
-    .finp:focus{border-color:rgba(0,255,180,0.4);}
-    .finp::placeholder{color:rgba(255,255,255,0.18);}
+    .finp,.fselect{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.7rem 0.9rem;font-family:"Josefin Sans",sans-serif;font-size:0.85rem;color:#ddd;outline:none;transition:border-color 0.2s;}
+    .finp:focus,.fselect:focus{border-color:rgba(0,255,180,0.4);}
     .frow{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
     textarea.finp{resize:vertical;min-height:80px;}
+    
     /* TOGGLE */
     .tgl-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:0.5px solid rgba(255,255,255,0.05);}
     .tgl-lbl{font-size:0.75rem;letter-spacing:0.08em;color:#bbb;}
@@ -84,41 +95,42 @@
     .tgl-sl::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#555;border-radius:50%;transition:0.3s;}
     .tgl input:checked+.tgl-sl{background:rgba(0,255,180,0.3);}
     .tgl input:checked+.tgl-sl::before{transform:translateX(20px);background:rgba(0,255,180,0.9);}
+    
     /* COLOR PALETTE */
     .cp-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:0.5rem;}
     .cp-swatch{width:100%;aspect-ratio:1;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.2s;box-shadow:0 2px 5px rgba(0,0,0,0.5);}
     .cp-swatch:hover{transform:scale(1.1);}
     .cp-swatch.active{border-color:#00ffb4;box-shadow:0 0 10px rgba(0,255,180,0.6);transform:scale(1.1);}
+    
     /* CONTENT BLOCKS */
     .block-card{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;margin-bottom:1rem;position:relative;}
     .block-acts{position:absolute;top:1rem;right:1rem;display:flex;gap:0.4rem;}
     .upzone{background:rgba(0,255,180,0.02);border:0.5px dashed rgba(0,255,180,0.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
     input[type="file"]{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.5rem;color:#777;font-size:0.72rem;margin-bottom:0.6rem;cursor:pointer;}
     progress{width:100%;height:5px;border-radius:3px;margin-bottom:0.5rem;display:none;}
-    progress::-webkit-progress-bar{background:rgba(255,255,255,0.08);border-radius:3px;}
-    progress::-webkit-progress-value{background:rgba(0,255,180,0.7);border-radius:3px;}
-    /* TABLES */
+    
+    /* TABLES & BADGES */
     .tbl{width:100%;border-collapse:collapse;font-size:0.7rem;}
     .tbl th{font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,255,180,0.55);padding:0.6rem 0.7rem;border-bottom:0.5px solid rgba(0,255,180,0.1);text-align:left;}
     .tbl td{padding:0.6rem 0.7rem;border-bottom:0.5px solid rgba(255,255,255,0.04);color:#999;vertical-align:top;}
     .tbl tr:hover td{background:rgba(0,255,180,0.02);}
-    /* BADGES */
     .badge{display:inline-block;font-size:0.53rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.18rem 0.5rem;border-radius:10px;font-weight:600;}
     .b-new{background:rgba(150,150,150,0.15);color:#888;border:0.5px solid rgba(150,150,150,0.2);}
     .b-sil{background:rgba(180,180,220,0.12);color:#aab;border:0.5px solid rgba(180,180,220,0.25);}
     .b-gld{background:rgba(255,200,0,0.1);color:rgba(255,200,0,0.8);border:0.5px solid rgba(255,200,0,0.2);}
     .b-plt{background:rgba(0,255,220,0.08);color:rgba(0,255,220,0.7);border:0.5px solid rgba(0,255,220,0.2);}
-    /* STATS */
+    
+    /* STATS & MODAL */
     .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;}
     .stat{background:rgba(0,0,0,0.3);border:0.5px solid rgba(0,255,180,0.1);border-radius:12px;padding:1.2rem;text-align:center;}
     .stat-n{font-family:"Cormorant Garamond",serif;font-size:2.2rem;font-weight:300;background:linear-gradient(135deg,#888,#eee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
     .stat-l{font-size:0.56rem;letter-spacing:0.15em;text-transform:uppercase;color:#555;margin-top:0.4rem;}
-    /* MODAL */
     .modal-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.82);align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem;}
     .modal-bg.open{display:flex;}
     .modal-box{background:linear-gradient(160deg,#071a12,#040f0a);border:0.5px solid rgba(0,255,180,0.2);border-radius:18px;width:min(96vw,540px);max-height:90vh;overflow-y:auto;padding:2rem;box-shadow:0 0 50px rgba(0,0,0,0.7);}
     .modal-ttl{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:300;letter-spacing:0.12em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.5rem;}
     .modal-foot{display:flex;gap:0.8rem;margin-top:1.5rem;justify-content:flex-end;}
+    
     /* ZONE EDITOR */
     .zone-box{position:absolute;border:2px solid rgba(0,255,180,0.85);background:rgba(0,255,180,0.08);cursor:move;box-shadow:0 0 0 1px rgba(0,0,0,0.3);border-radius:2px;}
     .zone-box.z2{border-color:rgba(255,180,0,0.85);background:rgba(255,180,0,0.08);}
@@ -126,13 +138,9 @@
     .zone-box.z2 .zh{background:rgba(255,180,0,0.9);}
     .zb-lbl{position:absolute;bottom:4px;right:6px;font-size:0.5rem;letter-spacing:0.08em;color:rgba(0,255,180,0.9);background:rgba(0,0,0,0.5);padding:1px 5px;border-radius:3px;pointer-events:none;white-space:nowrap;}
     .zone-box.z2 .zb-lbl{color:rgba(255,180,0,0.9);}
-    /* MISC */
     .loading{color:rgba(0,255,180,0.4);font-size:0.7rem;letter-spacing:0.15em;text-align:center;padding:2rem;}
     .empty{color:#444;font-size:0.7rem;text-align:center;padding:2rem;font-style:italic;}
-    @media(max-width:600px){
-      .frow{grid-template-columns:1fr;}
-      .cp-grid{grid-template-columns:repeat(6,1fr);}
-    }
+    @media(max-width:600px){.frow{grid-template-columns:1fr;}.cp-grid{grid-template-columns:repeat(6,1fr);}}
   </style>
 </head>
 <body>
@@ -184,47 +192,107 @@
     <div class="bc" id="bc"></div>
     <div class="panel" id="p-mats">
       <div class="panel-hdr">
-        <div class="panel-ttl">Material</div>
-        <button class="btn-p" onclick="openAddMat()">+ Lägg till</button>
+        <div class="panel-ttl">Material & Standardkatalog</div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn-s" onclick="initDefaultData()">⚡ Initiera standardkatalog</button>
+          <button class="btn-p" onclick="openAddMat()">+ Nytt material</button>
+        </div>
       </div>
       <div class="card-grid" id="mats-grid"><div class="loading">Laddar...</div></div>
     </div>
     
     <div class="panel" id="p-prods" style="display:none;">
       <div class="panel-hdr">
-        <div class="panel-ttl">Produkter</div>
-        <button class="btn-p" onclick="openAddProd()">+ Lägg till</button>
+        <div class="panel-ttl">Produkter (Dra och släpp för sortering)</div>
+        <button class="btn-p" onclick="openAddProd()">+ Ny produkt</button>
       </div>
       <div class="card-grid" id="prods-grid"></div>
     </div>
 
     <div id="p-detail" style="display:none;">
       
+      <!-- ALLMÄN PRODUKTINFO (Pris, Synlighet, Gravyrzon) -->
       <div class="panel">
-        <div class="panel-hdr"><div class="panel-ttl">Produktbilder (Karusell)</div></div>
+        <div class="panel-hdr">
+          <div class="panel-ttl">Produktinställningar</div>
+          <button class="btn-p" onclick="saveProdInfo()">Spara grundinfo</button>
+        </div>
+        
+        <div class="fgrp">
+          <label class="flbl">Kort produktbeskrivning</label>
+          <textarea class="finp" id="prod-short-desc" placeholder="Kortfattad beskrivning för produkten..."></textarea>
+        </div>
+
+        <div class="frow">
+          <div class="fgrp">
+            <label class="flbl">Pristyp</label>
+            <select class="fselect" id="prod-price-type" onchange="togglePriceFields()">
+              <option value="fixed">Fast pris</option>
+              <option value="offert">Preliminärt (Offert)</option>
+            </select>
+          </div>
+          <div class="fgrp" id="box-price">
+            <label class="flbl">Pris (SEK)</label>
+            <input class="finp" type="number" id="prod-price" placeholder="t.ex. 299"/>
+          </div>
+        </div>
+
+        <div class="frow">
+          <div class="fgrp">
+            <label class="flbl">Rabatt / Reapris (SEK - valfritt)</label>
+            <input class="finp" type="number" id="prod-sale-price" placeholder="Lämna tomt om ej rea"/>
+          </div>
+          <div class="fgrp">
+            <label class="flbl">Status</label>
+            <select class="fselect" id="prod-active">
+              <option value="true">Aktiv (Syns i butiken)</option>
+              <option value="false">Dold (Visas ej)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-ttl" style="margin-top:1.5rem;margin-bottom:0.8rem;color:rgba(0,255,180,0.8);">Gravyrzon (Mått i mm)</div>
+        <div class="frow">
+          <div class="fgrp">
+            <label class="flbl">Längd / Bredd (mm)</label>
+            <input class="finp" type="number" id="prod-gz-w" placeholder="Bredd i mm"/>
+          </div>
+          <div class="fgrp">
+            <label class="flbl">Höjd (mm)</label>
+            <input class="finp" type="number" id="prod-gz-h" placeholder="Höjd i mm"/>
+          </div>
+        </div>
+        <div class="status" id="prod-info-st"></div>
+      </div>
+
+      <!-- BILDER -->
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-ttl">Produktbilder (Cloudinary — Max 2 bilder, Max 5MB, JPG/PNG)</div></div>
         <div class="upzone">
-          <input type="file" id="img-upload" accept="image/*" multiple/>
+          <input type="file" id="img-upload" accept="image/jpeg,image/png,image/jpg" multiple/>
           <progress id="up-prog" max="100"></progress>
           <button class="btn-p" id="up-btn" onclick="uploadImgs()">Ladda upp bild(er)</button>
         </div>
         <div class="img-grid" id="imgs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem;"><div class="empty">Inga bilder.</div></div>
       </div>
 
+      <!-- SEKTIONSBYGGARE -->
       <div class="panel">
         <div class="panel-hdr">
           <div class="panel-ttl">Sektionsbyggare (Beskrivning & Detaljer)</div>
           <button class="btn-s" onclick="addProdBlock()">+ Lägg till sektion</button>
         </div>
-        <div style="font-size:0.62rem;color:#777;margin-bottom:1rem;">Här kan du bygga upp produktens informationssida med rubriker, texter och bilder.</div>
+        <div style="font-size:0.62rem;color:#777;margin-bottom:1rem;">Bygg upp utökade informationssektioner för produkten.</div>
         <div id="prod-blocks-container"></div>
         <button class="btn-p" style="width:100%;margin-top:1rem;" onclick="saveProdBlocks()">Spara sektioner</button>
         <div class="status" id="pb-status"></div>
       </div>
 
+      <!-- GRAVYRYTOR VISUELLT -->
       <div class="panel">
         <div class="panel-hdr">
-          <div class="panel-ttl">Gravyrytor (Max 2 st)</div>
-          <button class="btn-p" onclick="saveEngrave()">Spara inställningar</button>
+          <div class="panel-ttl">Visuell Gravyryteredigerare (Max 2 st)</div>
+          <button class="btn-p" onclick="saveEngrave()">Spara gravyrzoner</button>
         </div>
         
         <div class="tgl-row" style="margin-bottom:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:10px;">
@@ -232,7 +300,7 @@
           <label class="tgl"><input type="checkbox" id="tgl-zone2" onchange="toggleZone2()"/><span class="tgl-sl"></span></label>
         </div>
 
-        <div class="flbl" style="margin-bottom:0.5rem;">Visuell Zon-editor</div>
+        <div class="flbl" style="margin-bottom:0.5rem;">Placering på produktbild</div>
         <div id="zone-editor-wrap" style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#1a1a1a;border:0.5px solid rgba(0,255,180,0.2);">
           <img id="zone-product-img" src="" alt="" style="width:100%;display:block;opacity:0.85;"/>
           <div id="zone-no-img" style="width:100%;height:200px;display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;">Ladda upp produktbild för att rita zon</div>
@@ -260,19 +328,15 @@
               <div class="fgrp"><label class="flbl">Höjd (mm)</label><input class="finp" type="number" id="z0-h-mm" placeholder="T.ex. 20" oninput="renderZones()"/></div>
             </div>
             <div class="frow" style="margin-bottom:0.6rem;">
-              <div class="fgrp"><label class="flbl">Tillåtna textstilar (komma-seprerade)</label><input class="finp" type="text" id="z0-fonts" placeholder="T.ex. Rak, Kursiv, Skrivstil"/></div>
-              <div class="fgrp"><label class="flbl">Max Textstorlek (px)</label><input class="finp" type="number" id="z0-maxfont" placeholder="T.ex. 32" value="32"/></div>
+              <div class="fgrp"><label class="flbl">Tillåtna textstilar</label><input class="finp" type="text" id="z0-fonts" placeholder="Rak, Kursiv, Skrivstil"/></div>
+              <div class="fgrp"><label class="flbl">Max Textstorlek (px)</label><input class="finp" type="number" id="z0-maxfont" value="32"/></div>
             </div>
             <div class="fgrp">
-              <label class="flbl">Gravyrfärg (Syns för kunden)</label>
+              <label class="flbl">Gravyrfärg</label>
               <div id="cp-0" class="cp-grid"></div>
               <input type="hidden" id="z0-color" value="#c0c0c0"/>
             </div>
-            <div class="fgrp"><label class="flbl">Beskrivning / Box-titel</label><input class="finp" type="text" id="z0-desc" placeholder="T.ex. Framsida"/></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;border-top:0.5px solid rgba(255,255,255,0.05);padding-top:1rem;">
-              <div class="tgl-row"><div><div class="tgl-lbl">Rotation</div></div><label class="tgl"><input type="checkbox" id="z0-rot" checked/><span class="tgl-sl"></span></label></div>
-              <div class="tgl-row"><div><div class="tgl-lbl">Böjning (Konvex)</div></div><label class="tgl"><input type="checkbox" id="z0-cur" checked/><span class="tgl-sl"></span></label></div>
-            </div>
+            <div class="fgrp"><label class="flbl">Beskrivning</label><input class="finp" type="text" id="z0-desc" placeholder="T.ex. Framsida"/></div>
           </div>
 
           <div id="z1-settings" style="display:none;background:rgba(255,180,0,0.03);border:0.5px solid rgba(255,180,0,0.2);padding:1rem;border-radius:12px;">
@@ -282,19 +346,15 @@
               <div class="fgrp"><label class="flbl">Höjd (mm)</label><input class="finp" type="number" id="z1-h-mm" placeholder="T.ex. 20" oninput="renderZones()"/></div>
             </div>
             <div class="frow" style="margin-bottom:0.6rem;">
-              <div class="fgrp"><label class="flbl">Tillåtna textstilar (komma-seprerade)</label><input class="finp" type="text" id="z1-fonts" placeholder="T.ex. Rak, Kursiv, Skrivstil"/></div>
-              <div class="fgrp"><label class="flbl">Max Textstorlek (px)</label><input class="finp" type="number" id="z1-maxfont" placeholder="T.ex. 32" value="32"/></div>
+              <div class="fgrp"><label class="flbl">Tillåtna textstilar</label><input class="finp" type="text" id="z1-fonts" placeholder="Rak, Kursiv, Skrivstil"/></div>
+              <div class="fgrp"><label class="flbl">Max Textstorlek (px)</label><input class="finp" type="number" id="z1-maxfont" value="32"/></div>
             </div>
             <div class="fgrp">
-              <label class="flbl">Gravyrfärg (Syns för kunden)</label>
+              <label class="flbl">Gravyrfärg</label>
               <div id="cp-1" class="cp-grid"></div>
               <input type="hidden" id="z1-color" value="#c0c0c0"/>
             </div>
-            <div class="fgrp"><label class="flbl">Beskrivning / Box-titel</label><input class="finp" type="text" id="z1-desc" placeholder="T.ex. Baksida"/></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;border-top:0.5px solid rgba(255,255,255,0.05);padding-top:1rem;">
-              <div class="tgl-row"><div><div class="tgl-lbl">Rotation</div></div><label class="tgl"><input type="checkbox" id="z1-rot" checked/><span class="tgl-sl"></span></label></div>
-              <div class="tgl-row"><div><div class="tgl-lbl">Böjning (Konvex)</div></div><label class="tgl"><input type="checkbox" id="z1-cur" checked/><span class="tgl-sl"></span></label></div>
-            </div>
+            <div class="fgrp"><label class="flbl">Beskrivning</label><input class="finp" type="text" id="z1-desc" placeholder="T.ex. Baksida"/></div>
           </div>
         </div>
         <div class="status" id="eng-status"></div>
@@ -338,7 +398,7 @@
         <div class="panel-ttl">Orderhistorik</div>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
           <input class="finp" type="text" id="ord-search" placeholder="Sök..." style="width:160px;padding:0.45rem 0.7rem;font-size:0.72rem;" oninput="filterOrds()"/>
-          <select class="finp" id="ord-filter" style="width:150px;padding:0.45rem;font-size:0.68rem;" onchange="filterOrds()">
+          <select class="fselect" id="ord-filter" style="width:150px;padding:0.45rem;font-size:0.68rem;" onchange="filterOrds()">
             <option value="">Alla</option><option value="new">Nya</option><option value="processing">Behandlas</option>
             <option value="quoted">Offert skickad</option><option value="confirmed">Bekräftad</option><option value="completed">Klar</option>
           </select>
@@ -428,11 +488,10 @@
   <div class="modal-box">
     <div class="modal-ttl">Orderdetaljer</div>
     <div id="m-ord-content"></div>
-    <div id="m-ord-dl" style="margin-top:1rem;display:none;">
-      </div>
+    <div id="m-ord-dl" style="margin-top:1rem;display:none;"></div>
     <div class="fgrp" style="margin-top:1.2rem;">
       <label class="flbl">Uppdatera status</label>
-      <select class="finp" id="m-ord-status">
+      <select class="fselect" id="m-ord-status">
         <option value="new">Ny</option><option value="processing">Behandlas</option>
         <option value="quoted">Offert skickad</option><option value="confirmed">Bekräftad</option><option value="completed">Klar</option>
       </select>
@@ -447,7 +506,6 @@
 <script>
 const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
 const CLOUD="dqqirxxnz",UP="elegant-m-admin";
-const AM=["alkaisy",".ab@gmail",".com"].join("");
 const EPK="AOGvNUIneVA3XJNhk",ESV="service_t7ra7wk",ETP="template_8rljpya";
 
 const app=firebase.initializeApp(FB),auth=firebase.auth(),db=firebase.firestore();
@@ -457,13 +515,12 @@ let OTP=null,OTPexp=null;
 let att=parseInt(localStorage.getItem("em_a")||"0");
 let lck=parseInt(localStorage.getItem("em_l")||"0");
 let cMat=null,cProd=null,cPage=null,cOrdId=null;
-let allOrds=[],allCusts=[],allPages=[];
+let allOrds=[],allCusts=[],allPages=[],currentProducts=[];
 
 const stdColors=["#000000","#ffffff","#c0c0c0","#d4af37","#b87333","#cd7f32","#e5e4e2","#555555","#888888","#f5f5dc","#8b4513","#d2b48c","#b76e79","#4b5320","#000080","#800000","#ff0000","#00ff00","#0000ff","#ffff00","#800080","#ffa500","#00ffff","#ffc0cb"];
 
-// State för Zoner (Max 2)
+// State för Zoner & Block
 let zs=[{x:10,y:25,w:70,h:50},{x:10,y:80,w:70,h:10}];
-// State för Innehållsblock
 let prodBlocks=[];
 let pageBlocks=[];
 
@@ -479,6 +536,56 @@ function loy(n){
   if(n>=2)return{l:"Silver",b:"b-sil",i:"🥈"};
   return{l:"Ny kund",b:"b-new",i:"🥉"};
 }
+
+// ── INITIERA STANDARDSORTIMENT ──
+const DEFAULT_CATALOG = {
+  "akryl": { name: "Akryl", prods: ["Akrylskyltar", "Akryldisplay"] },
+  "kampanj": { name: "Kampanj", prods: ["Rea", "B2B"] },
+  "metall": { name: "Metall", prods: ["Visitkort", "Elegant penna", "Metall nyckelring"] },
+  "sten": { name: "Sten", prods: ["Stenbricka", "Glas underlägg stenplatta"] },
+  "specialbestallning": { name: "Specialbeställning", prods: ["Designa"] },
+  "tra": { name: "Trä", prods: ["Skärbräda", "Nyckelring", "Underlägg", "Vägg tavla", "Dekoration", "Ask"] },
+  "lader": { name: "Läder", prods: ["Plånbok", "Nyckelring"] },
+  "glas": { name: "Glas", prods: ["Dricksglas"] }
+};
+
+window.initDefaultData = async function() {
+  if(!confirm("Vill du skapa upp alla standardmaterial och produkter i Firebase? Befintliga ändras ej.")) return;
+  try {
+    for (const [matSlug, matData] of Object.entries(DEFAULT_CATALOG)) {
+      await db.collection("materials").doc(matSlug).set({
+        name: matData.name,
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+
+      let orderIdx = 0;
+      for (const pName of matData.prods) {
+        const pSlug = slug(pName);
+        const pRef = db.collection("materials").doc(matSlug).collection("products").doc(pSlug);
+        const doc = await pRef.get();
+        if(!doc.exists) {
+          await pRef.set({
+            name: pName,
+            desc: "Produktbeskrivning...",
+            active: true,
+            priceType: "fixed",
+            price: 0,
+            salePrice: 0,
+            images: [],
+            order: orderIdx,
+            engraveZone: { lengthMm: 0, widthMm: 0 },
+            createdAt: new Date().toISOString()
+          });
+        }
+        orderIdx++;
+      }
+    }
+    alert("Standardkatalog skapad i Firebase!");
+    loadMats();
+  } catch(e) {
+    alert("Fel vid initiering: " + e.message);
+  }
+};
 
 // ── AUTH ──
 window.doLogin=async function(){
@@ -508,19 +615,13 @@ window.doLogin=async function(){
   }
 };
 
-// NYTT: Funktion för lösenordsåterställning
 window.resetPassword=async function(){
   const email=$("login-email").value.trim();
-  if(!email){
-    setSt("login-status","Skriv din e-postadress först.","err");
-    return;
-  }
+  if(!email){setSt("login-status","Skriv din e-postadress först.","err");return;}
   try{
     await auth.sendPasswordResetEmail(email);
-    setSt("login-status","Återställningslänk skickad till din e-post!","ok");
-  }catch(e){
-    setSt("login-status","Ett fel uppstod. Kontrollera e-postadressen.","err");
-  }
+    setSt("login-status","Återställningslänk skickad!","ok");
+  }catch(e){setSt("login-status","Fel vid återställning.","err");}
 };
 
 window.doOTP=function(){
@@ -534,6 +635,7 @@ window.doOTP=function(){
     setTimeout(()=>onReady(),300);
   }else{setSt("otp-status","Fel kod.","err");}
 };
+
 window.resendOTP=async function(){
   OTP=Math.floor(100000+Math.random()*900000).toString();
   OTPexp=Date.now()+600000;
@@ -567,8 +669,17 @@ window.navTo=function(lvl){
   updateBC();
 };
 
-// ── GENERIC CLOUDINARY UPLOAD ──
+// ── CLOUDINARY UPLOAD ──
 async function uploadToCloud(file, folder, onProg) {
+  if (file.size > 5 * 1024 * 1024) {
+    alert(`Filen "${file.name}" överstiger maxstorleken på 5MB.`);
+    return null;
+  }
+  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+    alert(`Filen "${file.name}" måste vara JPG eller PNG.`);
+    return null;
+  }
+  
   const fd=new FormData();fd.append("file",file);fd.append("upload_preset",UP);fd.append("folder",folder);
   return await new Promise((res,rej)=>{
     const x=new XMLHttpRequest();
@@ -596,7 +707,364 @@ function initPalette(containerId, inpId, defaultCol) {
   });
 }
 
-// ── SIDOR (CMS) ──
+// ── MATERIALS & PRODUCTS ──
+async function loadMats(){
+  const g=$("mats-grid");g.innerHTML='<div class="loading">Laddar...</div>';
+  try{
+    const snap=await db.collection("materials").get();
+    const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
+    g.innerHTML="";
+    mats.sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{
+      const c=document.createElement("div");c.className="card";
+      c.innerHTML='<div class="card-top"><div><div class="card-name">'+m.name+'</div></div><div class="card-acts"><button class="btn-s" onclick="openMat(\''+m.id+'\',\''+m.name+'\')">Öppna</button><button class="btn-d" onclick="delMat(\''+m.id+'\')">🗑</button></div></div>';
+      g.appendChild(c);
+    });
+    const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Nytt material';ac.onclick=openAddMat;g.appendChild(ac);
+  }catch(e){g.innerHTML='<div class="empty">Fel: '+e.message+'</div>';}
+}
+
+window.openMat=function(id,name){cMat={id,name};cProd=null;$("p-mats").style.display="none";$("p-prods").style.display="";$("p-detail").style.display="none";updateBC();loadProds(id);};
+window.openAddMat=function(){$("m-mat-name").value="";$("m-mat-id").value="";$("m-mat-name").oninput=function(){$("m-mat-id").value=slug(this.value);};openM("m-mat");};
+window.saveMat=async function(){
+  const name=$("m-mat-name").value.trim(),id=$("m-mat-id").value.trim();
+  if(!name||!id){setSt("m-mat-st","Fyll i fälten.","err");return;}
+  try{await db.collection("materials").doc(id).set({name,createdAt:new Date().toISOString()},{merge:true});closeM("m-mat");loadMats();}catch(e){setSt("m-mat-st",e.message,"err");}
+};
+window.delMat=async function(id){if(!confirm("Ta bort material?"))return;await db.collection("materials").doc(id).delete();loadMats();};
+
+async function loadProds(matId){
+  const g=$("prods-grid");g.innerHTML='<div class="loading">Laddar...</div>';
+  const snap=await db.collection("materials/"+matId+"/products").get();
+  currentProducts=[];snap.forEach(d=>currentProducts.push({id:d.id,...d.data()}));
+  currentProducts.sort((a,b)=>(a.order||0)-(b.order||0));
+  renderProdsList();
+}
+
+function renderProdsList(){
+  const g=$("prods-grid"); g.innerHTML="";
+  currentProducts.forEach((p, idx)=>{
+    const hasImages = p.images && p.images.length > 0;
+    const dotClass = hasImages ? "dot-green" : "dot-red";
+    const dotTitle = hasImages ? "Klar" : "Saknar bild";
+    const isActive = p.active !== false;
+    const tagClass = isActive ? "tag-active" : "tag-hidden";
+    const tagText = isActive ? "Aktiv" : "Dold";
+
+    const c=document.createElement("div"); c.className="card"; c.draggable=true;
+    c.dataset.idx=idx;
+
+    // Drag events
+    c.ondragstart = (e) => { e.dataTransfer.setData("text/plain", idx); c.classList.add("dragging"); };
+    c.ondragend = () => c.classList.remove("dragging");
+    c.ondragover = (e) => e.preventDefault();
+    c.ondrop = async (e) => {
+      e.preventDefault();
+      const fromIdx = parseInt(e.dataTransfer.getData("text/plain"));
+      const toIdx = idx;
+      if(fromIdx === toIdx) return;
+      const moved = currentProducts.splice(fromIdx, 1)[0];
+      currentProducts.splice(toIdx, 0, moved);
+      renderProdsList();
+      // Save order to DB
+      for(let i=0; i<currentProducts.length; i++){
+        await db.collection("materials").doc(cMat.id).collection("products").doc(currentProducts[i].id).update({order: i});
+      }
+    };
+
+    const priceDisp = p.priceType === "offert" ? "Offert/Preliminärt" : (p.price ? `${p.price} kr` : "Ej satt");
+
+    c.innerHTML=`
+      <div class="card-top">
+        <div>
+          <div class="card-name">
+            <span class="status-dot ${dotClass}" title="${dotTitle}"></span>
+            ${p.name}
+          </div>
+          <div class="card-sub">${priceDisp} • <span class="status-tag ${tagClass}">${tagText}</span></div>
+        </div>
+      </div>
+      <div class="card-acts">
+        <button class="btn-s" onclick="openProd('${p.id}','${p.name}')">Redigera</button>
+        <button class="btn-s" onclick="toggleProdActive('${p.id}', ${!isActive})">${isActive ? 'Dölj' : 'Aktivera'}</button>
+        <button class="btn-d" onclick="delProd('${cMat.id}','${p.id}')">🗑</button>
+      </div>
+    `;
+    g.appendChild(c);
+  });
+
+  const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Ny produkt';ac.onclick=openAddProd;g.appendChild(ac);
+}
+
+window.toggleProdActive=async function(pId, newStatus){
+  await db.collection("materials").doc(cMat.id).collection("products").doc(pId).update({active: newStatus});
+  loadProds(cMat.id);
+};
+
+window.openProd=async function(id,name){cProd={id,name};$("p-mats").style.display="none";$("p-prods").style.display="none";$("p-detail").style.display="block";updateBC();await loadDetail(cMat.id,id);};
+window.openAddProd=function(){$("m-prod-name").value="";$("m-prod-desc").value="";openM("m-prod");};
+window.saveProd=async function(){
+  const name=$("m-prod-name").value.trim(),desc=$("m-prod-desc").value.trim();
+  if(!name)return;
+  await db.collection("materials/"+cMat.id+"/products").doc(slug(name)).set({
+    name,
+    desc,
+    active:true,
+    priceType:"fixed",
+    price:0,
+    images:[],
+    createdAt:new Date().toISOString()
+  });
+  closeM("m-prod");loadProds(cMat.id);
+};
+window.delProd=async function(mId,pId){if(!confirm("Ta bort produkt?"))return;await db.collection("materials/"+mId+"/products").doc(pId).delete();loadProds(mId);};
+
+// ── DETAIL (PRODUKT) ──
+async function loadDetail(mId,pId){
+  const snap=await db.collection("materials").doc(mId).collection("products").doc(pId).get();
+  if(!snap.exists)return;
+  const d=snap.data();
+  
+  // Grundinfo
+  $("prod-short-desc").value = d.desc || "";
+  $("prod-price-type").value = d.priceType || "fixed";
+  $("prod-price").value = d.price || "";
+  $("prod-sale-price").value = d.salePrice || "";
+  $("prod-active").value = d.active !== false ? "true" : "false";
+  $("prod-gz-w").value = (d.engraveZone && d.engraveZone.widthMm) || "";
+  $("prod-gz-h").value = (d.engraveZone && d.engraveZone.lengthMm) || "";
+  togglePriceFields();
+
+  // Bilder
+  const g=$("imgs-grid");g.innerHTML="";
+  (d.images||[]).forEach((img,i)=>{
+    const el=document.createElement("div");el.className="img-item";
+    el.innerHTML='<img src="'+img.url+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;"/><div style="padding:0.5rem;"><button class="btn-d" style="width:100%;font-size:0.55rem;" onclick="delImg('+i+')">🗑 Ta bort</button></div>';
+    g.appendChild(el);
+  });
+  
+  // Innehållsblock
+  prodBlocks = d.contentBlocks || [];
+  renderBlocks("prod-blocks-container", prodBlocks, "prod");
+
+  // Gravyrytor (Visuell editor)
+  const zData = d.zones || [];
+  const z0 = zData[0] || {x:10,y:25,w:70,h:50, wMM:"", hMM:"", fonts:"", maxfont:32, color:stdColors[0], desc:""};
+  const z1 = zData[1] || {x:10,y:70,w:70,h:15, wMM:"", hMM:"", fonts:"", maxfont:32, color:stdColors[0], desc:""};
+  zs = [{x:z0.x, y:z0.y, w:z0.w, h:z0.h}, {x:z1.x, y:z1.y, w:z1.w, h:z1.h}];
+  
+  $("z0-w-mm").value = z0.wMM; $("z0-h-mm").value = z0.hMM;
+  $("z0-fonts").value = z0.fonts; $("z0-maxfont").value = z0.maxfont; $("z0-desc").value = z0.desc;
+  initPalette("cp-0", "z0-color", z0.color);
+
+  $("z1-w-mm").value = z1.wMM; $("z1-h-mm").value = z1.hMM;
+  $("z1-fonts").value = z1.fonts; $("z1-maxfont").value = z1.maxfont; $("z1-desc").value = z1.desc;
+  initPalette("cp-1", "z1-color", z1.color);
+
+  $("tgl-zone2").checked = zData.length > 1;
+  toggleZone2();
+
+  const firstImg=(d.images&&d.images.length)?d.images[0].url:"";
+  if(firstImg){ $("zone-product-img").src=firstImg; $("zone-product-img").style.display="block"; $("zone-no-img").style.display="none"; }
+  else { $("zone-product-img").style.display="none"; $("zone-no-img").style.display="flex"; }
+  
+  setTimeout(()=>renderZones(), 100);
+}
+
+window.togglePriceFields = function(){
+  const pt = $("prod-price-type").value;
+  $("box-price").style.display = pt === "fixed" ? "block" : "none";
+};
+
+window.saveProdInfo = async function(){
+  try {
+    await db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id).set({
+      desc: $("prod-short-desc").value.trim(),
+      priceType: $("prod-price-type").value,
+      price: parseFloat($("prod-price").value) || 0,
+      salePrice: parseFloat($("prod-sale-price").value) || 0,
+      active: $("prod-active").value === "true",
+      engraveZone: {
+        widthMm: parseFloat($("prod-gz-w").value) || 0,
+        lengthMm: parseFloat($("prod-gz-h").value) || 0
+      }
+    }, { merge: true });
+    setSt("prod-info-st", "Grundinfo sparad!", "ok"); setTimeout(()=>setSt("prod-info-st","",""), 3000);
+  } catch(e) { setSt("prod-info-st", e.message, "err"); }
+};
+
+window.uploadImgs=async function(){
+  const files=$("img-upload").files;if(!files.length)return;
+  const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
+  const snap=await ref.get();
+  const ex=snap.exists?(snap.data().images||[]):[];
+
+  if (ex.length + files.length > 2) {
+    alert("Maximalt 2 bilder per produkt är tillåtna.");
+    return;
+  }
+
+  const btn=$("up-btn"),prog=$("up-prog"); btn.disabled=true; prog.style.display="block";
+
+  for(let i=0;i<files.length;i++){
+    const res = await uploadToCloud(files[i], "elegant-m/"+cMat.id+"/"+cProd.id, p => prog.value = p);
+    if(res) ex.push({url:res.secure_url});
+  }
+  await ref.set({images:ex},{merge:true});
+  $("img-upload").value="";btn.disabled=false;prog.style.display="none";
+  loadDetail(cMat.id,cProd.id);
+};
+
+window.delImg=async function(i){
+  const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
+  const snap=await ref.get();const imgs=snap.data().images||[];imgs.splice(i,1);
+  await ref.set({images:imgs},{merge:true});loadDetail(cMat.id,cProd.id);
+};
+
+// ── ZONE EDITOR ──
+window.toggleZone2=function(){
+  const on = $("tgl-zone2").checked;
+  $("z1-settings").style.display = on ? "block" : "none";
+  $("zb-1").style.display = on && $("zone-product-img").src ? "block" : "none";
+  renderZones();
+};
+
+window.renderZones=function(){
+  const wrap=$("zone-editor-wrap");
+  const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+  if(cw===0) return;
+  
+  const b0 = $("zb-0");
+  b0.style.display="block";
+  b0.style.left=(zs[0].x/100*cw)+"px"; b0.style.top=(zs[0].y/100*ch)+"px";
+  b0.style.width=(zs[0].w/100*cw)+"px"; b0.style.height=(zs[0].h/100*ch)+"px";
+  const w0=$("z0-w-mm").value, h0=$("z0-h-mm").value;
+  $("zl-0").textContent = (w0&&h0) ? `Yta 1 (${w0}x${h0}mm)` : "Yta 1";
+
+  const b1 = $("zb-1");
+  if($("tgl-zone2").checked){
+    b1.style.display="block";
+    b1.style.left=(zs[1].x/100*cw)+"px"; b1.style.top=(zs[1].y/100*ch)+"px";
+    b1.style.width=(zs[1].w/100*cw)+"px"; b1.style.height=(zs[1].h/100*ch)+"px";
+    const w1=$("z1-w-mm").value, h1=$("z1-h-mm").value;
+    $("zl-1").textContent = (w1&&h1) ? `Yta 2 (${w1}x${h1}mm)` : "Yta 2";
+  }else{
+    b1.style.display="none";
+  }
+};
+
+(function(){
+  function makeDraggable(boxId, zIdx) {
+    const box=$(boxId), wrap=$("zone-editor-wrap");
+    if(!box||!wrap)return;
+    box.addEventListener("pointerdown",function(e){
+      if(e.target.classList.contains("zh"))return;
+      e.preventDefault();
+      const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+      const sx=e.clientX, sy=e.clientY;
+      const szx=zs[zIdx].x, szy=zs[zIdx].y;
+      function onMove(e){
+        zs[zIdx].x=Math.max(0,Math.min(100-zs[zIdx].w, szx+(e.clientX-sx)/cw*100));
+        zs[zIdx].y=Math.max(0,Math.min(100-zs[zIdx].h, szy+(e.clientY-sy)/ch*100));
+        renderZones();
+      }
+      function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
+      window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
+    });
+    box.querySelectorAll(".zh").forEach(h=>{
+      h.addEventListener("pointerdown",e=>{
+        e.preventDefault();e.stopPropagation();
+        const c=h.dataset.c, cw=wrap.offsetWidth, ch=wrap.offsetHeight;
+        const sx=e.clientX, sy=e.clientY, sz={...zs[zIdx]};
+        function onMove(e){
+          const dx=(e.clientX-sx)/cw*100, dy=(e.clientY-sy)/ch*100;
+          if(c.includes("e")) zs[zIdx].w=Math.max(5,Math.min(100-zs[zIdx].x, sz.w+dx));
+          if(c.includes("s")) zs[zIdx].h=Math.max(5,Math.min(100-zs[zIdx].y, sz.h+dy));
+          if(c.includes("w")){ const nx=Math.max(0,Math.min(sz.x+sz.w-5,sz.x+dx)); zs[zIdx].w=sz.x+sz.w-nx; zs[zIdx].x=nx; }
+          if(c.includes("n")){ const ny=Math.max(0,Math.min(sz.y+sz.h-5,sz.y+dy)); zs[zIdx].h=sz.y+sz.h-ny; zs[zIdx].y=ny; }
+          renderZones();
+        }
+        function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
+        window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
+      });
+    });
+  }
+  window.addEventListener("DOMContentLoaded", ()=>{
+    makeDraggable("zb-0", 0); makeDraggable("zb-1", 1);
+  });
+})();
+
+window.saveEngrave=async function(){
+  const zArr = [{
+    x: zs[0].x, y: zs[0].y, w: zs[0].w, h: zs[0].h,
+    wMM: $("z0-w-mm").value, hMM: $("z0-h-mm").value,
+    fonts: $("z0-fonts").value, maxfont: parseInt($("z0-maxfont").value)||32,
+    color: $("z0-color").value, desc: $("z0-desc").value
+  }];
+  if($("tgl-zone2").checked){
+    zArr.push({
+      x: zs[1].x, y: zs[1].y, w: zs[1].w, h: zs[1].h,
+      wMM: $("z1-w-mm").value, hMM: $("z1-h-mm").value,
+      fonts: $("z1-fonts").value, maxfont: parseInt($("z1-maxfont").value)||32,
+      color: $("z1-color").value, desc: $("z1-desc").value
+    });
+  }
+  try {
+    await db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id).set({zones: zArr}, {merge:true});
+    setSt("eng-status", "Gravyrinställningar sparade!", "ok"); setTimeout(() => setSt("eng-status", "", ""), 3000);
+  } catch(e) { setSt("eng-status", e.message, "err"); }
+};
+
+// ── BLOCKS ──
+function renderBlocks(containerId, blocksArr, typeContext) {
+  const c = $(containerId); c.innerHTML="";
+  if(!blocksArr.length) { c.innerHTML='<div class="empty">Inga sektioner skapade.</div>'; return; }
+  blocksArr.forEach((b, i) => {
+    const d = document.createElement("div"); d.className="block-card";
+    d.innerHTML = `
+      <div class="block-acts"><button class="btn-d" onclick="delBlock('${typeContext}', ${i})">🗑 Radera</button></div>
+      <div class="frow">
+        <div class="fgrp"><label class="flbl">Rubrik</label><input class="finp" type="text" value="${b.heading||''}" placeholder="Sektionsrubrik" onchange="updBlock('${typeContext}',${i},'heading',this.value)"/></div>
+      </div>
+      <div class="fgrp"><label class="flbl">Text/Innehåll</label><textarea class="finp" placeholder="Beskrivning..." onchange="updBlock('${typeContext}',${i},'content',this.value)">${b.content||''}</textarea></div>
+      <div class="fgrp">
+        <label class="flbl">Sektionsbild (Valfritt)</label>
+        ${b.imgUrl ? `<img src="${b.imgUrl}" style="width:100px; border-radius:8px; display:block; margin-bottom:0.5rem;"/>` : ""}
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <input type="file" id="block-up-${typeContext}-${i}" accept="image/*" style="margin:0;width:auto;flex:1;"/>
+          <button class="btn-s" onclick="uploadBlockImg('${typeContext}', ${i})">Ladda upp</button>
+        </div>
+        <progress id="block-prog-${typeContext}-${i}" max="100"></progress>
+      </div>
+    `;
+    c.appendChild(d);
+  });
+}
+
+window.addProdBlock=function(){ prodBlocks.push({heading:"", content:"", imgUrl:""}); renderBlocks("prod-blocks-container", prodBlocks, "prod"); };
+window.delBlock=function(ctx, i){ if(!confirm("Ta bort sektion?"))return; const arr = ctx==="prod"?prodBlocks:pageBlocks; arr.splice(i,1); renderBlocks(ctx==="prod"?"prod-blocks-container":"page-blocks-container", arr, ctx); };
+window.updBlock=function(ctx, i, key, val){ const arr = ctx==="prod"?prodBlocks:pageBlocks; arr[i][key]=val; };
+window.uploadBlockImg=async function(ctx, i){
+  const file = $(`block-up-${ctx}-${i}`).files[0];
+  if(!file)return;
+  const prog = $(`block-prog-${ctx}-${i}`); prog.style.display="block";
+  const folder = ctx==="prod" ? `elegant-m/${cMat.id}/${cProd.id}/blocks` : `elegant-m/pages/${cPage.id}/blocks`;
+  try {
+    const res = await uploadToCloud(file, folder, p => prog.value = p);
+    if(res) {
+      const arr = ctx==="prod"?prodBlocks:pageBlocks;
+      arr[i].imgUrl = res.secure_url;
+      renderBlocks(ctx==="prod"?"prod-blocks-container":"page-blocks-container", arr, ctx);
+    }
+  } catch(e) { alert("Uppladdning misslyckades."); }
+};
+window.saveProdBlocks=async function(){
+  try{
+    await db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id).set({contentBlocks: prodBlocks},{merge:true});
+    setSt("pb-status","Sektioner sparade!","ok"); setTimeout(()=>setSt("pb-status","",""), 3000);
+  }catch(e){setSt("pb-status",e.message,"err");}
+};
+
+// ── PAGES (CMS) ──
 async function loadPages(){
   const g=$("pages-grid");g.innerHTML='<div class="loading">Laddar...</div>';
   try{
@@ -650,273 +1118,7 @@ window.savePageBlocks=async function(){
   }catch(e){setSt("page-st",e.message,"err");}
 };
 
-window.addPageBlock=function(){ pageBlocks.push({type:"text", heading:"", content:"", imgUrl:""}); renderBlocks("page-blocks-container", pageBlocks, "page"); };
-
-// ── BLOCKS (Används för både Produkter och Sidor) ──
-function renderBlocks(containerId, blocksArr, typeContext) {
-  const c = $(containerId); c.innerHTML="";
-  if(!blocksArr.length) { c.innerHTML='<div class="empty">Inga sektioner skapade.</div>'; return; }
-  blocksArr.forEach((b, i) => {
-    const d = document.createElement("div"); d.className="block-card";
-    d.innerHTML = `
-      <div class="block-acts"><button class="btn-d" onclick="delBlock('${typeContext}', ${i})">🗑 Radera</button></div>
-      <div class="frow">
-        <div class="fgrp"><label class="flbl">Rubrik</label><input class="finp" type="text" value="${b.heading||''}" placeholder="Sektionsrubrik" onchange="updBlock('${typeContext}',${i},'heading',this.value)"/></div>
-      </div>
-      <div class="fgrp"><label class="flbl">Text/Innehåll</label><textarea class="finp" placeholder="Beskrivning..." onchange="updBlock('${typeContext}',${i},'content',this.value)">${b.content||''}</textarea></div>
-      <div class="fgrp">
-        <label class="flbl">Sektionsbild (Valfritt)</label>
-        ${b.imgUrl ? `<img src="${b.imgUrl}" style="width:100px; border-radius:8px; display:block; margin-bottom:0.5rem;"/>` : ""}
-        <div style="display:flex;gap:0.5rem;align-items:center;">
-          <input type="file" id="block-up-${typeContext}-${i}" accept="image/*" style="margin:0;width:auto;flex:1;"/>
-          <button class="btn-s" onclick="uploadBlockImg('${typeContext}', ${i})">Ladda upp</button>
-        </div>
-        <progress id="block-prog-${typeContext}-${i}" max="100"></progress>
-      </div>
-    `;
-    c.appendChild(d);
-  });
-}
-
-window.addProdBlock=function(){ prodBlocks.push({heading:"", content:"", imgUrl:""}); renderBlocks("prod-blocks-container", prodBlocks, "prod"); };
-window.delBlock=function(ctx, i){ if(!confirm("Ta bort sektion?"))return; const arr = ctx==="prod"?prodBlocks:pageBlocks; arr.splice(i,1); renderBlocks(ctx==="prod"?"prod-blocks-container":"page-blocks-container", arr, ctx); };
-window.updBlock=function(ctx, i, key, val){ const arr = ctx==="prod"?prodBlocks:pageBlocks; arr[i][key]=val; };
-window.uploadBlockImg=async function(ctx, i){
-  const file = $(`block-up-${ctx}-${i}`).files[0];
-  if(!file)return;
-  const prog = $(`block-prog-${ctx}-${i}`); prog.style.display="block";
-  const folder = ctx==="prod" ? `elegant-m/${cMat.id}/${cProd.id}/blocks` : `elegant-m/pages/${cPage.id}/blocks`;
-  try {
-    const res = await uploadToCloud(file, folder, p => prog.value = p);
-    const arr = ctx==="prod"?prodBlocks:pageBlocks;
-    arr[i].imgUrl = res.secure_url;
-    renderBlocks(ctx==="prod"?"prod-blocks-container":"page-blocks-container", arr, ctx);
-  } catch(e) { alert("Uppladdning misslyckades."); }
-};
-window.saveProdBlocks=async function(){
-  try{
-    await db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id).set({contentBlocks: prodBlocks},{merge:true});
-    setSt("pb-status","Sektioner sparade!","ok"); setTimeout(()=>setSt("pb-status","",""), 3000);
-  }catch(e){setSt("pb-status",e.message,"err");}
-};
-
-
-// ── MATERIALS & PRODUCTS ──
-async function loadMats(){
-  const g=$("mats-grid");g.innerHTML='<div class="loading">Laddar...</div>';
-  try{
-    const snap=await db.collection("materials").get();
-    const mats=[];snap.forEach(d=>mats.push({id:d.id,...d.data()}));
-    g.innerHTML="";
-    mats.sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{
-      const c=document.createElement("div");c.className="card";
-      c.innerHTML='<div class="card-top"><div><div class="card-name">'+m.name+'</div></div><div class="card-acts"><button class="btn-s" onclick="openMat(\''+m.id+'\',\''+m.name+'\')">Öppna</button><button class="btn-d" onclick="delMat(\''+m.id+'\')">🗑</button></div></div>';
-      g.appendChild(c);
-    });
-    const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Nytt material';ac.onclick=openAddMat;g.appendChild(ac);
-  }catch(e){g.innerHTML='<div class="empty">Fel: '+e.message+'</div>';}
-}
-
-window.openMat=function(id,name){cMat={id,name};cProd=null;$("p-mats").style.display="none";$("p-prods").style.display="";$("p-detail").style.display="none";updateBC();loadProds(id);};
-window.openAddMat=function(){$("m-mat-name").value="";$("m-mat-id").value="";$("m-mat-name").oninput=function(){$("m-mat-id").value=slug(this.value);};openM("m-mat");};
-window.saveMat=async function(){
-  const name=$("m-mat-name").value.trim(),id=$("m-mat-id").value.trim();
-  if(!name||!id){setSt("m-mat-st","Fyll i fälten.","err");return;}
-  try{await db.collection("materials").doc(id).set({name,createdAt:new Date().toISOString()});closeM("m-mat");loadMats();}catch(e){setSt("m-mat-st",e.message,"err");}
-};
-window.delMat=async function(id){if(!confirm("Ta bort material?"))return;await db.collection("materials").doc(id).delete();loadMats();};
-
-async function loadProds(matId){
-  const g=$("prods-grid");g.innerHTML='<div class="loading">Laddar...</div>';
-  const snap=await db.collection("materials/"+matId+"/products").get();
-  const prods=[];snap.forEach(d=>prods.push({id:d.id,...d.data()}));
-  g.innerHTML="";
-  prods.forEach(p=>{
-    const c=document.createElement("div");c.className="card";
-    c.innerHTML='<div class="card-top"><div><div class="card-name">'+p.name+'</div></div><div class="card-acts"><button class="btn-s" onclick="openProd(\''+p.id+'\',\''+p.name+'\')">Redigera</button><button class="btn-d" onclick="delProd(\''+matId+'\',\''+p.id+'\')">🗑</button></div></div>';
-    g.appendChild(c);
-  });
-  const ac=document.createElement("div");ac.className="add-card";ac.innerHTML='<span style="font-size:1.3rem">+</span> Ny produkt';ac.onclick=openAddProd;g.appendChild(ac);
-}
-
-window.openProd=async function(id,name){cProd={id,name};$("p-mats").style.display="none";$("p-prods").style.display="none";$("p-detail").style.display="block";updateBC();await loadDetail(cMat.id,id);};
-window.openAddProd=function(){$("m-prod-name").value="";$("m-prod-desc").value="";openM("m-prod");};
-window.saveProd=async function(){
-  const name=$("m-prod-name").value.trim(),desc=$("m-prod-desc").value.trim();
-  if(!name)return;
-  await db.collection("materials/"+cMat.id+"/products").doc(slug(name)).set({name,desc,images:[],createdAt:new Date().toISOString()});
-  closeM("m-prod");loadProds(cMat.id);
-};
-window.delProd=async function(mId,pId){if(!confirm("Ta bort?"))return;await db.collection("materials/"+mId+"/products").doc(pId).delete();loadProds(mId);};
-
-// ── DETAIL (PRODUKT) ──
-async function loadDetail(mId,pId){
-  const snap=await db.collection("materials").doc(mId).collection("products").doc(pId).get();
-  if(!snap.exists)return;
-  const d=snap.data();
-  
-  // Bilder
-  const g=$("imgs-grid");g.innerHTML="";
-  (d.images||[]).forEach((img,i)=>{
-    const el=document.createElement("div");el.className="img-item";
-    el.innerHTML='<img src="'+img.url+'" style="width:100%;aspect-ratio:1;object-fit:cover;"/><div style="padding:0.5rem;"><button class="btn-d" style="width:100%;font-size:0.55rem;" onclick="delImg('+i+')">🗑 Ta bort</button></div>';
-    g.appendChild(el);
-  });
-  
-  // Innehållsblock
-  prodBlocks = d.contentBlocks || [];
-  renderBlocks("prod-blocks-container", prodBlocks, "prod");
-
-  // Gravyrytor (Max 2)
-  const zData = d.zones || [];
-  const z0 = zData[0] || {x:10,y:25,w:70,h:50, wMM:"", hMM:"", fonts:"", maxfont:32, color:stdColors[0], desc:"", rot:true, cur:true};
-  const z1 = zData[1] || {x:10,y:70,w:70,h:15, wMM:"", hMM:"", fonts:"", maxfont:32, color:stdColors[0], desc:"", rot:true, cur:true};
-  zs = [
-    {x:z0.x, y:z0.y, w:z0.w, h:z0.h},
-    {x:z1.x, y:z1.y, w:z1.w, h:z1.h}
-  ];
-  
-  $("z0-w-mm").value = z0.wMM; $("z0-h-mm").value = z0.hMM;
-  $("z0-fonts").value = z0.fonts; $("z0-maxfont").value = z0.maxfont;
-  $("z0-desc").value = z0.desc;
-  $("z0-rot").checked = !!z0.rot; $("z0-cur").checked = !!z0.cur;
-  initPalette("cp-0", "z0-color", z0.color);
-
-  $("z1-w-mm").value = z1.wMM; $("z1-h-mm").value = z1.hMM;
-  $("z1-fonts").value = z1.fonts; $("z1-maxfont").value = z1.maxfont;
-  $("z1-desc").value = z1.desc;
-  $("z1-rot").checked = !!z1.rot; $("z1-cur").checked = !!z1.cur;
-  initPalette("cp-1", "z1-color", z1.color);
-
-  $("tgl-zone2").checked = zData.length > 1;
-  toggleZone2();
-
-  const firstImg=(d.images&&d.images.length)?d.images[0].url:"";
-  if(firstImg){ $("zone-product-img").src=firstImg; $("zone-product-img").style.display="block"; $("zone-no-img").style.display="none"; }
-  else { $("zone-product-img").style.display="none"; $("zone-no-img").style.display="flex"; }
-  
-  // Render Zones
-  setTimeout(()=>renderZones(), 100);
-}
-
-window.uploadImgs=async function(){
-  const files=$("img-upload").files;if(!files.length)return;
-  const btn=$("up-btn"),prog=$("up-prog"); btn.disabled=true; prog.style.display="block";
-  const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
-  const snap=await ref.get();const ex=snap.exists?(snap.data().images||[]):[];
-  for(let i=0;i<files.length;i++){
-    const res = await uploadToCloud(files[i], "elegant-m/"+cMat.id+"/"+cProd.id, p => prog.value = p);
-    ex.push({url:res.secure_url});
-  }
-  await ref.set({images:ex},{merge:true});
-  $("img-upload").value="";btn.disabled=false;prog.style.display="none";
-  loadDetail(cMat.id,cProd.id);
-};
-window.delImg=async function(i){
-  const ref=db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id);
-  const snap=await ref.get();const imgs=snap.data().images||[];imgs.splice(i,1);
-  await ref.set({images:imgs},{merge:true});loadDetail(cMat.id,cProd.id);
-};
-
-// ── ZONE EDITOR & SAVING ──
-window.toggleZone2=function(){
-  const on = $("tgl-zone2").checked;
-  $("z1-settings").style.display = on ? "block" : "none";
-  $("zb-1").style.display = on && $("zone-product-img").src ? "block" : "none";
-  renderZones();
-};
-
-window.renderZones=function(){
-  const wrap=$("zone-editor-wrap");
-  const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
-  if(cw===0) return;
-  
-  // Box 0
-  const b0 = $("zb-0");
-  b0.style.display="block";
-  b0.style.left=(zs[0].x/100*cw)+"px"; b0.style.top=(zs[0].y/100*ch)+"px";
-  b0.style.width=(zs[0].w/100*cw)+"px"; b0.style.height=(zs[0].h/100*ch)+"px";
-  const w0=$("z0-w-mm").value, h0=$("z0-h-mm").value;
-  $("zl-0").textContent = (w0&&h0) ? `Yta 1 (${w0}x${h0}mm)` : "Yta 1";
-
-  // Box 1
-  const b1 = $("zb-1");
-  if($("tgl-zone2").checked){
-    b1.style.display="block";
-    b1.style.left=(zs[1].x/100*cw)+"px"; b1.style.top=(zs[1].y/100*ch)+"px";
-    b1.style.width=(zs[1].w/100*cw)+"px"; b1.style.height=(zs[1].h/100*ch)+"px";
-    const w1=$("z1-w-mm").value, h1=$("z1-h-mm").value;
-    $("zl-1").textContent = (w1&&h1) ? `Yta 2 (${w1}x${h1}mm)` : "Yta 2";
-  }else{
-    b1.style.display="none";
-  }
-};
-
-// Dragging Zones
-(function(){
-  function makeDraggable(boxId, zIdx) {
-    const box=$(boxId), wrap=$("zone-editor-wrap");
-    if(!box||!wrap)return;
-    box.addEventListener("pointerdown",function(e){
-      if(e.target.classList.contains("zh"))return;
-      e.preventDefault();
-      const cw=wrap.offsetWidth, ch=wrap.offsetHeight;
-      const sx=e.clientX, sy=e.clientY;
-      const szx=zs[zIdx].x, szy=zs[zIdx].y;
-      function onMove(e){
-        zs[zIdx].x=Math.max(0,Math.min(100-zs[zIdx].w, szx+(e.clientX-sx)/cw*100));
-        zs[zIdx].y=Math.max(0,Math.min(100-zs[zIdx].h, szy+(e.clientY-sy)/ch*100));
-        renderZones();
-      }
-      function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
-      window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
-    });
-    box.querySelectorAll(".zh").forEach(h=>{
-      h.addEventListener("pointerdown",e=>{
-        e.preventDefault();e.stopPropagation();
-        const c=h.dataset.c, cw=wrap.offsetWidth, ch=wrap.offsetHeight;
-        const sx=e.clientX, sy=e.clientY, sz={...zs[zIdx]};
-        function onMove(e){
-          const dx=(e.clientX-sx)/cw*100, dy=(e.clientY-sy)/ch*100;
-          if(c.includes("e")) zs[zIdx].w=Math.max(5,Math.min(100-zs[zIdx].x, sz.w+dx));
-          if(c.includes("s")) zs[zIdx].h=Math.max(5,Math.min(100-zs[zIdx].y, sz.h+dy));
-          if(c.includes("w")){ const nx=Math.max(0,Math.min(sz.x+sz.w-5,sz.x+dx)); zs[zIdx].w=sz.x+sz.w-nx; zs[zIdx].x=nx; }
-          if(c.includes("n")){ const ny=Math.max(0,Math.min(sz.y+sz.h-5,sz.y+dy)); zs[zIdx].h=sz.y+sz.h-ny; zs[zIdx].y=ny; }
-          renderZones();
-        }
-        function onUp(){window.removeEventListener("pointermove",onMove);window.removeEventListener("pointerup",onUp);}
-        window.addEventListener("pointermove",onMove); window.addEventListener("pointerup",onUp);
-      });
-    });
-  }
-  window.addEventListener("DOMContentLoaded", ()=>{
-    makeDraggable("zb-0", 0); makeDraggable("zb-1", 1);
-  });
-})();
-
-window.saveEngrave=async function(){
-  const zArr = [];
-  zArr.push({
-    x: zs[0].x, y: zs[0].y, w: zs[0].w, h: zs[0].h,
-    wMM: $("z0-w-mm").value, hMM: $("z0-h-mm").value,
-    fonts: $("z0-fonts").value, maxfont: parseInt($("z0-maxfont").value)||32,
-    color: $("z0-color").value, desc: $("z0-desc").value,
-    rot: $("z0-rot").checked, cur: $("z0-cur").checked
-  });
-  if($("tgl-zone2").checked){
-    zArr.push({
-      x: zs[1].x, y: zs[1].y, w: zs[1].w, h: zs[1].h,
-      wMM: $("z1-w-mm").value, hMM: $("z1-h-mm").value,
-      fonts: $("z1-fonts").value, maxfont: parseInt($("z1-maxfont").value)||32,
-      color: $("z1-color").value, desc: $("z1-desc").value,
-      rot: $("z1-rot").checked, cur: $("z1-cur").checked
-    });
-  }
-  try {
-    await db.collection("materials").doc(cMat.id).collection("products").doc(cProd.id).set({zones: zArr}, {merge:true});
-    setSt("eng-status", "Gravyrinställningar sparade!", "ok"); setTimeout(() => setSt("eng-status", "", ""), 3000);
-  } catch(e) { setSt("eng-status", e.message, "err"); }
-};
+window.addPageBlock=function(){ pageBlocks.push({heading:"", content:"", imgUrl:""}); renderBlocks("page-blocks-container", pageBlocks, "page"); };
 
 // ── ORDERS ──
 async function loadOrds(){
@@ -949,7 +1151,6 @@ window.openOrd=function(id){
   const ly=loy(o.customerOrders||1);
   $("m-ord-content").innerHTML='<div style="background:rgba(0,255,180,0.04);border:0.5px solid rgba(0,255,180,0.1);border-radius:10px;padding:1rem;font-size:0.76rem;line-height:2;color:#999;"><b style="color:rgba(0,255,180,0.7)">Kund:</b> '+(o.customerName||"-")+'<br><b style="color:rgba(0,255,180,0.7)">E-post:</b> '+(o.customerEmail||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Telefon:</b> '+(o.phone||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Adress:</b> '+(o.address||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Produkt:</b> '+(o.product||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Antal:</b> '+(o.qty||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Meddelande:</b> '+(o.message||"-")+'<br><b style="color:rgba(0,255,180,0.7)">Lojalitet:</b> <span class="badge '+ly.b+'">'+ly.i+" "+ly.l+'</span></div>';
   
-  // Gravyr PNG Download
   const dlBox = $("m-ord-dl");
   if(o.engraveFileUrl) {
     dlBox.innerHTML = `<a href="${o.engraveFileUrl}" download="gravyr_${o.id}.png" target="_blank" style="display:block;text-align:center;text-decoration:none;padding:0.8rem;background:linear-gradient(135deg,rgba(0,255,180,0.2),rgba(0,100,80,0.3));border:1px solid rgba(0,255,180,0.5);border-radius:10px;color:rgba(0,255,180,0.9);font-family:'Josefin Sans',sans-serif;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">⬇ Ladda ner gravyrfil (PNG)</a>`;
@@ -979,6 +1180,7 @@ async function loadCusts(){
     $("st-new").textContent=allCusts.filter(c=>c.firstOrder&&new Date(c.firstOrder)>=tm).length;
   }catch(e){}
 }
+
 function renderCusts(cs){
   const tb=$("custs-tbody");
   if(!cs.length){tb.innerHTML='<tr><td colspan="6" class="empty">Inga kunder.</td></tr>';return;}
@@ -987,10 +1189,12 @@ function renderCusts(cs){
     return '<tr><td>'+(c.name||"-")+'</td><td style="font-size:0.62rem;">'+(c.email||"-")+'</td><td>'+(c.totalOrders||1)+'</td><td>'+last+'</td><td><span class="badge '+ly.b+'">'+ly.i+" "+ly.l+'</span></td><td><button class="btn-d" onclick="delCust(\''+c.id+'\')">🗑</button></td></tr>';
   }).join("");
 }
+
 window.filterCusts=function(){
   const q=$("cust-search").value.toLowerCase();
   renderCusts(allCusts.filter(c=>(c.name||"").toLowerCase().includes(q)||(c.email||"").toLowerCase().includes(q)));
 };
+
 window.delCust=async function(id){if(!confirm("Ta bort kund?"))return;await db.collection("customers").doc(id).delete();loadCusts();};
 
 async function runMaint(){
@@ -1004,18 +1208,19 @@ async function runMaint(){
     loadCusts();
   }
 }
+
 async function genReport(){
   const el=$("rep-content");el.className="loading";el.textContent="Genererar...";
   el.className="";
   el.innerHTML='<div style="font-size:0.68rem;color:#555;text-align:center;font-style:italic;">Genererad: '+ts()+'</div>';
 }
+
 window.sendReport=async function(auto=false){await secMail(auto?"Automatisk månadsrapport":"Månadsrapport","Rapport genererad.");if(!auto)alert("Rapport skickad!");};
 
 window.openM=function(id){$(id).classList.add("open");};
 window.closeM=function(id){$(id).classList.remove("open");};
 document.querySelectorAll(".modal-bg").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 document.addEventListener("keydown",e=>{if(e.key==="Enter"){if(!$("login-section").classList.contains("hidden"))doLogin();if(!$("otp-section").classList.contains("hidden"))doOTP();}});
-
 </script>
 </body>
 </html>
