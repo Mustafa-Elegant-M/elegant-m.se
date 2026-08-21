@@ -1222,5 +1222,111 @@ window.closeM=function(id){$(id).classList.remove("open");};
 document.querySelectorAll(".modal-bg").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 document.addEventListener("keydown",e=>{if(e.key==="Enter"){if(!$("login-section").classList.contains("hidden"))doLogin();if(!$("otp-section").classList.contains("hidden"))doOTP();}});
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signOut, 
+    setPersistence, 
+    browserLocalPersistence,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  // 1. FYLL I DINA EGNA FIREBASE-UPPGIFTER HÄR
+  const firebaseConfig = {
+    apiKey: "DIN_API_KEY",
+    authDomain: "DITT_PROJEKT.firebaseapp.com",
+    projectId: "DITT_PROJEKT_ID",
+    storageBucket: "DITT_PROJEKT.appspot.com",
+    messagingSenderId: "DITT_SENDER_ID",
+    appId: "DITT_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Kom ihåg inloggningen vid siduppdatering (F5)
+  setPersistence(auth, browserLocalPersistence);
+
+  const ONE_HOUR = 60 * 60 * 1000; // 1 timme i millisekunder
+
+  function updateActivity() {
+    localStorage.setItem('lastActive', Date.now().toString());
+  }
+
+  function checkInactivity() {
+    const lastActive = localStorage.getItem('lastActive');
+    if (lastActive && (Date.now() - parseInt(lastActive, 10) > ONE_HOUR)) {
+      localStorage.removeItem('lastActive');
+      signOut(auth).then(() => {
+        alert("Du har loggats ut på grund av 1 timmes inaktivitet.");
+      });
+      return true;
+    }
+    return false;
+  }
+
+  // Nollställ 1-timmesklockan när du rör musen eller trycker på knappar
+  ['click', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
+    window.addEventListener(evt, () => {
+      if (auth.currentUser) updateActivity();
+    });
+  });
+
+  // Håller koll på om du är inloggad vid F5 / uppdatering
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if (!checkInactivity()) {
+        if (!localStorage.getItem('lastActive')) updateActivity();
+        
+        // Visa logga ut-knappen och dölj inloggningsrutan
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+      }
+    } else {
+      localStorage.removeItem('lastActive');
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('logout-btn').style.display = 'none';
+    }
+  });
+
+  // Kontrollera automatiskt varje minut om 1 timme passerat
+  setInterval(() => {
+    if (auth.currentUser) checkInactivity();
+  }, 60000);
+
+  // GÖR SÅ ATT DINA KNAPPAR (onclick) FUNGERAR AUTOMATISKT:
+  window.doLogin = async function() {
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+    const status = document.getElementById('login-status');
+    
+    try {
+      status.innerText = "Loggar in...";
+      await signInWithEmailAndPassword(auth, email, pass);
+      status.innerText = "";
+    } catch (err) {
+      status.innerText = "Fel vid inloggning: " + err.message;
+    }
+  };
+
+  window.doLogout = function() {
+    localStorage.removeItem('lastActive');
+    signOut(auth);
+  };
+
+  window.resetPassword = function() {
+    const email = document.getElementById('login-email').value;
+    if (!email) {
+      alert("Fyll i din e-postadress i fältet först!");
+      return;
+    }
+    sendPasswordResetEmail(auth, email)
+      .then(() => alert("Återställningslänk har skickats till din e-post."))
+      .catch(err => alert("Fel: " + err.message));
+  };
+</script>  
 </body>
 </html>
