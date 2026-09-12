@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gravyrverktyget — Admin | ELEGANT-M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@200;300;400;600&family=Dancing+Script:wght@400;700&family=Oswald:wght@300;400&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:linear-gradient(160deg,#0a0a1a,#060610);min-height:100vh;font-family:"Josefin Sans",sans-serif;color:#ccc;overflow-x:hidden;}
+
+    /* TOP BAR */
+    .top-bar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 2rem;background:rgba(6,6,16,0.97);border-bottom:0.5px solid rgba(180,0,255,0.15);}
+    .logo{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:300;letter-spacing:0.2em;background:linear-gradient(135deg,#888,#eee,#bbb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .logo span{font-style:italic;}
+    .tool-badge{font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,0,255,0.8);border:0.5px solid rgba(180,0,255,0.3);padding:0.25rem 0.7rem;border-radius:20px;}
+    .back-btn{background:none;border:0.5px solid rgba(255,255,255,0.15);color:#888;font-family:"Josefin Sans",sans-serif;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:20px;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.2s;}
+    .back-btn:hover{border-color:rgba(255,255,255,0.4);color:#ccc;}
+
+    /* LAYOUT */
+    .main{display:grid;grid-template-columns:1fr 380px;gap:1.5rem;padding:1.5rem 2rem 4rem;max-width:1400px;margin:0 auto;}
+    @media(max-width:900px){.main{grid-template-columns:1fr;}}
+
+    /* PANELS */
+    .panel{background:rgba(0,0,0,0.35);border:0.5px solid rgba(180,0,255,0.15);border-radius:16px;padding:1.4rem;margin-bottom:1.2rem;}
+    .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.6rem;}
+    .panel-ttl{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,0,255,0.8);}
+
+    /* PRODUCT HEADER */
+    .prod-header{background:rgba(180,0,255,0.04);border:0.5px solid rgba(180,0,255,0.2);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;}
+    .prod-img-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,0.05);flex-shrink:0;}
+    .prod-title{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:300;letter-spacing:0.1em;color:#ddd;}
+    .prod-mat{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,0,255,0.6);margin-top:0.2rem;}
+
+    /* EDITOR CANVAS */
+    .editor-wrap{position:relative;width:100%;border-radius:12px;overflow:hidden;background:#111;border:0.5px solid rgba(180,0,255,0.2);user-select:none;min-height:300px;}
+    .editor-wrap img{width:100%;display:block;opacity:0.9;}
+    .no-img-msg{display:flex;align-items:center;justify-content:center;height:300px;color:#444;font-size:0.75rem;letter-spacing:0.1em;flex-direction:column;gap:0.5rem;}
+    .no-img-msg span{font-size:1.5rem;}
+
+    /* ZONE BOXES */
+    .zbox{position:absolute;border:2px solid rgba(180,0,255,0.9);background:rgba(180,0,255,0.08);cursor:move;border-radius:2px;}
+    .zbox.z2{border-color:rgba(0,200,255,0.9);background:rgba(0,200,255,0.08);}
+    .zh{position:absolute;width:12px;height:12px;background:rgba(180,0,255,0.95);border:1px solid rgba(0,0,0,0.5);border-radius:2px;z-index:2;}
+    .zbox.z2 .zh{background:rgba(0,200,255,0.95);}
+    .zh[data-c="nw"]{top:-6px;left:-6px;cursor:nw-resize;}
+    .zh[data-c="ne"]{top:-6px;right:-6px;cursor:ne-resize;}
+    .zh[data-c="sw"]{bottom:-6px;left:-6px;cursor:sw-resize;}
+    .zh[data-c="se"]{bottom:-6px;right:-6px;cursor:se-resize;}
+    .zbox-lbl{position:absolute;top:4px;left:6px;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,0,255,0.95);background:rgba(0,0,0,0.6);padding:1px 5px;border-radius:3px;pointer-events:none;white-space:nowrap;}
+    .zbox.z2 .zbox-lbl{color:rgba(0,200,255,0.95);}
+    .zdim-lbl{position:absolute;bottom:4px;right:6px;font-size:0.48rem;letter-spacing:0.08em;color:rgba(180,0,255,0.85);background:rgba(0,0,0,0.55);padding:1px 5px;border-radius:3px;pointer-events:none;}
+    .zbox.z2 .zdim-lbl{color:rgba(0,200,255,0.85);}
+
+    /* TEXT PREVIEW inside zone */
+    .ztext-preview{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;gap:2px;padding:4px;}
+
+    /* FORMS */
+    .fgrp{margin-bottom:0.9rem;}
+    .flbl{font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#777;display:block;margin-bottom:0.3rem;}
+    .finp,.fselect{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:9px;padding:0.6rem 0.8rem;font-family:"Josefin Sans",sans-serif;font-size:0.82rem;color:#ddd;outline:none;transition:border-color 0.2s;}
+    .finp:focus,.fselect:focus{border-color:rgba(180,0,255,0.5);}
+    .finp::placeholder{color:rgba(255,255,255,0.18);}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+
+    /* ZONE TAB SWITCHER */
+    .zone-tabs{display:flex;gap:0.4rem;margin-bottom:1rem;}
+    .ztab{padding:0.5rem 1rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;cursor:pointer;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;transition:all 0.2s;}
+    .ztab.active{background:rgba(180,0,255,0.1);border-color:rgba(180,0,255,0.5);color:rgba(180,0,255,0.95);}
+    .ztab.z2-tab.active{background:rgba(0,200,255,0.08);border-color:rgba(0,200,255,0.5);color:rgba(0,200,255,0.95);}
+
+    /* FONT PREVIEW CARDS */
+    .font-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.4rem;}
+    .font-card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.7rem;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .font-card:hover{border-color:rgba(180,0,255,0.4);}
+    .font-card.active{background:rgba(180,0,255,0.08);border-color:rgba(180,0,255,0.6);}
+    .font-preview{font-size:1.1rem;color:#ddd;margin-bottom:0.2rem;line-height:1.2;}
+    .font-name{font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:#555;}
+
+    /* TOGGLE */
+    .tgl-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:0.5px solid rgba(255,255,255,0.04);}
+    .tgl-lbl{font-size:0.7rem;letter-spacing:0.06em;color:#bbb;}
+    .tgl-sub{font-size:0.56rem;color:#444;margin-top:0.1rem;}
+    .tgl{position:relative;width:42px;height:22px;flex-shrink:0;}
+    .tgl input{opacity:0;width:0;height:0;}
+    .tgl-sl{position:absolute;inset:0;background:rgba(255,255,255,0.08);border-radius:11px;cursor:pointer;transition:0.3s;}
+    .tgl-sl::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#444;border-radius:50%;transition:0.3s;}
+    .tgl input:checked+.tgl-sl{background:rgba(180,0,255,0.35);}
+    .tgl input:checked+.tgl-sl::before{transform:translateX(20px);background:rgba(200,80,255,0.95);}
+
+    /* BUTTONS */
+    .btn-p{padding:0.65rem 1.3rem;background:linear-gradient(135deg,rgba(80,0,120,0.8),rgba(40,0,80,0.9));border:0.5px solid rgba(180,0,255,0.5);border-radius:20px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,100,255,0.95);transition:all 0.2s;white-space:nowrap;}
+    .btn-p:hover{border-color:rgba(180,0,255,0.9);box-shadow:0 0 15px rgba(180,0,255,0.15);}
+    .btn-s{padding:0.5rem 0.9rem;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;font-family:"Josefin Sans",sans-serif;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:#777;transition:all 0.2s;}
+    .btn-s:hover{border-color:rgba(255,255,255,0.3);color:#ccc;}
+
+    /* STATUS */
+    .status{font-size:0.68rem;letter-spacing:0.08em;min-height:1.2rem;margin-top:0.8rem;text-align:center;}
+    .ok{color:#a060ff;}.err{color:#ff7070;}.inf{color:rgba(180,100,255,0.8);}
+
+    /* INFO BOX */
+    .info-box{background:rgba(180,0,255,0.04);border:0.5px solid rgba(180,0,255,0.15);border-radius:10px;padding:0.9rem;font-size:0.65rem;letter-spacing:0.05em;color:#777;line-height:1.7;margin-bottom:1rem;}
+    .info-box strong{color:rgba(180,100,255,0.9);}
+
+    /* LIVE PREVIEW */
+    .preview-box{background:#111;border:0.5px solid rgba(180,0,255,0.2);border-radius:10px;padding:1rem;text-align:center;margin-top:0.8rem;}
+    .preview-label{font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;color:#444;margin-bottom:0.5rem;}
+
+    .loading{color:rgba(180,0,255,0.4);font-size:0.7rem;text-align:center;padding:2rem;letter-spacing:0.1em;}
+    .empty{color:#333;font-size:0.68rem;text-align:center;padding:2rem;font-style:italic;}
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="../admin.html" class="back-btn">&#8592; Tillbaka till Admin</a>
+    <div class="logo">ELEGANT<span>-M</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <div class="tool-badge">&#9998; Gravyrverktyget &mdash; Admin</div>
+  </div>
+</div>
+
+<div id="loading-screen" style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem;">
+  <div class="loading">Laddar produkt...</div>
+</div>
+
+<div id="main-ui" style="display:none;">
+  <div class="main">
+
+    <!-- VANSTER: CANVAS -->
+    <div>
+      <div class="prod-header" id="prod-header">
+        <img id="prod-thumb" class="prod-img-thumb" src="" alt=""/>
+        <div>
+          <div class="prod-title" id="prod-title-lbl">Laddar...</div>
+          <div class="prod-mat" id="prod-mat-lbl"></div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Hur fungerar zoneditorn?</strong><br/>
+        Dra den markerade rutan for att flytta zonen. Dra i hornen for att andra storlek.<br/>
+        Kunden kan skriva text fritt inom zonen &mdash; text som gar utanfor kan inte graveras.<br/>
+        Ange <strong>verklig storlek i mm</strong> sa att kunden vet exakta matt.
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-ttl">Visuell zoneditor</div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <div class="tgl-row" style="border:none;padding:0;gap:0.8rem;">
+              <div class="tgl-lbl" style="font-size:0.6rem;">Aktivera Zon 2</div>
+              <label class="tgl"><input type="checkbox" id="tgl-z2" onchange="toggleZ2()"/><span class="tgl-sl"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-wrap" id="editor-wrap">
+          <img id="editor-img" src="" alt="" style="display:none;" onload="onImgLoad()"/>
+          <div class="no-img-msg" id="no-img-msg">
+            <span>&#128247;</span>
+            Ingen produktbild hittad.<br/>
+            <span style="font-size:0.62rem;margin-top:0.3rem;">Ladda upp en bild i admin forst.</span>
+          </div>
+
+          <!-- ZON 1 -->
+          <div id="zb-0" class="zbox" style="display:none;">
+            <div class="zh" data-z="0" data-c="nw"></div>
+            <div class="zh" data-z="0" data-c="ne"></div>
+            <div class="zh" data-z="0" data-c="sw"></div>
+            <div class="zh" data-z="0" data-c="se"></div>
+            <div class="zbox-lbl" id="zlbl-0">Zon 1</div>
+            <div class="zdim-lbl" id="zdim-0"></div>
+            <div class="ztext-preview" id="zprev-0"></div>
+          </div>
+
+          <!-- ZON 2 -->
+          <div id="zb-1" class="zbox z2" style="display:none;">
+            <div class="zh" data-z="1" data-c="nw"></div>
+            <div class="zh" data-z="1" data-c="ne"></div>
+            <div class="zh" data-z="1" data-c="sw"></div>
+            <div class="zh" data-z="1" data-c="se"></div>
+            <div class="zbox-lbl" id="zlbl-1">Zon 2</div>
+            <div class="zdim-lbl" id="zdim-1"></div>
+            <div class="ztext-preview" id="zprev-1"></div>
+          </div>
+        </div>
+
+        <!-- PREVIEWTEXT INPUT -->
+        <div style="margin-top:1rem;">
+          <div class="flbl">Forhandsvisningstext (testas i zonen ovan)</div>
+          <input class="finp" type="text" id="preview-text" value="Din text har" placeholder="Skriv text for att testa..." oninput="updateZonePreviews()"/>
+        </div>
+
+        <div class="status" id="save-status"></div>
+        <button class="btn-p" style="width:100%;margin-top:1rem;" onclick="saveZones()">&#10003; Spara gravyrzoner till Firebase</button>
+      </div>
+    </div>
+
+    <!-- HOGER: INSTALLNINGAR -->
+    <div>
+
+      <!-- ZON VALJARE -->
+      <div class="zone-tabs">
+        <div class="ztab active" id="ztab-0" onclick="selectZoneTab(0)">&#9632; Zon 1</div>
+        <div class="ztab z2-tab" id="ztab-1" onclick="selectZoneTab(1)" style="display:none;">&#9632; Zon 2</div>
+      </div>
+
+      <!-- ZON 1 INSTALLNINGAR -->
+      <div id="zone-settings-0">
+        <div class="panel">
+          <div class="panel-ttl" style="margin-bottom:1rem;color:rgba(180,0,255,0.9);">Zon 1 &mdash; Storlek &amp; Regler</div>
+
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Bredd (mm)</label>
+              <input class="finp" type="number" id="z0-w-mm" placeholder="T.ex. 80" min="1" oninput="updateDimLabel(0)"/>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Hojd (mm)</label>
+              <input class="finp" type="number" id="z0-h-mm" placeholder="T.ex. 20" min="1" oninput="updateDimLabel(0)"/>
+            </div>
+          </div>
+
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Max antal rader</label>
+              <input class="finp" type="number" id="z0-rows" placeholder="T.ex. 3" min="1" max="10" value="3"/>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Max textstorlek (px)</label>
+              <input class="finp" type="number" id="z0-maxfont" placeholder="T.ex. 32" value="32" min="8"/>
+            </div>
+          </div>
+
+          <div class="fgrp">
+            <label class="flbl">Min textstorlek (px)</label>
+            <input class="finp" type="number" id="z0-minfont" placeholder="T.ex. 8" value="8" min="6"/>
+          </div>
+
+          <div class="info-box" style="margin-top:0;margin-bottom:0.8rem;font-size:0.6rem;">
+            Text ar obegransad i storlek och antal tecken sa lange den ryms inom zonen. Rader och maxstorlek ar riktlinjer for kunden.
+          </div>
+
+          <div class="fgrp">
+            <label class="flbl">Zonettikett (visas for kunden)</label>
+            <input class="finp" type="text" id="z0-label" placeholder="T.ex. Framsida, Ovansida..."/>
+          </div>
+
+          <div class="tgl-row"><div><div class="tgl-lbl">Tillat rotation av text</div></div><label class="tgl"><input type="checkbox" id="z0-rot" checked/><span class="tgl-sl"></span></label></div>
+          <div class="tgl-row" style="margin-bottom:0.8rem;"><div><div class="tgl-lbl">Tillat bojning (Konvex/Konkav)</div></div><label class="tgl"><input type="checkbox" id="z0-cur" checked/><span class="tgl-sl"></span></label></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-ttl" style="margin-bottom:1rem;">Textstilar for Zon 1</div>
+          <div class="flbl">Valj vilka stilar kunden far anvanda</div>
+          <div class="font-grid" id="font-grid-0"></div>
+        </div>
+      </div>
+
+      <!-- ZON 2 INSTALLNINGAR -->
+      <div id="zone-settings-1" style="display:none;">
+        <div class="panel">
+          <div class="panel-ttl" style="margin-bottom:1rem;color:rgba(0,200,255,0.9);">Zon 2 &mdash; Storlek &amp; Regler</div>
+
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Bredd (mm)</label>
+              <input class="finp" type="number" id="z1-w-mm" placeholder="T.ex. 80" min="1" oninput="updateDimLabel(1)"/>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Hojd (mm)</label>
+              <input class="finp" type="number" id="z1-h-mm" placeholder="T.ex. 20" min="1" oninput="updateDimLabel(1)"/>
+            </div>
+          </div>
+
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Max antal rader</label>
+              <input class="finp" type="number" id="z1-rows" placeholder="T.ex. 3" min="1" max="10" value="3"/>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Max textstorlek (px)</label>
+              <input class="finp" type="number" id="z1-maxfont" placeholder="T.ex. 32" value="32" min="8"/>
+            </div>
+          </div>
+
+          <div class="fgrp">
+            <label class="flbl">Min textstorlek (px)</label>
+            <input class="finp" type="number" id="z1-minfont" placeholder="T.ex. 8" value="8" min="6"/>
+          </div>
+
+          <div class="fgrp">
+            <label class="flbl">Zonettikett (visas for kunden)</label>
+            <input class="finp" type="text" id="z1-label" placeholder="T.ex. Baksida, Undersida..."/>
+          </div>
+
+          <div class="tgl-row"><div><div class="tgl-lbl">Tillat rotation av text</div></div><label class="tgl"><input type="checkbox" id="z1-rot" checked/><span class="tgl-sl"></span></label></div>
+          <div class="tgl-row" style="margin-bottom:0.8rem;"><div><div class="tgl-lbl">Tillat bojning (Konvex/Konkav)</div></div><label class="tgl"><input type="checkbox" id="z1-cur" checked/><span class="tgl-sl"></span></label></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-ttl" style="margin-bottom:1rem;">Textstilar for Zon 2</div>
+          <div class="flbl">Valj vilka stilar kunden far anvanda</div>
+          <div class="font-grid" id="font-grid-1"></div>
+        </div>
+      </div>
+
+    </div><!-- /right col -->
+  </div><!-- /main -->
+</div><!-- /main-ui -->
+
+<script>
+const FB={apiKey:"AIzaSyCoRZnJl6gqQG7zmGzW2-aEKqtHXgcvaBg",authDomain:"elegant-m.firebaseapp.com",projectId:"elegant-m",storageBucket:"elegant-m.firebasestorage.app",messagingSenderId:"885190093704",appId:"1:885190093704:web:7bf7ac1a31dbf74011e83d"};
+const app=firebase.initializeApp(FB), db=firebase.firestore();
+
+// URL PARAMS
+const params=new URLSearchParams(location.search);
+const MAT_ID=params.get("mat")||"";
+const PROD_ID=params.get("prod")||"";
+
+// FONTS
+const FONTS=[
+  {id:"cormorant",label:"Klassisk",family:"Cormorant Garamond",sample:"Elegant text",weight:300},
+  {id:"josefin",label:"Modern",family:"Josefin Sans",sample:"MODERN TEXT",weight:300},
+  {id:"dancing",label:"Skrivstil",family:"Dancing Script",sample:"Handskriven stil",weight:400},
+  {id:"oswald",label:"Block",family:"Oswald",sample:"BLOCK TEXT",weight:400}
+];
+
+// ZONE STATE: procent av bildens storlek
+let zs=[{x:10,y:20,w:80,h:30},{x:10,y:65,w:80,h:20}];
+let activeZoneTab=0;
+let selectedFonts=[[...FONTS.map(f=>f.id)],[...FONTS.map(f=>f.id)]]; // alla aktiverade default
+let prodData=null;
+
+const $=id=>document.getElementById(id);
+function setSt(id,msg,cls){const el=$(id);if(!el)return;el.textContent=msg;el.className="status"+(cls?" "+cls:"");}
+
+// INIT
+window.addEventListener("DOMContentLoaded",async()=>{
+  if(!MAT_ID||!PROD_ID){$("loading-screen").innerHTML='<div class="loading">Ingen produkt vald. Oppna fran Admin-panelen.</div>';return;}
+  buildFontGrids();
+  await loadProduct();
+  initDrag();
+  $("loading-screen").style.display="none";
+  $("main-ui").style.display="block";
+});
+
+// LADDA PRODUKT
+async function loadProduct(){
+  try{
+    const snap=await db.collection("materials").doc(MAT_ID).collection("products").doc(PROD_ID).get();
+    if(!snap.exists){setSt("save-status","Produkten hittades inte.","err");return;}
+    prodData=snap.data();
+    const matSnap=await db.collection("materials").doc(MAT_ID).get();
+    const matName=matSnap.exists?matSnap.data().name:MAT_ID;
+
+    $("prod-title-lbl").textContent=prodData.name||PROD_ID;
+    $("prod-mat-lbl").textContent=matName;
+
+    // Bild
+    const imgs=prodData.images||[];
+    if(imgs.length){
+      $("editor-img").src=imgs[0].url;
+      $("editor-img").style.display="block";
+      $("no-img-msg").style.display="none";
+      $("prod-thumb").src=imgs[0].url;
+    }else{
+      $("prod-thumb").style.background="rgba(180,0,255,0.1)";
+      $("prod-thumb").style.border="0.5px solid rgba(180,0,255,0.3)";
+    }
+
+    // Ladda sparade zoner om de finns
+    const savedZones=prodData.zones||[];
+    if(savedZones.length>=1){
+      const z0=savedZones[0];
+      zs[0]={x:z0.x||10,y:z0.y||20,w:z0.w||80,h:z0.h||30};
+      $("z0-w-mm").value=z0.wMM||"";$("z0-h-mm").value=z0.hMM||"";
+      $("z0-rows").value=z0.maxRows||3;$("z0-maxfont").value=z0.maxFont||32;$("z0-minfont").value=z0.minFont||8;
+      $("z0-label").value=z0.label||"";$("z0-rot").checked=z0.allowRotation!==false;$("z0-cur").checked=z0.allowCurve!==false;
+      if(z0.fonts&&z0.fonts.length)selectedFonts[0]=z0.fonts;
+    }
+    if(savedZones.length>=2){
+      const z1=savedZones[1];
+      $("tgl-z2").checked=true;toggleZ2();
+      zs[1]={x:z1.x||10,y:z1.y||65,w:z1.w||80,h:z1.h||20};
+      $("z1-w-mm").value=z1.wMM||"";$("z1-h-mm").value=z1.hMM||"";
+      $("z1-rows").value=z1.maxRows||3;$("z1-maxfont").value=z1.maxFont||32;$("z1-minfont").value=z1.minFont||8;
+      $("z1-label").value=z1.label||"";$("z1-rot").checked=z1.allowRotation!==false;$("z1-cur").checked=z1.allowCurve!==false;
+      if(z1.fonts&&z1.fonts.length)selectedFonts[1]=z1.fonts;
+    }
+    updateAllFontGrids();
+    updateDimLabel(0);updateDimLabel(1);
+    renderZones();
+  }catch(e){setSt("save-status","Fel: "+e.message,"err");}
+}
+
+// FONT GRIDS
+function buildFontGrids(){
+  [0,1].forEach(z=>{
+    const g=$("font-grid-"+z);g.innerHTML="";
+    FONTS.forEach(f=>{
+      const c=document.createElement("div");c.className="font-card active";c.id="fc-"+z+"-"+f.id;
+      c.innerHTML='<div class="font-preview" style="font-family:\''+f.family+'\',serif;font-weight:'+f.weight+';">'+f.sample+'</div><div class="font-name">'+f.label+'</div>';
+      c.onclick=()=>toggleFont(z,f.id,c);
+      g.appendChild(c);
+    });
+  });
+}
+function toggleFont(z,fId,card){
+  const idx=selectedFonts[z].indexOf(fId);
+  if(idx>-1){
+    if(selectedFonts[z].length<=1){alert("Minst en textstil maste vara aktiverad.");return;}
+    selectedFonts[z].splice(idx,1);card.classList.remove("active");
+  }else{selectedFonts[z].push(fId);card.classList.add("active");}
+}
+function updateAllFontGrids(){
+  [0,1].forEach(z=>{
+    FONTS.forEach(f=>{
+      const c=$("fc-"+z+"-"+f.id);if(!c)return;
+      c.classList.toggle("active",selectedFonts[z].includes(f.id));
+    });
+  });
+}
+
+// ZON TAB
+window.selectZoneTab=function(z){
+  activeZoneTab=z;
+  [0,1].forEach(i=>{
+    $("ztab-"+i).classList.toggle("active",i===z);
+    $("zone-settings-"+i).style.display=i===z?"block":"none";
+  });
+};
+window.toggleZ2=function(){
+  const on=$("tgl-z2").checked;
+  $("ztab-1").style.display=on?"block":"none";
+  $("zone-settings-1").style.display=on&&activeZoneTab===1?"block":"none";
+  renderZones();
+};
+
+// DIM LABELS
+window.updateDimLabel=function(z){
+  const w=$("z"+z+"-w-mm").value,h=$("z"+z+"-h-mm").value;
+  $("zdim-"+z).textContent=(w&&h)?w+"\xD7"+h+" mm":"";
+  const lbl=$("z"+z+"-label").value||("Zon "+(z+1));
+  $("zlbl-"+z).textContent=lbl;
+};
+
+// RENDER ZONES
+function renderZones(){
+  const wrap=$("editor-wrap");
+  const img=$("editor-img");
+  if(!img||!img.naturalWidth)return;
+  const cw=img.offsetWidth,ch=img.offsetHeight;
+  if(cw===0||ch===0)return;
+
+  function posBox(id,z,idx){
+    const b=$(id);b.style.display="block";
+    b.style.left=(z.x/100*cw)+"px";b.style.top=(z.y/100*ch)+"px";
+    b.style.width=(z.w/100*cw)+"px";b.style.height=(z.h/100*ch)+"px";
+    // Dim label
+    const w=$("z"+idx+"-w-mm").value,h=$("z"+idx+"-h-mm").value;
+    $("zdim-"+idx).textContent=(w&&h)?w+"\xD7"+h+" mm":"";
+    const lbl=$("z"+idx+"-label").value||("Zon "+(idx+1));
+    $("zlbl-"+idx).textContent=lbl;
+    updateZonePreview(idx);
+  }
+
+  posBox("zb-0",zs[0],0);
+  if($("tgl-z2").checked)posBox("zb-1",zs[1],1);
+  else $("zb-1").style.display="none";
+}
+
+function updateZonePreview(idx){
+  const maxFont=parseInt($("z"+idx+"-maxfont").value)||32;
+  const minFont=parseInt($("z"+idx+"-minfont").value)||8;
+  const maxRows=parseInt($("z"+idx+"-rows").value)||3;
+  const text=$("preview-text").value||"Din text har";
+  const boxEl=$("zb-"+idx);
+  const prevEl=$("zprev-"+idx);
+  const bw=boxEl.offsetWidth,bh=boxEl.offsetHeight;
+  const activeF=selectedFonts[idx];
+  const firstFont=FONTS.find(f=>activeF.includes(f.id))||FONTS[0];
+  const fs=Math.max(minFont,Math.min(maxFont,Math.floor(bh/(maxRows+1))));
+  prevEl.innerHTML="";
+  for(let r=0;r<Math.min(maxRows,3);r++){
+    const el=document.createElement("div");
+    el.style.cssText="font-family:'"+firstFont.family+"',serif;font-size:"+fs+"px;color:rgba(255,255,255,0.6);font-weight:"+firstFont.weight+";white-space:nowrap;overflow:hidden;max-width:"+(bw-8)+"px;line-height:1.2;";
+    el.textContent=r===0?text:(r===1?"Rad 2":"Rad 3");
+    prevEl.appendChild(el);
+    if(r===0&&maxRows===1)break;
+  }
+}
+
+window.updateZonePreviews=function(){[0,1].forEach(i=>updateZonePreview(i));};
+
+// DRAG & RESIZE
+function initDrag(){
+  [0,1].forEach(zi=>{
+    const box=$("zb-"+zi),wrap=$("editor-wrap");
+    if(!box||!wrap)return;
+
+    // DRAG BOX
+    box.addEventListener("pointerdown",function(e){
+      if(e.target.classList.contains("zh"))return;
+      e.preventDefault();
+      const img=$("editor-img");const cw=img.offsetWidth,ch=img.offsetHeight;
+      const sx=e.clientX,sy=e.clientY,ox=zs[zi].x,oy=zs[zi].y;
+      const move=e=>{
+        zs[zi].x=Math.max(0,Math.min(100-zs[zi].w,ox+(e.clientX-sx)/cw*100));
+        zs[zi].y=Math.max(0,Math.min(100-zs[zi].h,oy+(e.clientY-sy)/ch*100));
+        renderZones();
+      };
+      const up=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);};
+      window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);
+    });
+
+    // RESIZE HANDLES
+    box.querySelectorAll(".zh").forEach(h=>{
+      h.addEventListener("pointerdown",e=>{
+        e.preventDefault();e.stopPropagation();
+        const c=h.dataset.c;
+        const img=$("editor-img");const cw=img.offsetWidth,ch=img.offsetHeight;
+        const sx=e.clientX,sy=e.clientY,sz={...zs[zi]};
+        const move=e=>{
+          const dx=(e.clientX-sx)/cw*100,dy=(e.clientY-sy)/ch*100;
+          if(c.includes("e"))zs[zi].w=Math.max(5,Math.min(100-sz.x,sz.w+dx));
+          if(c.includes("s"))zs[zi].h=Math.max(3,Math.min(100-sz.y,sz.h+dy));
+          if(c.includes("w")){const nx=Math.max(0,Math.min(sz.x+sz.w-5,sz.x+dx));zs[zi].w=sz.x+sz.w-nx;zs[zi].x=nx;}
+          if(c.includes("n")){const ny=Math.max(0,Math.min(sz.y+sz.h-3,sz.y+dy));zs[zi].h=sz.y+sz.h-ny;zs[zi].y=ny;}
+          renderZones();
+        };
+        const up=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);};
+        window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);
+      });
+    });
+  });
+}
+
+function onImgLoad(){
+  $("no-img-msg").style.display="none";
+  setTimeout(()=>renderZones(),50);
+}
+window.addEventListener("resize",()=>renderZones());
+
+// SPARA
+window.saveZones=async function(){
+  setSt("save-status","Sparar...","inf");
+  try{
+    const z2on=$("tgl-z2").checked;
+    const zones=[{
+      x:zs[0].x,y:zs[0].y,w:zs[0].w,h:zs[0].h,
+      wMM:$("z0-w-mm").value,hMM:$("z0-h-mm").value,
+      label:$("z0-label").value||"Framsida",
+      maxRows:parseInt($("z0-rows").value)||3,
+      maxFont:parseInt($("z0-maxfont").value)||32,
+      minFont:parseInt($("z0-minfont").value)||8,
+      allowRotation:$("z0-rot").checked,
+      allowCurve:$("z0-cur").checked,
+      fonts:selectedFonts[0]
+    }];
+    if(z2on)zones.push({
+      x:zs[1].x,y:zs[1].y,w:zs[1].w,h:zs[1].h,
+      wMM:$("z1-w-mm").value,hMM:$("z1-h-mm").value,
+      label:$("z1-label").value||"Baksida",
+      maxRows:parseInt($("z1-rows").value)||3,
+      maxFont:parseInt($("z1-maxfont").value)||32,
+      minFont:parseInt($("z1-minfont").value)||8,
+      allowRotation:$("z1-rot").checked,
+      allowCurve:$("z1-cur").checked,
+      fonts:selectedFonts[1]
+    });
+    await db.collection("materials").doc(MAT_ID).collection("products").doc(PROD_ID).set({zones},{merge:true});
+    setSt("save-status","\u2713 Gravyrzoner sparade!","ok");
+    setTimeout(()=>setSt("save-status","",""),4000);
+  }catch(e){setSt("save-status","Fel: "+e.message,"err");}
+};
+</script>
+</body>
+</html>
